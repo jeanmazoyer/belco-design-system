@@ -1,0 +1,1661 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Belco Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@900&family=Outfit:wght@400;500;700&display=swap">
+<style>
+/* Layout: Geist-style documentation shell — fixed left nav in three groups, sticky top bar with search,
+   one reading column with preview cards and "Afficher le code". Single light theme: belco.fr has no dark mode. */
+:root{
+  /* palette relevée sur belco.fr */
+  --color-white:#FFFFFF;
+  --color-sand-50:#FBF9F5;
+  --color-sand-100:#F2F0EB;
+  --color-stone-200:#E8E8E8;
+  --color-cream-50:#FFFFEC;
+  --color-forest-600:#5B766B;
+  --color-forest-900:#053021;
+  --color-moss-700:#4C5439;
+  --color-sage-500:#798A72;
+  --color-flame-500:#F85A2F;
+  --color-flame-600:#DE4A22;
+  /* rôles sémantiques */
+  --color-background:var(--color-sand-50);
+  --color-surface:var(--color-sand-100);
+  --color-surface-inverse:var(--color-forest-900);
+  --color-text:var(--color-forest-900);
+  --color-text-muted:var(--color-forest-600);
+  --color-text-inverse:var(--color-cream-50);
+  --color-border:var(--color-stone-200);
+  --color-primary:var(--color-flame-500);
+  --color-primary-hover:var(--color-flame-600);
+  --color-primary-foreground:var(--color-sand-50);
+  --color-secondary:var(--color-forest-900);
+  --color-secondary-foreground:var(--color-cream-50);
+  --color-accent-moss:var(--color-moss-700);
+  --color-accent-sage:var(--color-sage-500);
+  /* typographie */
+  --font-display:"PP Formula Condensed","PP Formula","Barlow Condensed",Impact,sans-serif;
+  --font-sans:"Centra No2","CentraNo2","Outfit",system-ui,sans-serif;
+  --font-mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --font-weight-book:400;
+  --font-weight-medium:500;
+  --font-weight-bold:700;
+  --font-weight-black:900;
+  --text-xs:12px; --text-sm:14px; --text-base:16px; --text-lg:18px; --text-xl:24px; --text-2xl:32px; --text-3xl:42px; --text-4xl:56px; --text-5xl:80px;
+  --leading-xs:16px; --leading-sm:20px; --leading-base:24px; --leading-lg:28px; --leading-xl:30px; --leading-2xl:32px; --leading-3xl:42px; --leading-4xl:56px; --leading-5xl:76px;
+  --tracking-tight:-0.01em; --tracking-normal:0em; --tracking-wide:0.06em;
+  /* espacements, rayons */
+  --spacing-1:4px; --spacing-2:8px; --spacing-3:12px; --spacing-4:16px; --spacing-5:20px; --spacing-6:24px; --spacing-8:32px; --spacing-10:40px; --spacing-12:48px; --spacing-16:64px; --spacing-20:80px; --spacing-24:96px;
+  --radius-sm:6px; --radius-md:12px; --radius-lg:20px; --radius-full:9999px;
+  --opacity-disabled:40%; --opacity-muted:60%;
+  --breakpoint-sm:640px; --breakpoint-md:768px; --breakpoint-lg:1024px; --breakpoint-xl:1440px;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--color-background);color:var(--color-text);font:var(--font-weight-book) var(--text-base)/var(--leading-base) var(--font-sans);-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:40;background:var(--color-white)}
+a{color:inherit}
+button{font:inherit;color:inherit}
+h1,h2,h3,h4{margin:0;text-wrap:balance}
+p{margin:0}
+.display{font-family:var(--font-display);font-weight:var(--font-weight-black);text-transform:uppercase;letter-spacing:0}
+.label{font-size:var(--text-xs);line-height:var(--leading-xs);font-weight:var(--font-weight-medium);letter-spacing:var(--tracking-wide);text-transform:uppercase;color:var(--color-text-muted)}
+.muted{color:var(--color-text-muted)}
+code.inline{font:12px/1 var(--font-mono);background:var(--color-surface);padding:2px 6px;border-radius:4px}
+
+/* ---------- shell ---------- */
+.shell{display:flex;min-height:100%}
+.sidebar{position:sticky;top:0;align-self:flex-start;height:100vh;height:100dvh;width:260px;flex-shrink:0;overflow-y:auto;background:var(--color-white);border-right:1px solid var(--color-border);display:flex;flex-direction:column;gap:28px;padding-block:20px 48px;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:12px}
+.brand{display:flex;align-items:center;gap:12px;padding:4px 12px;text-decoration:none}
+.brand svg{width:auto;height:44px;flex-shrink:0}
+.brand span{font-size:var(--text-sm);font-weight:var(--font-weight-medium);line-height:var(--leading-sm);color:var(--color-text)}
+.nav-group{display:flex;flex-direction:column;gap:2px}
+.group-title{display:flex;align-items:center;height:32px;padding:0 12px;margin-bottom:4px;font-size:var(--text-sm);font-weight:var(--font-weight-bold);color:var(--color-text);text-decoration:none;border-radius:var(--radius-sm)}
+.group-title:hover{background:var(--color-surface)}
+.nav-item{display:flex;align-items:center;justify-content:space-between;gap:8px;height:30px;padding:0 12px;border-radius:var(--radius-full);font-size:var(--text-sm);line-height:var(--leading-sm);text-decoration:none;color:var(--color-text-muted)}
+.nav-item:hover{background:var(--color-surface);color:var(--color-text)}
+.nav-item.is-active{background:var(--color-secondary);color:var(--color-secondary-foreground);font-weight:var(--font-weight-medium)}
+.nav-item.is-soon{color:var(--color-text-muted)}
+.nav-item.is-active.is-soon{color:var(--color-secondary-foreground)}
+.nav-item .soon{flex-shrink:0}
+.nav-item[hidden]{display:none}
+.soon{display:inline-flex;align-items:center;height:18px;padding:0 8px;border-radius:var(--radius-full);background:var(--color-surface);color:var(--color-text-muted);font-size:10px;line-height:12px;font-weight:var(--font-weight-medium);letter-spacing:var(--tracking-wide);text-transform:uppercase}
+.nav-item.is-active .soon{background:color-mix(in srgb,var(--color-secondary-foreground) 18%,transparent);color:var(--color-secondary-foreground)}
+.nav-empty{padding:8px 12px;font-size:var(--text-sm);color:var(--color-text-muted)}
+
+.content{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;display:flex;align-items:center;gap:12px;height:64px;background:var(--color-white);border-bottom:1px solid var(--color-border);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.menu-btn{display:none;align-items:center;justify-content:center;width:40px;height:40px;border:1px solid var(--color-border);border-radius:var(--radius-full);background:var(--color-white);cursor:pointer;flex-shrink:0}
+.topbar .b-search{flex:1;max-width:420px;height:40px;min-width:0}
+.topbar .b-search input{min-width:0}
+.kbd{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px solid var(--color-border);border-radius:4px;background:var(--color-white);font:11px/1 var(--font-mono);color:var(--color-text-muted);flex-shrink:0}
+.topnav{margin-left:auto;display:flex;align-items:center;gap:4px}
+.topnav a{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:var(--radius-full);font-size:var(--text-sm);font-weight:var(--font-weight-medium);color:var(--color-text-muted);text-decoration:none;white-space:nowrap}
+.topnav a:hover{background:var(--color-surface);color:var(--color-text)}
+.topnav a.is-active{color:var(--color-text);background:var(--color-surface)}
+.logo-slot svg{height:120px;width:auto}
+.bento-preview svg{height:110px;width:auto}
+.changelog{display:flex;flex-direction:column}
+.changelog > div{display:grid;grid-template-columns:160px minmax(0,1fr);gap:8px 24px;padding:20px 0;border-bottom:1px solid var(--color-border)}
+.changelog > div:last-child{border-bottom:0}
+.changelog time{font-size:var(--text-sm);color:var(--color-text-muted)}
+.changelog ul{margin:0;padding-left:18px;font-size:var(--text-sm);line-height:var(--leading-sm);display:flex;flex-direction:column;gap:4px}
+.changelog h3{font-size:var(--text-base);font-weight:var(--font-weight-bold);margin-bottom:8px}
+.preset-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;width:100%}
+.preset{display:flex;flex-direction:column;gap:10px;min-width:0}
+.preset .box{height:120px;display:flex;align-items:flex-end;padding:12px;font-size:var(--text-xs);color:inherit}
+.preset b{font:var(--font-weight-medium) var(--text-sm)/var(--leading-sm) var(--font-mono)}
+.preset small{font-size:var(--text-xs);color:var(--color-text-muted);line-height:var(--leading-xs)}
+.scrim{display:none;position:fixed;inset:0;background:rgba(5,48,33,.35);z-index:25}
+
+.page{width:100%;max-width:1060px;padding-block:40px 96px;padding-left:max(56px,env(safe-area-inset-left,0px));padding-right:max(56px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:40px}
+.page-head{display:flex;flex-direction:column;gap:12px}
+.page-head h1{font-size:var(--text-4xl);line-height:var(--leading-4xl)}
+.page-head .lede{font-size:var(--text-lg);line-height:var(--leading-lg);color:var(--color-text-muted);max-width:66ch}
+.page-head .head-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.section{display:flex;flex-direction:column;gap:16px}
+.section > h2{font-size:var(--text-xl);line-height:var(--leading-xl);padding-bottom:12px;border-bottom:1px solid var(--color-border)}
+.section > p{max-width:66ch;color:var(--color-text)}
+.section .note{font-size:var(--text-sm);line-height:var(--leading-sm);color:var(--color-text-muted);max-width:66ch}
+.seen{display:flex;flex-wrap:wrap;gap:6px 10px;font-size:var(--text-sm);color:var(--color-text-muted)}
+.seen a{color:var(--color-text)}
+
+/* demo card */
+.demo{border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-white);overflow:hidden}
+.demo-preview{padding:32px;display:flex;flex-wrap:wrap;align-items:center;gap:16px;min-width:0}
+.demo-preview.is-block{display:block}
+.demo-preview.is-stack{flex-direction:column;align-items:stretch}
+.demo-preview.is-sand{background:var(--color-background)}
+.demo-preview.is-forest{background:var(--color-surface-inverse)}
+.demo-foot{border-top:1px solid var(--color-border);display:flex;flex-direction:column}
+.demo-toggle{display:flex;align-items:center;gap:8px;width:100%;padding:12px 20px;border:0;background:transparent;cursor:pointer;text-align:left;font-size:var(--text-sm);font-weight:var(--font-weight-medium)}
+.demo-toggle:hover{background:var(--color-background)}
+.demo-toggle svg{transition:transform .15s;flex-shrink:0}
+.demo-toggle.is-on svg{transform:rotate(90deg)}
+.demo-toggle .demo-file{margin-left:auto}
+.demo-panel{border-top:1px solid var(--color-border);background:var(--color-surface)}
+.demo-panel + .demo-toggle{border-top:1px solid var(--color-border)}
+.demo-toggle + .demo-toggle{border-top:1px solid var(--color-border)}
+.demo-toggle--rules{background:var(--color-white)}
+.demo-toggle--rules .tag{display:inline-flex;align-items:center;height:20px;padding:0 8px;border-radius:var(--radius-full);background:var(--color-secondary);color:var(--color-secondary-foreground);font-size:10px;font-weight:var(--font-weight-bold);letter-spacing:var(--tracking-wide);text-transform:uppercase}
+.demo-code{border-top:1px solid var(--color-border);background:var(--color-surface)}
+.demo-tabs{display:flex;align-items:center;gap:4px;padding:8px 12px 0}
+.demo-file{margin-left:auto;font:12px/1 var(--font-mono);color:var(--color-text-muted)}
+.filetree{margin:0;padding:16px 20px;font:13px/1.7 var(--font-mono);background:var(--color-surface);border-radius:var(--radius-md);overflow-x:auto}
+.filetree .muted{color:var(--color-text-muted)}
+.bundle-actions{display:flex;flex-wrap:wrap;gap:8px}
+.demo-tabs button{height:28px;padding:0 12px;border:0;border-radius:var(--radius-full);background:transparent;font-size:var(--text-xs);font-weight:var(--font-weight-bold);letter-spacing:var(--tracking-wide);text-transform:uppercase;color:var(--color-text-muted);cursor:pointer}
+.demo-tabs button.is-on{background:var(--color-white);color:var(--color-text)}
+.demo-code pre,.demo-panel pre{margin:0;padding:16px 20px 20px;overflow-x:auto;font:13px/1.55 var(--font-mono);color:var(--color-text);white-space:pre;tab-size:2}
+.demo-panel pre{white-space:pre-wrap;overflow-wrap:anywhere;padding-top:40px}
+.demo-code .copy{position:absolute;right:12px;top:8px}
+.demo-code .codewrap{position:relative}
+.copy-btn{height:28px;padding:0 12px;border:1px solid var(--color-border);border-radius:var(--radius-full);background:var(--color-white);font-size:var(--text-xs);font-weight:var(--font-weight-medium);cursor:pointer}
+
+.pager{display:flex;justify-content:space-between;gap:16px;padding-top:24px;border-top:1px solid var(--color-border)}
+.pager a{display:flex;flex-direction:column;gap:2px;text-decoration:none;max-width:48%}
+.pager a.next{text-align:right;margin-left:auto}
+.pager .label{color:var(--color-text-muted)}
+.pager strong{font-size:var(--text-base);font-weight:var(--font-weight-medium);display:flex;align-items:center;gap:6px}
+.pager a.next strong{justify-content:flex-end}
+
+/* bento (introduction) */
+.bento{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.bento a{display:flex;flex-direction:column;gap:12px;text-decoration:none;border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-white);padding:16px;min-width:0}
+.bento a:hover{border-color:var(--color-text)}
+.bento-preview{height:180px;border-radius:var(--radius-md);background:var(--color-background);display:flex;align-items:center;justify-content:center;gap:12px;padding:20px;overflow:hidden}
+.bento h3{font-size:var(--text-base);font-weight:var(--font-weight-bold)}
+.bento p{font-size:var(--text-sm);line-height:var(--leading-sm);color:var(--color-text-muted)}
+.bars{display:flex;gap:10px;align-items:flex-end}
+.bars i{display:block;width:14px;height:88px;border-radius:var(--radius-full);border:1px solid var(--color-border)}
+.type-tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;max-width:320px}
+.type-tiles span{display:flex;align-items:center;justify-content:center;height:60px;border:1px solid var(--color-border);border-radius:var(--radius-md);background:var(--color-white);font-size:20px}
+.shape-row{display:flex;gap:14px;align-items:center}
+.shape-row i{display:block;width:64px;height:48px;background:var(--color-accent-moss)}
+.wordmark{font-family:var(--font-display);font-weight:var(--font-weight-black);font-size:64px;line-height:64px;text-transform:uppercase}
+
+/* colours page */
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px}
+.swatch{display:flex;flex-direction:column;gap:10px;min-width:0}
+.swatch i{display:block;height:96px;border-radius:var(--radius-md);border:1px solid var(--color-border)}
+.swatch b{font-size:var(--text-sm);font-weight:var(--font-weight-medium)}
+.swatch small{font-size:var(--text-xs);letter-spacing:var(--tracking-wide);text-transform:uppercase;color:var(--color-text-muted)}
+.tablewrap{overflow-x:auto;border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-white)}
+table.roles{border-collapse:collapse;width:100%;min-width:640px;font-size:var(--text-sm)}
+table.roles th,table.roles td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--color-border);vertical-align:middle}
+table.roles th{font-size:var(--text-xs);letter-spacing:var(--tracking-wide);text-transform:uppercase;color:var(--color-text-muted);font-weight:var(--font-weight-medium)}
+table.roles tr:last-child td{border-bottom:0}
+table.roles .dot{display:inline-block;width:28px;height:28px;border-radius:var(--radius-full);border:1px solid var(--color-border);vertical-align:middle}
+table.roles code{font:12px/1 var(--font-mono)}
+
+/* typography page */
+.type-scale{display:flex;flex-direction:column}
+.type-row{display:grid;grid-template-columns:220px minmax(0,1fr);gap:32px;padding:24px 0;border-bottom:1px solid var(--color-border);align-items:start}
+.type-row:last-child{border-bottom:0}
+.type-row .meta{display:flex;flex-direction:column;gap:2px;padding-top:4px}
+.type-row .meta b{font-size:var(--text-sm);font-weight:var(--font-weight-medium)}
+.type-row .meta small{font-size:var(--text-xs);letter-spacing:var(--tracking-wide);text-transform:uppercase;color:var(--color-text-muted)}
+.type-row .spec{min-width:0;overflow-wrap:anywhere}
+.font-panel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.font-card{border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-white);padding:24px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.font-card .big{font-size:64px;line-height:64px;overflow-wrap:anywhere}
+.font-card dl{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:0;font-size:var(--text-sm)}
+.font-card dt{color:var(--color-text-muted)}
+.font-card dd{margin:0}
+.radius-row{display:flex;flex-wrap:wrap;gap:24px}
+.radius-row figure{margin:0;display:flex;flex-direction:column;gap:8px;width:140px}
+.radius-row i{display:block;height:96px;background:var(--color-surface);border:1px solid var(--color-border)}
+.radius-row figcaption{font-size:var(--text-sm)}
+.radius-row figcaption small{display:block;font-size:var(--text-xs);letter-spacing:var(--tracking-wide);text-transform:uppercase;color:var(--color-text-muted)}
+.space-row{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.space-row figure{margin:0;display:flex;flex-direction:column;gap:8px;min-width:64px}
+.space-row i{display:block;background:var(--color-accent-moss);border-radius:2px}
+.space-row figcaption{font-size:var(--text-xs);color:var(--color-text-muted)}
+
+/* brand page */
+.logo-slot{display:flex;align-items:center;justify-content:center;gap:12px;height:200px;border:1px dashed var(--color-border);border-radius:var(--radius-lg);background:var(--color-white);color:var(--color-text-muted);font-size:var(--text-sm)}
+.brand-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
+.brand-grid a{display:flex;flex-direction:column;gap:10px;text-decoration:none;border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-white);padding:16px}
+.brand-grid a:hover{border-color:var(--color-text)}
+.brand-grid .slot{height:120px;border-radius:var(--radius-md);background:var(--color-background);display:flex;align-items:center;justify-content:center;color:var(--color-text-muted);font-size:var(--text-sm)}
+.brand-grid h3{font-size:var(--text-base);font-weight:var(--font-weight-bold)}
+.facts{display:grid;grid-template-columns:200px minmax(0,1fr);gap:10px 24px;font-size:var(--text-sm)}
+.facts dt{color:var(--color-text-muted)}
+.facts dd{margin:0;overflow-wrap:anywhere}
+
+/* components index */
+.comp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.comp-grid a{display:flex;align-items:center;justify-content:space-between;gap:8px;height:52px;padding:0 16px;border:1px solid var(--color-border);border-radius:var(--radius-md);background:var(--color-white);text-decoration:none;font-size:var(--text-sm);font-weight:var(--font-weight-medium)}
+.comp-grid a:hover{border-color:var(--color-text)}
+.comp-grid a.is-soon{color:var(--color-text-muted);font-weight:var(--font-weight-book)}
+.empty-page{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;min-height:280px;border:1px dashed var(--color-border);border-radius:var(--radius-lg);background:var(--color-white);text-align:center;padding:32px;color:var(--color-text-muted)}
+.empty-page .display{font-size:var(--text-3xl);line-height:var(--leading-3xl);color:var(--color-text)}
+
+/* responsive */
+@media (max-width:900px){
+  .sidebar{position:fixed;left:0;top:0;z-index:30;transform:translateX(-100%);transition:transform .2s ease}
+  body.nav-open .sidebar{transform:none}
+  body.nav-open .scrim{display:block}
+  .menu-btn{display:inline-flex}
+  .page{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));gap:32px}
+  .page-head h1{font-size:var(--text-3xl);line-height:var(--leading-3xl)}
+  .bento,.font-panel{grid-template-columns:minmax(0,1fr)}
+  .type-row{grid-template-columns:minmax(0,1fr);gap:8px}
+  .facts{grid-template-columns:minmax(0,1fr)}
+  .topnav a{padding:0 8px;font-size:var(--text-xs)}
+  .topbar .b-search .kbd{display:none}
+  .changelog > div{grid-template-columns:minmax(0,1fr)}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+:focus-visible{outline:2px solid var(--color-primary);outline-offset:2px}
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <nav class="sidebar" id="sidebar" aria-label="Navigation de la documentation">
+    <a class="brand" href="#introduction" id="brand"><span>Design System</span></a>
+    <div id="nav"></div>
+  </nav>
+  <div class="scrim" id="scrim"></div>
+  <div class="content">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" type="button" aria-label="Ouvrir la navigation"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+      <label class="b-search" for="q"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="q" type="search" placeholder="Chercher un composant, une couleur…" autocomplete="off"><span class="kbd">⌘K</span></label>
+      <nav class="topnav" id="topnav" aria-label="Sections">
+        <a href="#introduction" data-top="ds">Design System</a>
+        <a href="#changelog" data-top="changelog">Changelog</a>
+        <a href="#mcp" data-top="mcp">MCP</a>
+      </nav>
+    </header>
+    <main class="page" id="page"></main>
+  </div>
+</div>
+
+<script>
+/* ---------- Logo Belco (SVG fourni, 79 × 88) ---------- */
+const BELCO_LOGO = `<svg width="79" height="88" viewBox="0 0 79 88" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Belco">
+<path d="M13.7109 53.7965L16.7352 58.8316C18.2597 61.3692 17.9861 64.0303 15.6564 65.4411C14.4424 66.1759 13.1146 66.1481 12.0051 65.4535C12.4016 67.3582 11.7469 68.9389 10.161 69.8989C7.65303 71.4178 5.01289 70.4423 3.20259 67.4323L0 62.1009L13.7109 53.7935V53.7965ZM11.0954 61.8477C11.7101 62.8696 12.6874 63.2987 13.6679 62.7029C14.6668 62.0978 14.7282 61.042 14.1135 60.0171L13.004 58.1679L9.98889 59.9955L11.0984 61.8447L11.0954 61.8477ZM5.56612 65.7622C6.3222 67.0218 7.40715 67.491 8.52283 66.8149C9.62007 66.1512 9.71842 64.9379 8.97463 63.6969L7.61614 61.4341L4.20763 63.4994L5.56612 65.7622Z" fill="#053021"/>
+<path d="M22.4107 65.9116L30.6015 70.5948L29.0617 73.3084L23.8521 70.3324L22.2478 73.1663L26.9963 75.883L25.5026 78.5194L20.754 75.8027L19.0114 78.8775L24.2578 81.8782L22.718 84.5918L14.4902 79.887L22.4107 65.9116Z" fill="#053021"/>
+<path d="M39.1898 71.9165V84.7589H44.7713V88.0004H35.7598V71.9165H39.1898Z" fill="#053021"/>
+<path d="M52.5966 68.6861C53.8291 68.0316 55.2675 67.7137 56.7305 67.7939L58.427 71.0261C56.9272 70.7823 55.581 70.9243 54.2655 71.622C51.7975 72.9278 50.9892 75.8235 52.2831 78.284C53.5525 80.7012 56.3586 81.7107 58.8666 80.3801C60.1605 79.6948 61.0487 78.6791 61.7464 77.2961L63.443 80.5283C62.5824 81.8928 61.4575 82.8529 60.3234 83.4549C56.1158 85.6838 51.3672 84.1742 49.1451 79.9479C46.9567 75.7834 48.5089 70.8564 52.5966 68.6923" fill="#053021"/>
+<path d="M76.5989 69.0786C73.8697 72.8511 68.7 73.7062 64.9596 70.9803C61.2222 68.2513 60.4323 63.0495 63.1616 59.2739C65.8909 55.5015 71.0605 54.6463 74.8009 57.3723C78.5383 60.1013 79.3251 65.3031 76.5959 69.0786M65.8632 61.2466C64.2619 63.4601 64.7905 66.4823 67.0281 68.1185C69.2656 69.7516 72.293 69.3194 73.8943 67.109C75.4956 64.8956 74.97 61.8733 72.7294 60.2371C70.4888 58.604 67.4645 59.0362 65.8632 61.2466Z" fill="#053021"/>
+<path d="M51.2384 4.75244C48.0819 1.59123 44.3937 -0.0542058 40.5826 0.00136228C35.9108 0.0692789 31.6694 1.94316 28.3101 5.42851C23.0544 10.8804 20.2698 19.7095 20.4603 30.2891C20.7769 47.6387 29.1461 60.8145 39.9279 60.938C50.8542 61.0615 59.8995 47.4967 60.0901 30.6966C60.21 20.1232 56.8998 10.4235 51.2353 4.75244M47.0031 5.1692C47.7192 5.66931 48.4139 6.24969 49.0839 6.91959C52.3295 10.1703 54.7453 15.1282 56.0208 20.8271C55.446 20.8456 54.8283 20.9752 54.1644 21.2284C50.9587 22.4509 50.9833 26.7018 50.9956 29.5142C50.9987 30.1903 51.0018 30.8293 50.9587 31.243C50.8358 32.4346 50.4916 33.052 50.2334 33.2187C50.0152 33.3577 49.6248 33.2712 49.339 33.1724C48.8042 32.9903 48.6843 31.6104 48.7642 30.8324C49.1945 29.1191 50.8112 21.5433 47.8514 14.3873C46.6189 11.4083 46.7603 7.49071 47.0001 5.17228M41.1204 57.8231C41.8519 55.3534 42.6971 50.806 41.0651 45.9901C39.3655 40.9674 39.6882 36.7164 40.4258 33.7281L37.3093 33.7096C36.5809 37.1085 36.3872 41.6836 38.1791 46.9749C39.7189 51.5161 38.5664 55.8936 37.967 57.6471C29.9605 55.9183 23.7613 44.4744 23.5 30.2366C23.4078 25.1552 24.0809 20.4597 25.4118 16.4464C25.6208 17.3448 25.8943 18.3234 26.26 19.3761C27.5632 23.1424 26.5674 27.6558 26.134 29.2518C27.2098 28.8783 28.3316 28.5448 29.4903 28.2608C29.9728 25.7819 30.3601 21.9045 29.1368 18.3697C27.8368 14.6096 27.8214 11.9639 27.8736 11.0224C28.6543 9.73196 29.5241 8.56811 30.4923 7.56171C30.563 7.48762 30.6398 7.42588 30.7105 7.35488C30.7043 9.25345 30.9318 11.788 31.7555 14.8473L31.9552 15.5882C33.4613 21.1574 34.1405 23.6981 32.9634 27.5755C34.0268 27.4119 35.1117 27.2822 36.2182 27.1958C37.1495 23.1517 36.3288 20.0861 34.8966 14.7856L34.6968 14.0477C33.4213 9.31211 33.7471 6.06137 33.9592 4.84505C35.1117 4.19058 36.3381 3.72134 37.6259 3.42806C37.34 6.29599 37.1771 12.6369 39.8634 20.1818C39.9679 20.6264 40.6256 23.7536 39.7374 27.063C39.9248 27.063 40.1093 27.063 40.2998 27.063C41.1635 27.0723 42.0179 27.1093 42.86 27.1649C43.7544 23.1053 42.8508 19.5521 42.7986 19.3483L42.7586 19.2218C40.0017 11.5348 40.4811 5.10745 40.7362 3.06996C40.7793 3.06996 40.8254 3.06996 40.8684 3.06996C41.9626 3.0823 43.0475 3.28297 44.111 3.6596C43.7913 5.91628 43.2903 11.3403 45.0361 15.5666C47.7438 22.1144 45.995 29.3691 45.786 30.1748L45.7491 30.357C45.5217 32.0734 45.8137 35.2068 48.3524 36.0743C48.921 36.2688 49.4343 36.3522 49.8861 36.3553C50.762 36.3645 51.4228 36.0898 51.8716 35.7996C53.0456 35.0463 53.7771 33.5799 53.9861 31.564C54.0445 30.9837 54.0415 30.2983 54.0384 29.5019C54.0292 27.6527 54.0138 24.5594 55.2401 24.0932C55.864 23.8555 56.2544 23.8524 56.3988 23.9234C56.4849 23.9636 56.5218 24.0809 56.5095 24.0284L56.5986 24.0099C56.909 26.1709 57.0627 28.4028 57.0381 30.6657C56.8752 45.1412 49.8369 56.9463 41.1174 57.8231" fill="#053021"/>
+<path d="M39.759 27.3623C39.759 27.3623 39.7436 27.3839 39.7344 27.3994C39.759 27.3994 39.7866 27.3994 39.8112 27.3994L39.7928 27.387L39.759 27.3654V27.3623Z" fill="#053021"/>
+</svg>`;
+
+/* ---------- Belco component CSS: one source, injected in the page and shown under "Afficher le code" ---------- */
+const COMPONENT_CSS = {
+matieres: `/* surfaces : posées sur la page */
+.m-card{background:var(--color-white);border:1px solid var(--color-border);border-radius:var(--radius-lg)}
+.m-field{background:var(--color-surface);border:1px solid var(--color-surface);border-radius:var(--radius-sm)}
+.m-encart{background:var(--color-surface);border-radius:var(--radius-md)}
+.m-inverse{background:var(--color-surface-inverse);color:var(--color-text-inverse);border-radius:var(--radius-lg)}
+.m-pill{background:var(--color-white);border:1px solid var(--color-border);border-radius:var(--radius-full)}
+/* flottants : au-dessus de la page, sans ombre */
+.m-menu{background:var(--color-white);border:1px solid var(--color-border);border-radius:var(--radius-md)}`,
+
+bouton: `.b-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 20px;border:0;border-radius:var(--radius-full);background:var(--color-primary);color:var(--color-primary-foreground);font:var(--font-weight-bold) var(--text-sm)/var(--leading-sm) var(--font-sans);text-decoration:none;white-space:nowrap;cursor:pointer}
+.b-btn:hover{background:var(--color-primary-hover)}
+.b-btn--secondary{background:var(--color-secondary);color:var(--color-secondary-foreground)}
+.b-btn--secondary:hover{background:color-mix(in srgb,var(--color-secondary) 85%,var(--color-white))}
+.b-btn--outline{background:transparent;color:var(--color-text);border:1px solid var(--color-text)}
+.b-btn--outline:hover{background:var(--color-surface)}
+.b-btn--cream{background:var(--color-text-inverse);color:var(--color-text)}
+.b-btn--s{height:36px;padding:0 16px}
+.b-btn--l{height:52px;padding:0 24px;font-size:var(--text-base)}
+.b-btn--block{width:100%}
+.b-btn[disabled],.b-btn.is-disabled{background:var(--color-border);color:var(--color-white);pointer-events:none}
+.b-link{font:var(--font-weight-bold) var(--text-sm)/var(--leading-sm) var(--font-sans);color:var(--color-text);text-decoration:underline;text-underline-offset:3px}
+.b-link:hover{color:var(--color-primary)}`,
+
+badge: `.b-badge{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 12px;border-radius:var(--radius-full);background:var(--color-primary);color:var(--color-primary-foreground);font:var(--font-weight-bold) var(--text-xs)/var(--leading-xs) var(--font-sans);letter-spacing:var(--tracking-wide);text-transform:uppercase;white-space:nowrap}
+.b-badge--forest{background:var(--color-secondary);color:var(--color-secondary-foreground)}
+.b-badge--moss{background:var(--color-accent-moss);color:var(--color-text-inverse)}
+.b-badge--sage{background:var(--color-accent-sage);color:var(--color-text-inverse)}
+.b-badge--outline{background:transparent;border:1px solid var(--color-text);color:var(--color-text)}
+.b-badge--surface{background:var(--color-surface);color:var(--color-text-muted);font-weight:var(--font-weight-medium)}
+.b-badge--meta{background:var(--color-white);color:var(--color-text);border:1px solid var(--color-border);height:24px;padding:0 10px;font-weight:var(--font-weight-medium)}
+.b-score{display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:28px;padding:0 10px;border-radius:var(--radius-full);background:var(--color-secondary);color:var(--color-secondary-foreground);font:var(--font-weight-bold) var(--text-sm)/1 var(--font-sans);font-variant-numeric:tabular-nums}`,
+
+chip: `.b-chip{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 14px;border-radius:var(--radius-full);border:1px solid var(--color-border);background:var(--color-white);font:var(--font-weight-medium) var(--text-sm)/var(--leading-sm) var(--font-sans);color:var(--color-text);cursor:pointer}
+.b-chip:hover{border-color:var(--color-text)}
+.b-chip.is-on{background:var(--color-secondary);border-color:var(--color-secondary);color:var(--color-secondary-foreground)}
+.b-chip--note{cursor:default;border:0;background:var(--color-surface)}
+.b-chip small{color:var(--color-text-muted);font-weight:var(--font-weight-book)}
+.b-chip.is-on small{color:inherit}`,
+
+recherche: `.b-search{display:flex;align-items:center;gap:12px;height:48px;padding:0 20px;border-radius:var(--radius-full);background:var(--color-surface);border:1px solid var(--color-surface);color:var(--color-text);cursor:text}
+.b-search:focus-within{background:var(--color-white);border-color:var(--color-text)}
+.b-search input{flex:1;min-width:0;border:0;background:transparent;outline:none;font:var(--font-weight-book) var(--text-base)/var(--leading-base) var(--font-sans);color:var(--color-text)}
+.b-search input::placeholder{color:var(--color-text-muted)}
+.b-search svg{flex-shrink:0}`,
+
+saisie: `.b-field{display:flex;flex-direction:column;gap:8px;width:100%;max-width:400px}
+.b-field > label{font:var(--font-weight-medium) var(--text-sm)/var(--leading-sm) var(--font-sans)}
+.b-field .hint{font:var(--font-weight-book) var(--text-xs)/var(--leading-xs) var(--font-sans);color:var(--color-text-muted)}
+.b-input{height:48px;width:100%;padding:0 16px;border:1px solid var(--color-surface);border-radius:var(--radius-sm);background:var(--color-surface);font:var(--font-weight-book) var(--text-base)/var(--leading-base) var(--font-sans);color:var(--color-text);outline:none}
+.b-input::placeholder{color:var(--color-text-muted)}
+.b-input:focus{background:var(--color-white);border-color:var(--color-text)}
+.b-input-group{display:flex;width:100%;max-width:400px}
+.b-input-group .b-input{border-radius:var(--radius-full) 0 0 var(--radius-full)}
+.b-input-group .b-btn{border-radius:0 var(--radius-full) var(--radius-full) 0;height:48px}`,
+
+filtres: `.b-filterbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;width:100%}
+.b-filter{display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 14px;border-radius:var(--radius-full);border:1px solid var(--color-border);background:var(--color-white);font:var(--font-weight-medium) var(--text-sm)/var(--leading-sm) var(--font-sans);color:var(--color-text);cursor:pointer;white-space:nowrap}
+.b-filter:hover{border-color:var(--color-text)}
+.b-filter.is-open,.b-filter.is-on{background:var(--color-surface);border-color:var(--color-text)}
+.b-filter svg{flex-shrink:0}
+.b-filterbar .count{margin-right:auto;font:var(--font-weight-medium) var(--text-sm)/var(--leading-sm) var(--font-sans)}
+.b-clear{border:0;background:transparent;font:var(--font-weight-medium) var(--text-sm)/var(--leading-sm) var(--font-sans);color:var(--color-text-muted);text-decoration:underline;cursor:pointer}`,
+
+menu: `.b-menu{width:260px;max-width:100%;padding:8px;border:1px solid var(--color-border);border-radius:var(--radius-md);background:var(--color-white)}
+.b-menu .b-clear{display:block;padding:6px 10px 10px}
+.b-menu label{display:flex;align-items:center;gap:10px;height:36px;padding:0 10px;border-radius:var(--radius-sm);font:var(--font-weight-book) var(--text-sm)/var(--leading-sm) var(--font-sans);cursor:pointer}
+.b-menu label:hover{background:var(--color-surface)}
+.b-menu label .n{margin-left:auto;color:var(--color-text-muted);font-variant-numeric:tabular-nums}`,
+
+case: `.b-check{appearance:none;width:16px;height:16px;margin:0;border:1px solid var(--color-text-muted);border-radius:4px;background:var(--color-white);display:inline-grid;place-content:center;cursor:pointer;flex-shrink:0}
+.b-check::before{content:"";width:9px;height:9px;transform:scale(0);background:var(--color-secondary-foreground);clip-path:polygon(14% 44%,0 65%,50% 100%,100% 16%,80% 0,43% 62%)}
+.b-check:checked{background:var(--color-secondary);border-color:var(--color-secondary)}
+.b-check:checked::before{transform:scale(1)}
+.b-checkrow{display:inline-flex;align-items:center;gap:10px;font:var(--font-weight-book) var(--text-sm)/var(--leading-sm) var(--font-sans);cursor:pointer}`,
+
+choicebox: `.b-choice{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;width:180px;height:96px;border:1px solid var(--color-border);border-radius:var(--radius-md);background:var(--color-white);font:var(--font-weight-medium) var(--text-sm)/var(--leading-sm) var(--font-sans);color:var(--color-text);cursor:pointer}
+.b-choice input{position:absolute;inset:0;opacity:0;margin:0;cursor:pointer}
+.b-choice i{width:36px;height:36px;border-radius:var(--radius-full);border:1px solid var(--color-border)}
+.b-choice:has(input:checked){border-color:var(--color-primary);color:var(--color-primary)}
+.b-choice:has(input:checked) i{border-color:var(--color-primary)}`,
+
+collapse: `.b-collapse{display:flex;flex-direction:column;width:100%}
+.b-collapse details{border-bottom:1px solid var(--color-border)}
+.b-collapse summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0;cursor:pointer;font:var(--font-weight-bold) var(--text-sm)/var(--leading-sm) var(--font-sans)}
+.b-collapse summary::-webkit-details-marker{display:none}
+.b-collapse summary svg{flex-shrink:0;transition:transform .15s}
+.b-collapse details[open] summary svg{transform:rotate(180deg)}
+.b-collapse .body{padding:0 0 20px;max-width:66ch;font:var(--font-weight-book) var(--text-sm)/var(--leading-sm) var(--font-sans);color:var(--color-text)}
+.b-collapse--inverse{background:var(--color-surface-inverse);color:var(--color-text-inverse);border-radius:var(--radius-lg);padding:8px 24px}
+.b-collapse--inverse details{border-color:color-mix(in srgb,var(--color-text-inverse) 20%,transparent)}
+.b-collapse--inverse .body{color:color-mix(in srgb,var(--color-text-inverse) 85%,transparent)}`,
+
+description: `.b-desc{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 32px;width:100%}
+.b-desc > div{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--color-border);font:var(--font-weight-book) var(--text-sm)/var(--leading-sm) var(--font-sans)}
+.b-desc i{width:18px;height:18px;border-radius:var(--radius-full);border:1px solid var(--color-border);flex-shrink:0}
+.b-desc .k{color:var(--color-text-muted)}
+.b-desc .v{margin-left:auto;font-weight:var(--font-weight-bold);text-align:right}
+@media (max-width:640px){.b-desc{grid-template-columns:minmax(0,1fr)}}`,
+
+breadcrumbs: `.b-crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0;padding:0;list-style:none;font:var(--font-weight-book) var(--text-xs)/var(--leading-xs) var(--font-sans);color:var(--color-text-muted)}
+.b-crumbs a{color:inherit;text-decoration:none}
+.b-crumbs a:hover{color:var(--color-text);text-decoration:underline}
+.b-crumbs li+li::before{content:"›";margin-right:8px}
+.b-crumbs li:last-child{color:var(--color-text);font-weight:var(--font-weight-bold)}`,
+
+bandeau: `.b-banner{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;padding:16px 24px;border-radius:var(--radius-md);background:var(--color-surface)}
+.b-banner b{display:block;font:var(--font-weight-bold) var(--text-sm)/var(--leading-sm) var(--font-sans)}
+.b-banner p{font:var(--font-weight-book) var(--text-xs)/var(--leading-xs) var(--font-sans);color:var(--color-text-muted)}
+.b-banner .b-btn{flex-shrink:0}
+@media (max-width:640px){.b-banner{flex-direction:column;align-items:flex-start}}`,
+
+statut: `.b-status{display:inline-flex;align-items:center;gap:8px;font:var(--font-weight-medium) var(--text-xs)/var(--leading-xs) var(--font-sans);color:var(--color-text)}
+.b-status::before{content:"";width:8px;height:8px;border-radius:var(--radius-full);background:var(--color-secondary)}
+.b-status--contrat::before{background:var(--color-accent-sage)}
+.b-status--demande::before{background:var(--color-primary)}
+.b-status small{color:var(--color-text-muted);font-weight:var(--font-weight-book)}`,
+
+stepper: `.b-stepper{display:flex;align-items:center;gap:0;width:100%;max-width:520px}
+.b-step{display:inline-flex;align-items:center;height:32px;padding:0 18px;border-radius:var(--radius-full);background:var(--color-surface);color:var(--color-text-muted);font:var(--font-weight-medium) var(--text-xs)/var(--leading-xs) var(--font-sans);letter-spacing:var(--tracking-wide);text-transform:uppercase;white-space:nowrap}
+.b-step.is-active{background:var(--color-secondary);color:var(--color-secondary-foreground)}
+.b-step.is-done{background:var(--color-accent-sage);color:var(--color-text-inverse)}
+.b-stepper i{flex:1;height:1px;background:var(--color-text-muted);min-width:16px}`,
+
+tabs: `.b-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
+.b-tab{height:36px;padding:0 16px;border:1px solid var(--color-border);border-radius:var(--radius-full);background:var(--color-white);font:var(--font-weight-medium) var(--text-sm)/var(--leading-sm) var(--font-sans);color:var(--color-text);cursor:pointer}
+.b-tab:hover{border-color:var(--color-text)}
+.b-tab[aria-selected="true"]{background:var(--color-secondary);border-color:var(--color-secondary);color:var(--color-secondary-foreground)}`,
+
+toggle: `.b-toggle{display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 14px;border:1px solid var(--color-border);border-radius:var(--radius-full);background:var(--color-white);font:var(--font-weight-medium) var(--text-sm)/var(--leading-sm) var(--font-sans);cursor:pointer}
+.b-toggle:hover{border-color:var(--color-text)}
+.b-toggle.is-on{background:var(--color-surface);border-color:var(--color-text)}`,
+
+comparateur: `.b-compare{display:flex;align-items:center;gap:16px;width:100%;padding:12px 20px;border-radius:var(--radius-md);background:var(--color-surface-inverse);color:var(--color-text-inverse);font:var(--font-weight-book) var(--text-sm)/var(--leading-sm) var(--font-sans)}
+.b-compare b{font-weight:var(--font-weight-bold)}
+.b-compare .slots{display:flex;gap:6px}
+.b-compare .slots i{width:28px;height:28px;border-radius:var(--radius-sm);border:1px dashed color-mix(in srgb,var(--color-text-inverse) 40%,transparent)}
+.b-compare .right{margin-left:auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.b-compare .b-clear{color:var(--color-text-inverse)}
+@media (max-width:640px){.b-compare{flex-wrap:wrap}.b-compare .right{margin-left:0}}`,
+
+skeleton: `.b-skeleton{display:block;background:var(--color-surface);border-radius:var(--radius-sm);position:relative;overflow:hidden}
+.b-skeleton::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,var(--color-white),transparent);transform:translateX(-100%);animation:b-shimmer 1.4s infinite}
+@keyframes b-shimmer{to{transform:translateX(100%)}}
+@media (prefers-reduced-motion:reduce){.b-skeleton::after{animation:none}}`,
+
+scroller: `.b-scroller{display:flex;gap:12px;width:100%;overflow-x:auto;padding-bottom:8px;scroll-snap-type:x proximity}
+.b-tile{flex:0 0 220px;display:flex;align-items:center;gap:12px;height:56px;padding:0 16px;border-radius:var(--radius-md);background:var(--color-secondary);color:var(--color-text-inverse);font:var(--font-weight-bold) var(--text-xs)/var(--leading-xs) var(--font-sans);letter-spacing:var(--tracking-wide);text-transform:uppercase;text-decoration:none;scroll-snap-align:start}
+.b-tile--sage{background:var(--color-accent-sage)}
+.b-tile--moss{background:var(--color-accent-moss)}
+.b-tile i{width:28px;height:28px;border-radius:var(--radius-full);border:1px solid color-mix(in srgb,var(--color-text-inverse) 40%,transparent);flex-shrink:0}`,
+
+pictos: `.b-pictos{display:flex;gap:20px;overflow-x:auto;width:100%;padding-bottom:8px}
+.b-picto{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:8px;width:88px;font:var(--font-weight-medium) var(--text-xs)/var(--leading-xs) var(--font-sans);text-align:center;text-decoration:none;color:var(--color-text)}
+.b-picto i{width:64px;height:64px;border-radius:var(--radius-full);background:var(--color-surface);border:1px solid var(--color-border)}`,
+
+vide: `.b-empty{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;padding:32px;border:1px dashed var(--color-border);border-radius:var(--radius-md);text-align:center;font:var(--font-weight-book) var(--text-sm)/var(--leading-sm) var(--font-sans);color:var(--color-text-muted)}
+.b-empty b{color:var(--color-text);font-weight:var(--font-weight-bold)}`,
+
+carte: `.b-card{display:flex;flex-direction:column;width:280px;border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-white);overflow:hidden;font-family:var(--font-sans)}
+.b-card .media{position:relative;height:180px;background:var(--color-accent-sage);display:flex;align-items:flex-start;justify-content:space-between;padding:12px}
+.b-card .media--white{background:var(--color-background)}
+.b-card .body{display:flex;flex-direction:column;gap:12px;padding:16px}
+.b-card .eyebrow{font:var(--font-weight-medium) var(--text-xs)/var(--leading-xs) var(--font-sans);letter-spacing:var(--tracking-wide);text-transform:uppercase;color:var(--color-text-muted)}
+.b-card h3{margin:0;font:var(--font-weight-bold) var(--text-base)/var(--leading-base) var(--font-sans)}
+.b-card .chips{display:flex;flex-wrap:wrap;gap:6px}
+.b-card .chips .b-chip{height:26px;padding:0 10px;font-size:var(--text-xs)}
+.b-card .price{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:12px;border-top:1px solid var(--color-border);font:var(--font-weight-book) var(--text-xs)/var(--leading-xs) var(--font-sans);color:var(--color-text-muted)}
+.b-card .actions{display:flex;flex-direction:column;gap:8px}
+.b-card .actions .b-btn{width:100%}`
+};
+
+/* ---------- IA Rules : un fichier Markdown par composant, lisible par un agent ---------- */
+const AI_RULES = {
+couleurs: `# Couleurs
+Statut : relevé sur belco.fr (styles calculés). Fichier : couleurs.md
+
+## Palette
+forest-900 #053021 · forest-600 #5B766B · moss-700 #4C5439 · sage-500 #798A72
+flame-500 #F85A2F · flame-600 #DE4A22
+white #FFFFFF · sand-50 #FBF9F5 · sand-100 #F2F0EB · stone-200 #E8E8E8 · cream-50 #FFFFEC
+
+## Rôles (les composants n'utilisent que ceux-ci)
+- --color-background → sand-50 : fond de toutes les pages
+- --color-surface → sand-100 : champs, recherche, encarts
+- --color-surface-inverse → forest-900 : hero, footer, bandeaux sombres
+- --color-text → forest-900 ; --color-text-muted → forest-600 ; --color-text-inverse → cream-50
+- --color-border → stone-200 : filets, contours
+- --color-primary → flame-500 ; --color-primary-hover → flame-600 ; --color-primary-foreground → sand-50
+- --color-secondary → forest-900 ; --color-secondary-foreground → cream-50
+- --color-accent-moss → moss-700 ; --color-accent-sage → sage-500 : cartes et aplats
+
+## Règles
+- Une seule surface flamme (CTA principal) par écran ; tout le reste est vert forêt, sable ou filet.
+- Jamais de hex en dur dans un composant : passer par un rôle.
+- Texte sur vert forêt : toujours cream-50, jamais blanc pur.
+- Pas de mode sombre : le site n'en a pas.
+- flame-600 et forest-600 sont dérivées (hover, texte secondaire), elles n'existent pas dans le CSS du site.`,
+
+typographie: `# Typographie
+Statut : relevé sur belco.fr. Fichier : typographie.md
+
+## Familles
+- Titres : PP Formula (Condensed Black 900 ; le site la déclare 800). Majuscules, interlignage 1:1, pas d'interlettrage.
+- Texte : Centra No2 (Book 400, Medium 500, Bold 700, ExtraBold 800). Corps par défaut 14 / 21 px sur le site.
+- Fallbacks : Barlow Condensed 900, Outfit (le site charge aussi Outfit et Lexend Deca).
+
+## Échelle (px / interlignage)
+Display XL 80/76 · Display L 56/56 · Display M 42/42 · Heading 32/32 (PP Formula)
+Title 24/30 Bold · Body L 18/28 · Body 16/24 · Body S 14/20 · Label 12/16 Medium majuscules tracking 0.06em (Centra No2)
+
+## Règles
+- Tout titre h1/h2/h3 est en PP Formula majuscules ; jamais de PP Formula en bas de casse ni en corps de texte.
+- Centra Medium pour les libellés et noms de produits, Bold pour les boutons et les valeurs, Book pour le courant.
+- Texte courant limité à ~66 caractères par ligne.
+- Pas de texte sous 12 px ; 12 px uniquement en majuscules avec tracking-wide.`,
+
+fonts: `# Fonts
+Statut : relevé sur belco.fr. Fichier : fonts.md
+
+- --font-display: "PP Formula Condensed", "PP Formula", "Barlow Condensed", Impact, sans-serif
+- --font-sans: "Centra No2", "CentraNo2", "Outfit", system-ui, sans-serif
+
+## Règles
+- Les fichiers de fontes sont sous licence (Pangram Pangram, Colophon) : ne pas les embarquer sans accord Belco.
+- Toujours déclarer les fallbacks ci-dessus.
+- Utiliser des px pour les corps, des em pour l'interlettrage, des px pour l'interlignage.`,
+
+matieres: `# Matières
+Statut : relevé sur belco.fr. Fichier : matieres.md
+
+## Surfaces (posées sur la page)
+- .m-card : blanc, filet --color-border, rayon 20 px → cartes produit, cartes service
+- .m-field : sable, sans filet au repos, rayon 6 px → champs, recherche
+- .m-encart : sable, rayon 12 px → bandeaux, encarts
+- .m-inverse : vert forêt, texte crème, rayon 20 px → hero, bandeaux sombres
+- .m-pill : rayon plein → boutons, badges, filtres, onglets
+
+## Flottants (au-dessus de la page)
+- .m-menu : blanc, filet, rayon 12 px → menus de filtres
+- tooltip, modal : non relevés (Soon)
+
+## Rayons
+radius-sm 6 · radius-md 12 · radius-lg 20 · radius-full 9999
+
+## Règles
+- Aucune ombre : la hiérarchie se fait par la couleur de surface et les filets.
+- Rayon plein = action ou étiquette ; 20 px = carte ; 12 px = image, encart, menu ; 6 px = champ.
+- Filet standard 1 px --color-border ; filet fort 1 px --color-text (bouton contour, champ au focus).
+- Grille d'espacement de 4 px (spacing-1 à spacing-24, 4 → 96 px).`,
+
+bouton: `# Bouton
+Statut : relevé sur belco.fr (accueil, catalogue, connexion). Fichier : bouton.md
+
+## Classes
+- .b-btn : primaire, flamme, texte sable. Hover : flame-600.
+- .b-btn--secondary : vert forêt, texte crème.
+- .b-btn--outline : transparent, filet 1 px --color-text. Hover : fond sable.
+- .b-btn--cream : crème sur fond vert forêt.
+- .b-link : lien souligné, Bold 14, flèche → en fin de libellé.
+- Tailles : .b-btn--s 36 px · défaut 44 px · .b-btn--l 52 px (16 px de corps). .b-btn--block pleine largeur.
+- Désactivé : [disabled] → fond --color-border, texte blanc (ex. « Commander » quand les prix sont masqués).
+
+## Règles
+- Une seule pilule flamme par écran : l'action principale. Les autres actions sont secondaires (vert forêt), contour ou lien.
+- Libellé en Centra Bold 14, jamais en majuscules, verbe à l'infinitif ou substantif court (« Devenir client », « Se connecter », « En savoir + »).
+- Toujours une pilule (radius-full), jamais de coins carrés.
+- Sur fond vert forêt : .b-btn--cream ou .b-btn, jamais .b-btn--secondary.
+- Pas d'icône dans les boutons relevés ; si besoin, 18 px, à gauche, gap 8 px.`,
+
+badge: `# Badge
+Statut : relevé sur belco.fr (cartes café, fiche café, catalogue équipement). Fichier : badge.md
+
+## Classes
+- .b-badge : flamme (« Nouveau »). Majuscules 12 px Bold, tracking 0.06em, hauteur 28 px.
+- .b-badge--forest (« Spot », « Microlot ») · --moss (« Café de forêt ») · --sage (« À la voile ») · --outline (« Bio ») · --surface (« Bientôt disponible », « Dernières unités »)
+- .b-badge--meta : blanc filet, 24 px, Medium, posé sur la photo (« 600 kg · Bolivie »).
+- .b-score : pastille vert forêt avec la note SCA (« 82.5 »), chiffres tabulaires.
+
+## Règles
+- Deux badges maximum par carte.
+- Un badge informe, il ne se clique pas ; pour une action, utiliser un bouton ; pour un filtre, une chip.
+- Flamme réservée à la nouveauté ou à l'alerte, pas à la catégorie.`,
+
+chip: `# Chip
+Statut : relevé sur belco.fr (fiche café, catalogue équipement). Fichier : chip.md
+
+## Classes
+- .b-chip : pilule blanche filet, Medium 14, hauteur 32 px, cliquable. Sélectionnée : .is-on (vert forêt, texte crème).
+- .b-chip small : compteur de résultats (« Nouveautés 107 »).
+- .b-chip--note : non cliquable, sable, pour les notes aromatiques et les tags de carte (« Lavé », « Blend de variétés »).
+
+## Règles
+- Chip = valeur sélectionnable ou tag descriptif ; badge = statut.
+- Les variantes produit (« 450 ml », « 1 tasse(s) ») sont des chips, une seule sélectionnée à la fois.
+- Les couleurs par famille aromatique de la fiche café restent à relever.`,
+
+recherche: `# Champ de recherche
+Statut : relevé sur belco.fr (header, blog). Fichier : recherche.md
+
+- .b-search : pilule sable 48 px, icône loupe 18 px à gauche, placeholder en texte atténué.
+- Focus : fond blanc, filet 1 px --color-text.
+- Placeholder du site : « Cherchez un produit, une origine, un producteur… »
+
+## Règles
+- Une seule recherche globale, dans le header, largeur 320–420 px ; dans la barre haute d'une doc, 40 px de haut.
+- Pas de bouton « Rechercher » : la touche Entrée suffit.`,
+
+saisie: `# Champ de saisie
+Statut : relevé sur belco.fr (newsletter, connexion). Fichier : saisie.md
+
+- .b-field : libellé Medium 14 au-dessus, champ, aide 12 px atténuée en dessous.
+- .b-input : 48 px, sable, rayon 6 px, sans filet au repos ; focus : blanc + filet --color-text.
+- .b-input-group : champ pilule à gauche + bouton vert forêt accolé à droite (newsletter « S'inscrire »).
+
+## Règles
+- Libellé toujours visible au-dessus (sauf la connexion Auth0, qui utilise un label flottant).
+- Aide et erreur sous le champ, jamais en placeholder.
+- État d'erreur : non relevé sur le site (Soon). Ne pas en inventer un.`,
+
+filtres: `# Filtres
+Statut : relevé sur belco.fr (catalogues café et équipement). Fichier : filtres.md
+
+- .b-filterbar : rangée de pilules qui passe à la ligne ; compte de résultats à gauche (« 400 cafés verts »), Trier et Vue liste à droite.
+- .b-filter : pilule blanche filet 36 px, libellé + chevron ; ouverte : .is-open (fond sable, filet --color-text).
+- .b-clear : lien atténué souligné « Tout effacer ».
+
+## Règles
+- Un filtre ouvre un menu (.b-menu) sous lui ; il ne navigue pas.
+- Ordre relevé sur le catalogue café : Sélection Belco, Transporté à la voile, Women Coffee, Origines, Disponibilité, Quantité, Traçabilité, Note SCA, Note Impact score Belco, Process, Conditionnement, Certifications, Niveau d'agroforesterie, Process de décaféination, Producteurs, Projets, Variétés, Familles aromatiques.
+- La barre reste collée sous le header au défilement.`,
+
+menu: `# Multi-select
+Statut : relevé sur belco.fr (filtre Origines). Fichier : menu.md
+
+- .b-menu : panneau blanc filet, rayon 12 px, largeur 260 px, sans ombre.
+- Lignes : case à cocher + libellé + compteur aligné à droite (chiffres tabulaires).
+- « Tout effacer » en tête.
+
+## Règles
+- Plusieurs valeurs cochables ; le filtre parent passe en .is-on quand au moins une est cochée.
+- Trier les valeurs par ordre alphabétique, compteur à jour après chaque coche.`,
+
+case: `# Case à cocher
+Statut : relevé sur belco.fr (menus de filtres). Fichier : case.md
+
+- .b-check : 16 px, rayon 4 px, filet atténué ; cochée : fond vert forêt, coche crème.
+- .b-checkrow : libellé Book 14 à droite, gap 10 px.
+
+## Règles
+- Utilisée pour des choix multiples ; pour un choix unique, pas de radio relevé sur le site (Soon).
+- Désactivée : opacité 40 %.`,
+
+choicebox: `# Choicebox
+Statut : relevé sur belco.fr (parcours « Devenir client », étape Intérêts). Fichier : choicebox.md
+
+- .b-choice : carte 180 × 96, filet, rayon 12 px, picto 36 px + libellé Medium 14.
+- Sélectionnée : filet et texte flamme (via input:checked).
+- Valeurs du site : Café Vert, Équipement, Services / Formations.
+
+## Règles
+- Choix multiples par défaut (cases) ; une erreur bloque « Suivant » si rien n'est coché.
+- Première question du parcours : deux pilules « Non » (contour) / « Oui » (flamme).`,
+
+collapse: `# Collapse
+Statut : relevé sur belco.fr (FAQ, fiche café). Fichier : collapse.md
+
+- .b-collapse : liste de <details> séparés par un filet ; question en Bold 14, chevron à droite qui pivote à l'ouverture.
+- .b-collapse--inverse : version sur fond vert forêt (bloc « Notre histoire avec » de la fiche café).
+
+## Règles
+- Un seul niveau ; pas d'accordéon imbriqué.
+- Le premier élément peut être ouvert par défaut ; les autres fermés.
+- Sur la FAQ, les groupes (Commande, Paiement et facturation, Livraison, Équipement) sont des titres PP Formula entre les listes.`,
+
+description: `# Description
+Statut : relevé sur belco.fr (fiche café, « Fiche d'identité »). Fichier : description.md
+
+- .b-desc : grille deux colonnes ; chaque ligne = picto 18 px + clé atténuée + valeur Bold alignée à droite, filet entre les lignes.
+- Clés relevées : Origine, Séchage, Région, Conditionnement, Terroir, Altitude, Espèce, Période de récolte, Variétés, Type de récolte, Process.
+
+## Règles
+- Une colonne sous 640 px.
+- Valeur en Bold ; une valeur qui est un lien (origine, process) reste Bold et soulignée.`,
+
+breadcrumbs: `# Breadcrumbs
+Statut : relevé sur belco.fr (catalogue, FAQ, contact). Fichier : breadcrumbs.md
+
+- .b-crumbs : 12 px atténué, séparateur « › », dernier niveau en Bold couleur texte.
+- Exemple : Accueil › Café Vert › Tous les cafés
+
+## Règles
+- Toujours « Accueil » en premier ; trois niveaux maximum.
+- Placé sous le header, au-dessus du titre de page.`,
+
+bandeau: `# Bandeau
+Statut : relevé sur belco.fr (catalogues). Fichier : bandeau.md
+
+- .b-banner : encart sable, rayon 12 px, titre Bold 14 + texte 12 px atténué, un bouton secondaire à droite.
+- Texte du site : « Connectez-vous pour voir les prix ».
+
+## Règles
+- Une information et une seule action.
+- Empilé en colonne sous 640 px.`,
+
+statut: `# Statut
+Statut : relevé sur belco.fr (cartes café). Fichier : statut.md
+
+- .b-status : 12 px Medium, point de couleur à gauche (vert forêt = en stock, sauge = étape contrat, flamme = sur demande).
+- Complément atténué possible : « · Arrivage en 09/12/26 », « · Prix spot ».
+
+## Règles
+- Valeurs relevées : En stock, Étape contrat, Sur demande.
+- Le site accompagne chaque statut d'un picto ; le point de couleur est provisoire (Soon).`,
+
+stepper: `# Stepper
+Statut : relevé sur belco.fr (parcours « Devenir client »). Fichier : stepper.md
+
+- .b-stepper : pilules 32 px en majuscules 12 px reliées par un trait 1 px.
+- .b-step : sable, texte atténué ; .is-active : vert forêt, texte crème ; .is-done : sauge (non observé, à confirmer).
+- Étapes du site : Intérêts, Société, Compte Belco.
+
+## Règles
+- Trois étapes maximum ; centré sous le logo, sans navigation principale pendant le parcours.`,
+
+tabs: `# Tabs
+Statut : relevé sur belco.fr (blog, fiche café). Fichier : tabs.md
+
+- .b-tabs : rangée de pilules 36 px ; sélectionnée : vert forêt, texte crème (aria-selected).
+- Blog : Tous les articles, Actualités, Café, Équipement.
+- Fiche café : Histoire et traçabilité, Impact, Qualité, Outils Marketing (ancres vers les sections).
+
+## Règles
+- Un seul onglet sélectionné ; le contenu change sans rechargement.
+- Pas d'onglet désactivé.`,
+
+toggle: `# Toggle vue
+Statut : relevé sur belco.fr (catalogue). Fichier : toggle.md
+
+- .b-toggle : pilule blanche filet 36 px, icône + libellé (« Vue liste », « Vue grille ») ; .is-on : fond sable, filet --color-text.
+
+## Règles
+- Toujours à droite de « Trier » dans la barre de filtres.
+- Mémoriser le choix pendant la session.`,
+
+comparateur: `# Comparateur
+Statut : relevé sur belco.fr (catalogue café). Fichier : comparateur.md
+
+- .b-compare : barre vert forêt, texte crème, titre Bold + compteur « (0 / 5) » + cinq emplacements + message + « Tout effacer ».
+- Messages du site : « Aucun produit à comparer », « Encore 2 produits pour comparer ».
+
+## Règles
+- Fixée en bas de la fenêtre sur le catalogue ; cinq cafés maximum, deux minimum pour comparer.`,
+
+skeleton: `# Skeleton
+Statut : relevé sur belco.fr (catalogue, chargement du scroll infini). Fichier : skeleton.md
+
+- .b-skeleton : bloc sable, rayon 6 px, reflet qui traverse (désactivé si prefers-reduced-motion).
+
+## Règles
+- Reproduire la silhouette exacte du composant attendu (carte : photo, titre, lignes, bouton).
+- Pas de spinner : le site charge par skeleton.`,
+
+scroller: `# Scroller
+Statut : relevé sur belco.fr (tuiles de sélection du catalogue café). Fichier : scroller.md
+
+- .b-scroller : rangée horizontale défilante, snap doux, tuiles .b-tile 220 × 56 (vert forêt, sauge ou mousse) avec picto et libellé majuscules.
+- Tuiles du site : Impact Score, Women coffee, Les Cafés de Forêt©, Cafés agroforestiers, Cafés transportés à la voile, Offres entreprises & CHR.
+
+## Règles
+- Déborde à droite volontairement : la dernière tuile coupée signale le défilement.`,
+
+pictos: `# Pictos catégories
+Statut : relevé sur belco.fr (catalogue équipement, menu). Fichier : pictos.md
+
+- .b-pictos : rangée défilante de .b-picto (rond 64 px sable filet + libellé 12 px Medium).
+- Catégories du site : Nouveautés, Pack produits, Moulins à café, Balances à café, Bouilloires à café, Cafetières et drip, Filtres à café, Carafes à café, Tasses et sous-tasses, Thermos, Boîtes de conservation, Aide à l'extraction, Thé & infusion, Produits d'entretien, Pièces détachées.
+
+## Règles
+- Les dessins sont ceux de la charte Belco (fond beige, trait vert forêt) : fichiers PNG à intégrer, ne pas en redessiner.`,
+
+vide: `# État vide
+Statut : relevé sur belco.fr (comparateur). Fichier : vide.md
+
+- .b-empty : cadre pointillé, texte centré : titre Bold + indication de ce qui manque.
+
+## Règles
+- Dire ce qui manque et ce qui le ferait apparaître ; pas d'illustration relevée.`,
+
+carte: `# Carte produit
+Statut : relevé sur belco.fr (catalogues café et équipement). Fichier : carte.md
+
+- .b-card : 280 px, galet blanc filet 20 px, zone média 180 px, corps en colonne gap 12.
+- Café : badge méta (poids · origine) et score ou badge label sur la photo ; sur-titre majuscules (terroir · grade · process · bio) ; nom Bold 16 ; chips (variétés, process) ; statut ; pied prix (« Prix spot » + « Voir le prix ») ; boutons « Commander » (gris tant que non connecté) et « Demande de contrat » (contour).
+- Équipement : média clair, badge surface (« Bientôt disponible »), marque en sur-titre, nom, chips de variantes, pied prix, « Commander ».
+
+## Règles
+- Deux badges maximum sur la photo.
+- Les prix ne s'affichent qu'une fois connecté : sinon lien « Voir le prix » et bouton désactivé.
+- La photo du producteur ou du produit est obligatoire ; l'aplat sauge n'est qu'un gabarit.`
+};
+const RULE_FILE = {tokens:'couleurs'};
+
+const NAV = [
+  {group:'Fondations', items:[
+    {id:'introduction',label:'Introduction'},
+    {id:'couleurs',label:'Couleurs'},
+    {id:'typographie',label:'Typographie'},
+    {id:'fonts',label:'Fonts'},
+    {id:'matieres',label:'Matières'},
+    {id:'terminal',label:'Terminal',soon:true}
+  ]},
+  {group:'Marques & labels', items:[
+    {id:'marque-belco',label:'Belco'},
+    {id:'marque-fcco',label:'Fresh Coffee Clean Ocean©'},
+    {id:'marque-impact-score',label:'Impact Score®'},
+    {id:'marque-cafe-de-foret',label:'Café de Forêt©'},
+    {id:'marque-soil',label:'Soil of Excellence©'},
+    {id:'marque-women-coffee',label:'Women Coffee'}
+  ]},
+  {group:'Composants', items:[
+    {id:'composants',label:'Tous les composants'},
+    {id:'avatar',label:'Avatar',soon:true},
+    {id:'badge',label:'Badge'},
+    {id:'bandeau',label:'Bandeau'},
+    {id:'bouton',label:'Bouton'},
+    {id:'breadcrumbs',label:'Breadcrumbs'},
+    {id:'calendrier',label:'Calendrier',soon:true},
+    {id:'carte-produit',label:'Carte produit'},
+    {id:'case-a-cocher',label:'Case à cocher'},
+    {id:'champ-de-recherche',label:'Champ de recherche'},
+    {id:'champ-de-saisie',label:'Champ de saisie'},
+    {id:'choicebox',label:'Choicebox'},
+    {id:'collapse',label:'Collapse'},
+    {id:'comparateur',label:'Comparateur'},
+    {id:'description',label:'Description'},
+    {id:'drawer',label:'Drawer',soon:true},
+    {id:'erreur',label:'Erreur',soon:true},
+    {id:'etat-vide',label:'État vide'},
+    {id:'filtres',label:'Filtres'},
+    {id:'modal',label:'Modal',soon:true},
+    {id:'multi-select',label:'Multi-select'},
+    {id:'pagination',label:'Pagination',soon:true},
+    {id:'pictos',label:'Pictos catégories'},
+    {id:'progress',label:'Progress',soon:true},
+    {id:'scroller',label:'Scroller'},
+    {id:'select',label:'Select'},
+    {id:'skeleton',label:'Skeleton'},
+    {id:'slider',label:'Slider',soon:true},
+    {id:'statut',label:'Statut'},
+    {id:'stepper',label:'Stepper'},
+    {id:'switch',label:'Switch',soon:true},
+    {id:'table',label:'Table',soon:true},
+    {id:'tabs',label:'Tabs'},
+    {id:'telephone',label:'Téléphone',soon:true},
+    {id:'textarea',label:'Textarea',soon:true},
+    {id:'toast',label:'Toast',soon:true},
+    {id:'toggle-vue',label:'Toggle vue'},
+    {id:'tooltip',label:'Tooltip',soon:true},
+    {id:'voir-plus',label:'Voir plus'}
+  ]}
+];
+const FLAT = NAV.flatMap(g => g.items.map(i => ({...i, group:g.group})));
+
+/* ---------- helpers ---------- */
+const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function dedent(s){
+  const lines = s.replace(/^\n/,'').replace(/\s+$/,'').split('\n');
+  const ind = Math.min(...lines.filter(l=>l.trim()).map(l=>l.match(/^\s*/)[0].length));
+  return lines.map(l=>l.slice(ind)).join('\n');
+}
+const chev = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
+const chevDown = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+const searchIco = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>';
+const listIco = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>';
+const gridIco = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg>';
+
+function rulesFor(key){
+  const rk = RULE_FILE[key] || key;
+  return {file:`rules/${rk}.md`, text: AI_RULES[rk] || `# ${rk}\nStatut : Soon. Pas encore relevé sur belco.fr, aucune règle à donner à une IA.`};
+}
+function rulesRow(key){
+  const r = rulesFor(key);
+  return `<button class="demo-toggle demo-toggle--rules" type="button" data-panel="rules">${chev}<span>IA Rules</span><span class="demo-file">${r.file}</span></button>
+    <div class="demo-panel demo-rules" hidden><div class="codewrap"><button class="copy-btn copy" type="button">Copier</button><pre><code>${esc(r.text)}</code></pre></div></div>`;
+}
+function demo(key, html, opts={}){
+  const src = dedent(html);
+  const cls = ['demo-preview', opts.block?'is-block':'', opts.stack?'is-stack':'', opts.sand?'is-sand':'', opts.forest?'is-forest':''].join(' ');
+  return `<div class="demo" data-key="${key}">
+    <div class="${cls}">${src}</div>
+    <div class="demo-foot">
+      <button class="demo-toggle" type="button" data-panel="code">${chev}<span>Afficher le code</span></button>
+      <div class="demo-panel demo-code" hidden>
+        <div class="demo-tabs"><button type="button" data-lang="html" class="is-on">HTML</button><button type="button" data-lang="css">CSS</button><span class="demo-file"></span></div>
+        <div class="codewrap"><button class="copy-btn copy" type="button">Copier</button><pre><code>${esc(src)}</code></pre></div>
+      </div>
+      ${rulesRow(key)}
+    </div>
+  </div>`;
+}
+function section(title, body, note){
+  return `<section class="section"><h2 class="display">${title}</h2>${note?`<p class="note">${note}</p>`:''}${body}</section>`;
+}
+function seen(list){ return `<div class="seen"><span>Relevé sur :</span>${list.map(([t,u])=>`<a href="${u}" target="_blank" rel="noopener">${t}</a>`).join('<span>·</span>')}</div>`; }
+function soonPage(item){
+  return {
+    eyebrow:'Composants', title:item.label, soon:true,
+    lede:'Pas encore relevé sur belco.fr. Ce composant existe probablement dans l’espace client connecté (commandes, factures, panier) ou dans un parcours que nous n’avons pas encore parcouru.',
+    body:`<div class="empty-page"><span class="display">Soon</span><p>Dès qu’une capture ou une page du site le montre, il entre ici avec son aperçu et son code.</p></div>`
+  };
+}
+
+/* ---------- pages ---------- */
+const PAGES = {};
+
+PAGES.introduction = () => ({
+  eyebrow:'Fondations', title:'Belco Design System',
+  lede:'Le système de design de belco.fr, relevé sur le site tel qu’il est en ligne : couleurs, typographie, matières et composants, pour construire des interfaces cohérentes du catalogue à l’espace client.',
+  body:`
+  <div class="bento">
+    <a href="#marque-belco"><div class="bento-preview">${BELCO_LOGO}</div><h3>Marques &amp; labels</h3><p>Belco, Fresh Coffee Clean Ocean©, Impact Score®, Café de Forêt©, Soil of Excellence©, Women Coffee.</p></a>
+    <a href="#pictos"><div class="bento-preview"><div class="b-pictos" style="justify-content:center"><span class="b-picto"><i></i>Moulins</span><span class="b-picto"><i></i>Balances</span><span class="b-picto"><i></i>Filtres</span></div></div><h3>Pictos</h3><p>Le jeu de pictogrammes des catégories équipement et des sélections café.</p></a>
+    <a href="#composants"><div class="bento-preview"><span class="b-btn">Devenir client</span><span class="b-badge b-badge--forest">Microlot</span><span class="b-filter">Trier ${chevDown}</span></div><h3>Composants</h3><p>Boutons, badges, filtres, cartes produit : les briques du site, en HTML et CSS.</p></a>
+    <a href="#couleurs"><div class="bento-preview"><div class="bars"><i style="background:var(--color-forest-900)"></i><i style="background:var(--color-forest-600)"></i><i style="background:var(--color-moss-700)"></i><i style="background:var(--color-sage-500)"></i><i style="background:var(--color-flame-500)"></i><i style="background:var(--color-sand-100)"></i><i style="background:var(--color-cream-50)"></i></div></div><h3>Couleurs</h3><p>Sable, vert forêt, crème, une seule flamme orange pour l’action.</p></a>
+    <a href="#matieres"><div class="bento-preview"><div class="shape-row"><i style="border-radius:var(--radius-sm);background:var(--color-surface);border:1px solid var(--color-border)"></i><i style="border-radius:var(--radius-lg)"></i><i style="border-radius:var(--radius-full);background:var(--color-primary)"></i></div></div><h3>Matières</h3><p>Pilules pour les actions, galets pour les surfaces, filets fins, aucune ombre.</p></a>
+    <a href="#fonts"><div class="bento-preview"><div class="type-tiles"><span class="display">PP Formula</span><span style="font-family:var(--font-sans)">Centra No2</span><span class="display" style="font-size:14px">Condensed Black</span><span style="font-family:var(--font-sans);font-weight:700">Book · Medium · Bold</span></div></div><h3>Fonts</h3><p>PP Formula pour les titres, Centra No2 pour tout le reste.</p></a>
+  </div>
+  ${section('Comment lire cette documentation', `<p>Chaque page de composant montre le rendu, puis le code HTML et CSS qui le produit, avec les variables de la page Couleurs. Les entrées marquées <span class="soon">Soon</span> n’ont pas encore été relevées sur le site : elles restent vides tant qu’une page de belco.fr ne les montre pas. Rien n’est inventé.</p>`)}
+  `
+});
+
+PAGES.couleurs = () => {
+  const palette = [
+    ['forest-900','#053021','Vert forêt'],['forest-600','#5B766B','Forêt atténué'],['moss-700','#4C5439','Mousse'],['sage-500','#798A72','Sauge'],['flame-500','#F85A2F','Flamme'],['flame-600','#DE4A22','Flamme foncée'],
+    ['white','#FFFFFF','Blanc'],['sand-50','#FBF9F5','Sable clair'],['sand-100','#F2F0EB','Sable'],['stone-200','#E8E8E8','Pierre'],['cream-50','#FFFFEC','Crème']
+  ];
+  const roles = [
+    ['--color-primary','flame-500','Action principale : CTA, lien fort, badge actif.'],
+    ['--color-primary-hover','flame-600','Hover et pressed du CTA principal.'],
+    ['--color-primary-foreground','sand-50','Texte sur bouton primaire.'],
+    ['--color-secondary','forest-900','Bouton secondaire, liens, icônes.'],
+    ['--color-secondary-foreground','cream-50','Texte sur bouton secondaire.'],
+    ['--color-background','sand-50','Fond de toutes les pages.'],
+    ['--color-surface','sand-100','Champs, barre de recherche, encarts.'],
+    ['--color-surface-inverse','forest-900','Hero, footer, bandeaux sombres.'],
+    ['--color-text','forest-900','Texte principal sur fond clair.'],
+    ['--color-text-muted','forest-600','Texte secondaire, légendes, métadonnées.'],
+    ['--color-text-inverse','cream-50','Texte sur surfaces vert forêt.'],
+    ['--color-border','stone-200','Filets, séparateurs, contours de champs.'],
+    ['--color-accent-moss','moss-700','Cartes et aplats illustratifs.'],
+    ['--color-accent-sage','sage-500','Cartes et aplats illustratifs.']
+  ];
+  return {
+    eyebrow:'Fondations', title:'Couleurs',
+    lede:'Un sol sable chaud, un vert forêt profond, une seule flamme orange pour l’action. Les onze teintes viennent des styles calculés de belco.fr ; les rôles sémantiques sont la couche que les composants utilisent.',
+    body:`
+    ${section('Palette', `<div class="swatches">${palette.map(([n,h,l])=>`<div class="swatch"><i style="background:var(--color-${n})"></i><b>${n}</b><small>${h} · ${l}</small></div>`).join('')}</div>`, 'Deux teintes n’existent pas telles quelles dans le CSS du site : flame-600 (hover) et forest-600 (texte secondaire) sont dérivées de forest-900 et flame-500.')}
+    ${section('Rôles sémantiques', `<div class="tablewrap"><table class="roles"><thead><tr><th></th><th>Token</th><th>Alias</th><th>Usage</th></tr></thead><tbody>${roles.map(([t,a,u])=>`<tr><td><span class="dot" style="background:var(${t})"></span></td><td><code>${t}</code></td><td class="muted">→ ${a}</td><td>${u}</td></tr>`).join('')}</tbody></table></div>`, 'Les composants ne pointent que vers ces rôles, jamais vers la palette.')}
+    ${section('Variables CSS et règles', `<div class="demo" data-key="tokens"><div class="demo-code" style="border-top:0"><div class="demo-tabs"><button type="button" data-lang="css" class="is-on">CSS</button><span class="demo-file">tokens.css</span></div><div class="codewrap"><button class="copy-btn copy" type="button">Copier</button><pre><code id="tokensCode"></code></pre></div></div><div class="demo-foot">${rulesRow('tokens')}</div></div>`, 'Le bloc :root tel qu’il est chargé par cette page, et le fichier couleurs.md à donner à une IA.')}
+    `
+  };
+};
+
+PAGES.typographie = () => {
+  const rows = [
+    ['Display XL','PP Formula · 80 / 76 · text-5xl','display','font-size:var(--text-5xl);line-height:var(--leading-5xl)','Cafés verts de spécialité'],
+    ['Display L','PP Formula · 56 / 56 · text-4xl','display','font-size:var(--text-4xl);line-height:var(--leading-4xl)','Sourcing et importation'],
+    ['Display M','PP Formula · 42 / 42 · text-3xl','display','font-size:var(--text-3xl);line-height:var(--leading-3xl)','Transport à la voile, décarboné à 90 %'],
+    ['Heading','PP Formula · 32 / 32 · text-2xl','display','font-size:var(--text-2xl);line-height:var(--leading-2xl)','La qualité avant tout'],
+    ['Title','Centra No2 Bold · 24 / 30 · text-xl','','font-weight:700;font-size:var(--text-xl);line-height:var(--leading-xl)','Un (vrai) accompagnement commercial'],
+    ['Body L','Centra No2 Book · 18 / 28 · text-lg','','font-size:var(--text-lg);line-height:var(--leading-lg);max-width:66ch','Être client chez Belco, c’est rejoindre un écosystème engagé dans la filière, entouré de passionné·e·s.'],
+    ['Body','Centra No2 Book · 16 / 24 · text-base','','font-size:var(--text-base);line-height:var(--leading-base);max-width:66ch','Entre 150 et 300 cafés disponibles toute l’année, du volume au microlot, avec une traçabilité réelle et totale.'],
+    ['Body S','Centra No2 Book · 14 / 20 · text-sm','','font-size:var(--text-sm);line-height:var(--leading-sm);max-width:66ch','Fiches qualité accessibles 24h/24 depuis votre espace client. Ajustement des prix en temps réel.'],
+    ['Label','Centra No2 Medium · 12 / 16 · text-xs','label','','Origine · Éthiopie · Lot 2026-04']
+  ];
+  return {
+    eyebrow:'Fondations', title:'Typographie',
+    lede:'Deux voix. PP Formula Condensed Black crie les titres en majuscules, interlignage 1:1. Centra No2 parle calmement pour tout le reste.',
+    body:`
+    ${section('Échelle', demo('typographie', `
+    <div class="type-scale">
+      ${rows.map(([n,s,c,st,t])=>`<div class="type-row"><div class="meta"><b>${n}</b><small>${s}</small></div><div class="spec ${c}" style="${st}">${t}</div></div>`).join('\n      ')}
+    </div>`, {block:true}), 'Sur le site : h1 et h2 en PP Formula 800 majuscules (42 px et 36 px sur le catalogue), corps en Centra No2 14 px / 21 px.')}
+    ${section('Règles relevées', `<p>Les titres sont toujours en majuscules, sans interlettrage ajouté, avec un interlignage égal au corps. Le texte courant reste en Book 400 ; Medium 500 sert aux libellés et aux noms de produits ; Bold 700 aux boutons et aux valeurs.</p>`)}
+    `
+  };
+};
+
+PAGES.fonts = () => ({
+  eyebrow:'Fondations', title:'Fonts',
+  lede:'Les deux familles chargées par belco.fr. Elles ne sont pas sur Google Fonts : cette page les utilise si elles sont installées sur votre poste, sinon elle bascule sur Barlow Condensed et Outfit.',
+  body:`
+  <div class="font-panel">
+    <div class="font-card"><span class="label">Titres</span><div class="big display">PP Formula</div><dl><dt>Graisse chargée</dt><dd>Condensed Black (900), déclarée 800 sur le site</dd><dt>Casse</dt><dd>Majuscules</dd><dt>Interlignage</dt><dd>1 : 1</dd><dt>Fallback</dt><dd>Barlow Condensed 900</dd></dl></div>
+    <div class="font-card"><span class="label">Texte</span><div class="big" style="font-weight:700">Centra No2</div><dl><dt>Graisses chargées</dt><dd>300 · 400 · 500 · 700 · 800</dd><dt>Corps par défaut</dt><dd>14 px / 21 px</dd><dt>Fallback</dt><dd>Outfit (que le site charge aussi, avec Lexend Deca)</dd></dl></div>
+  </div>
+  ${section('Déclaration', demo('fonts', `
+    <pre style="margin:0;font:13px/1.55 var(--font-mono);white-space:pre-wrap">--font-display: "PP Formula Condensed", "PP Formula", "Barlow Condensed", Impact, sans-serif;
+--font-sans: "Centra No2", "CentraNo2", "Outfit", system-ui, sans-serif;</pre>`, {block:true}), 'Les fichiers de fontes restent à fournir par Belco (licences Pangram Pangram et Colophon) ; ils ne sont pas inclus ici.')}
+  `
+});
+
+PAGES.matieres = () => ({
+  eyebrow:'Fondations', title:'Matières',
+  lede:'Les préréglages de rayons, aplats et filets, classés comme dans Geist : surfaces posées sur la page, puis éléments flottants. Aucune ombre n’a été relevée sur belco.fr : la hiérarchie se fait par la couleur et les filets.',
+  body:`
+  ${section('Surfaces', demo('matieres', `
+    <div class="preset-grid">
+      <div class="preset"><div class="box m-card">Carte produit, carte service</div><b>.m-card</b><small>Blanc · filet pierre · 20 px</small></div>
+      <div class="preset"><div class="box m-field">Champ, recherche</div><b>.m-field</b><small>Sable · sans filet au repos · 6 px</small></div>
+      <div class="preset"><div class="box m-encart">Bandeau, encart</div><b>.m-encart</b><small>Sable · 12 px</small></div>
+      <div class="preset"><div class="box m-inverse">Hero, bandeau, carte sombre</div><b>.m-inverse</b><small>Vert forêt · texte crème · 20 px</small></div>
+      <div class="preset"><div class="box m-pill" style="height:48px;align-items:center">Bouton, badge, filtre</div><b>.m-pill</b><small>Pilule · filet ou aplat</small></div>
+    </div>`, {block:true}), 'Sur la page. Pas de niveaux d’élévation : une surface est blanche, sable ou vert forêt, c’est tout.')}
+  ${section('Flottants', demo('matieres', `
+    <div class="preset-grid">
+      <div class="preset"><div class="box m-menu">Menu de filtre</div><b>.m-menu</b><small>Blanc · filet pierre · 12 px · relevé sur le catalogue</small></div>
+      <div class="preset"><div class="box" style="border:1px dashed var(--color-border);border-radius:var(--radius-md);color:var(--color-text-muted)"><span class="soon">Soon</span></div><b>.m-tooltip</b><small>Non relevé (seule la carte Google en affiche)</small></div>
+      <div class="preset"><div class="box" style="border:1px dashed var(--color-border);border-radius:var(--radius-md);color:var(--color-text-muted)"><span class="soon">Soon</span></div><b>.m-modal</b><small>Galerie photos de la fiche café, non ouverte</small></div>
+    </div>`, {block:true}), 'Au-dessus de la page. Geist y met tooltip, menu, modal et plein écran ; Belco n’a montré que le menu.')}
+  ${section('Rayons', demo('matieres', `
+    <div class="radius-row">
+      <figure><i style="border-radius:var(--radius-sm)"></i><figcaption>radius-sm<small>6 px · champs, chips de carte</small></figcaption></figure>
+      <figure><i style="border-radius:var(--radius-md)"></i><figcaption>radius-md<small>12 px · images, encarts, menus</small></figcaption></figure>
+      <figure><i style="border-radius:var(--radius-lg);background:var(--color-accent-moss);border:0"></i><figcaption>radius-lg<small>20 px · cartes</small></figcaption></figure>
+      <figure><i style="border-radius:var(--radius-full);background:var(--color-primary);border:0"></i><figcaption>radius-full<small>pilule · boutons, badges, filtres</small></figcaption></figure>
+    </div>`, {block:true}))}
+  ${section('Filets', demo('matieres', `
+    <div style="width:100%;display:flex;flex-direction:column;gap:16px">
+      <div style="border-top:1px solid var(--color-border);padding-top:12px;font-size:14px">Séparateur de section · 1 px · <code class="inline">--color-border</code></div>
+      <div style="border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:16px;font-size:14px">Contour de carte · 1 px · <code class="inline">--color-border</code></div>
+      <div style="border:1px solid var(--color-text);border-radius:var(--radius-full);padding:10px 16px;font-size:14px;width:fit-content">Contour fort · 1 px · <code class="inline">--color-text</code></div>
+    </div>`, {block:true}))}
+  ${section('Espacements', demo('matieres', `
+    <div class="space-row">
+      ${[1,2,3,4,5,6,8,10,12,16,20,24].map(n=>`<figure><i style="width:var(--spacing-${n});height:var(--spacing-${n})"></i><figcaption>spacing-${n}</figcaption></figure>`).join('')}
+    </div>`, {block:true}), 'Grille de 4 px, de 4 à 96 px.')}
+  `
+});
+
+PAGES.terminal = () => ({
+  eyebrow:'Fondations', title:'Terminal', soon:true,
+  lede:'Dans Geist, cette page fournit deux thèmes (Vercel Dark, Vercel Light) pour les émulateurs de terminal : une hiérarchie de gris, des couleurs sémantiques rouge / vert / ambre / bleu, les seize couleurs ANSI avec leurs contrastes, et des fichiers à télécharger pour Ghostty, iTerm2, Alacritty et Windows Terminal.',
+  body:`
+  <div class="empty-page"><span class="display">Soon</span><p>Belco n’a pas d’outil en ligne de commande ni de thème de terminal. L’entrée est conservée pour garder la structure de Geist ; elle ne sera remplie que si Belco décide d’en publier un (palette ANSI dérivée des couleurs du site).</p></div>
+  `
+});
+
+PAGES.changelog = () => ({
+  eyebrow:'Suivi', title:'Changelog',
+  lede:'Ajouts, modifications et suppressions de composants, de fondations et de marques, par version. Les évolutions de cette documentation elle-même n’y figurent pas.',
+  body:`
+  ${section('Historique', `<div class="changelog">
+    <div><time datetime="2026-11-04">4 novembre 2026</time><div><h3>v0.2</h3>
+      <p class="label" style="margin-bottom:6px">Ajouté</p><ul><li><a href="#marque-belco">Belco</a> : logo SVG (79 × 88, vert forêt).</li><li><a href="#terminal">Terminal</a> : entrée de fondation, en Soon (aucun équivalent sur le site).</li></ul>
+      <p class="label" style="margin:12px 0 6px">Modifié</p><ul><li><a href="#matieres">Matières</a> : réorganisée en surfaces et flottants, avec les préréglages .m-card, .m-field, .m-encart, .m-inverse, .m-pill et .m-menu.</li></ul>
+      <p class="label" style="margin:12px 0 6px">Supprimé</p><ul><li>Rien.</li></ul>
+    </div></div>
+    <div><time datetime="2026-11-04">4 novembre 2026</time><div><h3>v0.1</h3>
+      <p class="label" style="margin-bottom:6px">Ajouté</p><ul>
+        <li>Fondations : <a href="#couleurs">Couleurs</a> (11 teintes, 14 rôles), <a href="#typographie">Typographie</a> (9 styles), <a href="#fonts">Fonts</a>, <a href="#matieres">Matières</a>.</li>
+        <li>Marques et labels : Belco, Fresh Coffee Clean Ocean©, Impact Score®, Café de Forêt©, Soil of Excellence© (Soon), Women Coffee.</li>
+        <li>Composants relevés (24) : Badge, Bandeau, Bouton, Breadcrumbs, Carte produit, Case à cocher, Champ de recherche, Champ de saisie, Choicebox, Collapse, Comparateur, Description, État vide, Filtres, Multi-select, Pictos catégories, Scroller, Select, Skeleton, Statut, Stepper, Tabs, Toggle vue, Voir plus.</li>
+        <li>Composants en Soon (14) : Avatar, Calendrier, Drawer, Erreur, Modal, Pagination, Progress, Slider, Switch, Table, Téléphone, Textarea, Toast, Tooltip.</li>
+      </ul>
+    </div></div>
+  </div>`)}
+  `, nopager:true
+});
+
+const RULE_ORDER = ['couleurs','typographie','fonts','matieres','bouton','badge','chip','recherche','saisie','filtres','menu','case','choicebox','collapse','description','breadcrumbs','bandeau','statut','stepper','tabs','toggle','comparateur','skeleton','scroller','pictos','vide','carte'];
+function agentsMd(){
+  const soon = NAV.flatMap(g=>g.items).filter(i=>i.soon).map(i=>i.label).join(', ');
+  const head = `# Belco Design System — règles pour les IA
+
+Source : belco.fr, relevé le 4 novembre 2026. Rien n'est inventé : chaque règle vient d'une page du site.
+Fonts : PP Formula (titres, majuscules) et Centra No2 (texte). Pas de mode sombre. Aucune ombre.
+Tokens CSS : voir tokens.css (variables --color-*, --font-*, --text-*, --leading-*, --radius-*, --spacing-*).
+Composants pas encore relevés (ne pas les produire sans capture du site) : ${soon}.
+
+## Sommaire
+${RULE_ORDER.map(k=>`- rules/${k}.md`).join('\n')}
+
+---
+`;
+  return head + RULE_ORDER.map(k=>AI_RULES[k]).join('\n\n---\n\n') + '\n';
+}
+PAGES.mcp = () => ({
+  eyebrow:'Outils', title:'MCP',
+  lede:'Geist expose chaque page en Markdown pour les agents. Ici, chaque composant a son fichier de règles (onglet IA Rules sous « Afficher le code ») et tout est assemblé en un AGENTS.md à copier dans un projet, un prompt ou un futur serveur MCP.',
+  body:`
+  ${section('Structure des fichiers', `<pre class="filetree">belco-design-system/
+├── AGENTS.md            <span class="muted">← tout assemblé, à donner tel quel à une IA</span>
+├── tokens.css           <span class="muted">← le bloc :root de la page Couleurs</span>
+├── components.css       <span class="muted">← le CSS de tous les composants (onglet CSS)</span>
+└── rules/
+${RULE_ORDER.map((k,i)=>`    ${i===RULE_ORDER.length-1?'└──':'├──'} ${k}.md`).join('\n')}</pre>
+  <div class="bundle-actions"><button class="b-btn b-btn--s" type="button" id="copyAgents">Copier AGENTS.md</button><button class="b-btn b-btn--s b-btn--outline" type="button" id="copyTokens">Copier tokens.css</button><button class="b-btn b-btn--s b-btn--outline" type="button" id="copyCss">Copier components.css</button></div>`, 'Les téléchargements sont bloqués dans cette page : les boutons copient le contenu dans le presse-papiers.')}
+  ${section('AGENTS.md', `<div class="demo is-open" data-key="agents"><div class="demo-code" style="border-top:0"><div class="demo-tabs"><span class="demo-file">AGENTS.md · ${Math.round(agentsMd().length/1024)} Ko</span></div><div class="codewrap"><button class="copy-btn copy" type="button">Copier</button><pre><code>${esc(agentsMd())}</code></pre></div></div></div>`, 'Un en-tête, le sommaire, puis chaque fichier rules/*.md séparé par une ligne.')}
+  ${section('Serveur MCP', `<div class="empty-page" style="min-height:180px"><span class="soon">Soon</span><p>Quand les tokens et les composants seront stabilisés, un serveur MCP servira ces mêmes fichiers aux outils de design et de code : lire les tokens, lire un composant, suggérer un token. En attendant, AGENTS.md fait le travail.</p></div>`)}
+  `, nopager:true
+});
+
+/* ---- marques ---- */
+const BRANDS = {
+  'marque-belco': {name:'Belco', type:'Marque', asset:'https://www.belco.fr/images/belco-logo.svg (79 × 88)', seen:'Header de toutes les pages, page de connexion, footer', notes:'Monogramme rond vert forêt sur fond sable, wordmark en lettres espacées en dessous. Le site l’utilise seul, sans baseline.'},
+  'marque-fcco': {name:'Fresh Coffee Clean Ocean©', type:'Marque de transport à la voile', asset:'LANDING CAFÉ/FCCO_GRAINSOLO.png (picto grain) · HOME/BANDEAU_FCCO_1609_V2.png (bandeau)', seen:'Menu Café vert, sélection « Cafés transportés à la voile », bandeau de la page d’accueil, site fcco.fr', notes:'« La marque qui vous garantit un transport de vos cafés à la voile décarboné à 90 % ». Trois offres : cafés sourcés et transportés à la voile, direct trade à la voile, fret seul (Windshift).'},
+  'marque-impact-score': {name:'Impact Score®', type:'Score de durabilité', asset:'IMPACT/IMPACT SCORE/logo impact score.png', seen:'Menu Café vert, tuile de sélection du catalogue, filtre « Note Impact score Belco », badge sur les fiches café', notes:'24 critères de durabilité de la filière. Sur le catalogue, le score apparaît comme une pastille numérique ; la fiche café le détaille.'},
+  'marque-cafe-de-foret': {name:'Café de Forêt©', type:'Label agroforesterie', asset:'ELEMENTS CHARTE BELCO/café de forêt/tag cafés de forêt.png · PICTOGRAMME/FOND_VERT/ARBRE.png', seen:'Menu Café vert (« Les Cafés de Forêt© », « Cafés agroforestiers »), filtre « Niveau d’agroforesterie », page Impact', notes:'Picto arbre sur fond vert. Le site distingue le label Café de Forêt© et la sélection plus large « Cafés agroforestiers ».'},
+  'marque-soil': {name:'Soil of Excellence©', type:'Label', asset:'Non relevé sur les pages parcourues', seen:'Cité sur la page d’accueil, section Transition &amp; Impact', notes:'Seulement nommé dans le texte. Aucun visuel repéré : le logo et ses règles d’usage restent à relever.', soon:true},
+  'marque-women-coffee': {name:'Women Coffee', type:'Sélection', asset:'IMPACT/logo_WOMEN COFFEE.png', seen:'Menu Café vert, tuile de sélection du catalogue (fond sauge), filtre « Women Coffee »', notes:'Sélection de cafés produits par des femmes. Tuile sauge dans le scroller des sélections.'}
+};
+for (const id in BRANDS){
+  PAGES[id] = () => {
+    const b = BRANDS[id];
+    return {
+      eyebrow:'Marques & labels', title:b.name, soon:b.soon,
+      lede:b.notes,
+      body:`
+      ${id==='marque-belco'
+        ? section('Logo', demo('logo', `
+    ${BELCO_LOGO}`), 'Monogramme et lettrage en une seule couleur, vert forêt. Fichier source : belco-logo.svg, 79 × 88.')
+        : section('Logo', `<div class="logo-slot"><span class="soon">Soon</span> Fichier à récupérer sur le site, puis intégré ici en SVG.</div>`, 'Les images de belco.fr ne peuvent pas être chargées depuis cette page ; le fichier source est indiqué ci-dessous.')}
+      ${section('Fiche', `<dl class="facts"><dt>Type</dt><dd>${b.type}</dd><dt>Fichier source</dt><dd><code class="inline">${b.asset}</code></dd><dt>Où on le voit</dt><dd>${b.seen}</dd></dl>`)}
+      ${section('Toutes les marques', `<div class="brand-grid">${Object.entries(BRANDS).filter(([k])=>k!==id).map(([k,v])=>`<a href="#${k}"><div class="slot">${k==='marque-belco'?BELCO_LOGO.replace('width="79" height="88"','width="60" height="66"'):(v.soon?'<span class="soon">Soon</span>':'Logo à venir')}</div><h3>${v.name}</h3><p class="muted" style="font-size:14px">${v.type}</p></a>`).join('')}</div>`)}
+      `
+    };
+  };
+}
+
+/* ---- composants ---- */
+PAGES.composants = () => ({
+  eyebrow:'Composants', title:'Tous les composants',
+  lede:'Les briques de belco.fr, classées par ordre alphabétique comme dans Geist. Les entrées Soon attendent une capture du site ou de l’espace client.',
+  body:`<div class="comp-grid">${NAV[2].items.filter(i=>i.id!=='composants').map(i=>`<a href="#${i.id}" class="${i.soon?'is-soon':''}">${i.label}${i.soon?'<span class="soon">Soon</span>':chev}</a>`).join('')}</div>`
+});
+
+PAGES.bouton = () => ({
+  eyebrow:'Composants', title:'Bouton',
+  lede:'Trois intentions, trois tailles, une seule pilule orange par écran. Le reste est vert forêt, contour ou lien souligné.',
+  body:`
+  ${seen([['Accueil','https://www.belco.fr/'],['Catalogue café','https://www.belco.fr/cafes/all'],['Connexion','https://www.belco.fr/authn/login']])}
+  ${section('Tailles', demo('bouton', `
+    <button class="b-btn b-btn--s" type="button">Découvrir</button>
+    <button class="b-btn" type="button">Devenir client</button>
+    <button class="b-btn b-btn--l" type="button">Découvrir nos cafés</button>`), 'La taille par défaut est Medium (44 px). Small (36 px) dans le header, Large (52 px) sous le hero.')}
+  ${section('Variantes', demo('bouton', `
+    <button class="b-btn" type="button">Devenir client</button>
+    <button class="b-btn b-btn--secondary" type="button">Se connecter</button>
+    <button class="b-btn b-btn--outline" type="button">En savoir +</button>
+    <a class="b-link" href="#bouton">Voir tous les cafés →</a>`))}
+  ${section('États', demo('bouton', `
+    <button class="b-btn" type="button" style="background:var(--color-primary-hover)">Hover</button>
+    <button class="b-btn" type="button" disabled>Commander</button>
+    <button class="b-btn b-btn--outline" type="button">Demande de contrat</button>`), 'Désactivé : gris pierre et texte blanc, comme « Commander » sur le catalogue quand les prix sont masqués.')}
+  ${section('Sur fond vert forêt', demo('bouton', `
+    <button class="b-btn b-btn--cream" type="button">Les cafés à la voile</button>
+    <button class="b-btn" type="button">Découvrir nos cafés</button>`, {forest:true}), 'Le bandeau Fresh Coffee Clean Ocean© et les cartes de services utilisent le bouton crème.')}
+  ${section('Pleine largeur', demo('bouton', `
+    <div style="width:320px"><button class="b-btn b-btn--secondary b-btn--block" type="button">Continuer</button></div>`), 'Page de connexion (Auth0 habillé aux couleurs Belco).')}
+  `
+});
+
+PAGES.badge = () => ({
+  eyebrow:'Composants', title:'Badge',
+  lede:'La même pilule que les boutons, en plus discret. Jamais plus de deux par carte.',
+  body:`
+  ${seen([['Catalogue café','https://www.belco.fr/cafes/all'],['Fiche café','https://www.belco.fr/cafes/012000100101000/ayni'],['Catalogue équipement','https://www.belco.fr/equipements/all']])}
+  ${section('Variantes', demo('badge', `
+    <span class="b-badge">Nouveau</span>
+    <span class="b-badge b-badge--forest">Spot</span>
+    <span class="b-badge b-badge--moss">Café de forêt</span>
+    <span class="b-badge b-badge--sage">À la voile</span>
+    <span class="b-badge b-badge--outline">Bio</span>
+    <span class="b-badge b-badge--surface">Bientôt disponible</span>`))}
+  ${section('Méta et score', demo('badge', `
+    <span class="b-badge b-badge--meta">600 kg · Bolivie</span>
+    <span class="b-badge b-badge--meta">69 kg · Brésil</span>
+    <span class="b-score">82.5</span>
+    <span class="b-score">84</span>`), 'Les pilules méta (poids · origine) sont posées sur la photo des cartes café ; la pastille de score suit le nom du café.')}
+  ${section('Notes aromatiques', demo('chip', `
+    <span class="b-chip b-chip--note">Citron</span>
+    <span class="b-chip b-chip--note">Chocolat au lait</span>
+    <span class="b-chip b-chip--note">Amande</span>
+    <span class="b-chip b-chip--note">Carré à sucre</span>
+    <span class="b-chip b-chip--note">Végétal</span>`), 'Sur la fiche café, les notes aromatiques apparaissent comme des chips colorées par famille. Les couleurs par famille restent à relever.')}
+  `
+});
+
+PAGES.bandeau = () => ({
+  eyebrow:'Composants', title:'Bandeau',
+  lede:'Un encart sable qui porte une information et une seule action. Sur le catalogue, il invite à se connecter pour voir les prix.',
+  body:`
+  ${seen([['Catalogue café','https://www.belco.fr/cafes/all'],['Catalogue équipement','https://www.belco.fr/equipements/all']])}
+  ${section('Connexion', demo('bandeau', `
+    <div class="b-banner">
+      <div><b>Connectez-vous pour voir les prix</b><p>Découvrez les prix, les remises et les offres réservées à nos clients.</p></div>
+      <button class="b-btn b-btn--s b-btn--secondary" type="button">Se connecter</button>
+    </div>`, {block:true}))}
+  `
+});
+
+PAGES.breadcrumbs = () => ({
+  eyebrow:'Composants', title:'Breadcrumbs',
+  lede:'Fil d’Ariane en petites capitales basses, le dernier niveau en gras.',
+  body:`
+  ${seen([['Catalogue café','https://www.belco.fr/cafes/all'],['FAQ','https://www.belco.fr/faq'],['Contact','https://www.belco.fr/contactez-nous']])}
+  ${section('Exemple', demo('breadcrumbs', `
+    <ol class="b-crumbs"><li><a href="#introduction">Accueil</a></li><li><a href="#introduction">Café Vert</a></li><li>Tous les cafés</li></ol>`, {block:true}))}
+  `
+});
+
+PAGES['carte-produit'] = () => ({
+  eyebrow:'Composants', title:'Carte produit',
+  lede:'Deux cartes : café vert et équipement. Même galet de 20 px, même pied avec le prix et l’action.',
+  body:`
+  ${seen([['Catalogue café','https://www.belco.fr/cafes/all'],['Catalogue équipement','https://www.belco.fr/equipements/all']])}
+  ${section('Café vert', demo('carte', `
+    <article class="b-card">
+      <div class="media"><span class="b-badge b-badge--meta">600 kg · Bolivie</span><span class="b-score">82.5</span></div>
+      <div class="body">
+        <span class="eyebrow">Caranavi · Grade 1 · Lavé · Bio</span>
+        <h3>Ayni</h3>
+        <div class="chips"><span class="b-chip b-chip--note">Blend de variétés</span><span class="b-chip b-chip--note">Lavé</span></div>
+        <span class="b-status">En stock <small>· Prix spot</small></span>
+        <div class="price"><span>Prix spot</span><a class="b-link" href="#bouton">Voir le prix</a></div>
+        <div class="actions"><button class="b-btn b-btn--s" type="button" disabled>Commander</button><button class="b-btn b-btn--s b-btn--outline" type="button">Demande de contrat</button></div>
+      </div>
+    </article>
+    <article class="b-card">
+      <div class="media"><span class="b-badge b-badge--meta">69 kg · Brésil</span><span class="b-badge b-badge--moss">Café de forêt</span></div>
+      <div class="body">
+        <span class="eyebrow">Caparaó · Nature</span>
+        <h3>Mulheres do Caparaó</h3>
+        <div class="chips"><span class="b-chip b-chip--note">Bourbon rouge</span><span class="b-chip b-chip--note">Nature</span></div>
+        <span class="b-status b-status--contrat">Étape contrat <small>· Arrivage en 09/12/26</small></span>
+        <div class="price"><span>Prix contrat</span><a class="b-link" href="#bouton">Voir le prix</a></div>
+        <div class="actions"><button class="b-btn b-btn--s" type="button" disabled>Commander</button><button class="b-btn b-btn--s b-btn--outline" type="button">Demande de contrat</button></div>
+      </div>
+    </article>`, {sand:true}), 'La photo du producteur occupe la zone média (ici un aplat sauge). « Commander » reste gris tant que l’utilisateur n’est pas connecté.')}
+  ${section('Équipement', demo('carte', `
+    <article class="b-card">
+      <div class="media media--white"><span class="b-badge b-badge--surface">Bientôt disponible</span></div>
+      <div class="body">
+        <span class="eyebrow">Timemore</span>
+        <h3>Balance Basic 2</h3>
+        <div class="chips"><span class="b-chip is-on">1 tasse(s)</span><span class="b-chip">2 tasse(s)</span></div>
+        <div class="price"><span>Prix pro</span><a class="b-link" href="#bouton">Voir le prix</a></div>
+        <div class="actions"><button class="b-btn b-btn--s" type="button" disabled>Commander</button></div>
+      </div>
+    </article>`, {sand:true}), 'Les variantes (contenance, nombre de tasses) sont des chips sélectionnables sous le nom.')}
+  `
+});
+
+PAGES['case-a-cocher'] = () => ({
+  eyebrow:'Composants', title:'Case à cocher',
+  lede:'Relevée dans les menus de filtres du catalogue, avec le compteur de résultats à droite.',
+  body:`
+  ${seen([['Catalogue café, filtre Origines','https://www.belco.fr/cafes/all']])}
+  ${section('États', demo('case', `
+    <label class="b-checkrow"><input class="b-check" type="checkbox"> Bolivie</label>
+    <label class="b-checkrow"><input class="b-check" type="checkbox" checked> Brésil</label>
+    <label class="b-checkrow"><input class="b-check" type="checkbox" disabled> Burundi</label>`))}
+  `
+});
+
+PAGES['champ-de-recherche'] = () => ({
+  eyebrow:'Composants', title:'Champ de recherche',
+  lede:'La pilule sable du header. Elle devient blanche avec un contour vert forêt au focus.',
+  body:`
+  ${seen([['Header, toutes les pages','https://www.belco.fr/'],['Blog','https://www.belco.fr/blog']])}
+  ${section('Repos et focus', demo('recherche', `
+    <label class="b-search" style="width:420px;max-width:100%">${searchIco}<input type="search" placeholder="Cherchez un produit, une origine, un producteur…"></label>
+    <label class="b-search" style="width:420px;max-width:100%;background:var(--color-white);border-color:var(--color-text)">${searchIco}<input type="search" value="Éthiopie Guji"></label>`, {stack:true}))}
+  `
+});
+
+PAGES['champ-de-saisie'] = () => ({
+  eyebrow:'Composants', title:'Champ de saisie',
+  lede:'Rectangle doux sur la surface sable, sans contour au repos. Le groupe newsletter accole un bouton à droite.',
+  body:`
+  ${seen([['Footer, newsletter','https://www.belco.fr/'],['Connexion','https://www.belco.fr/authn/login']])}
+  ${section('Texte', demo('saisie', `
+    <div class="b-field"><label for="d-email">Adresse e-mail professionnelle</label><input class="b-input" id="d-email" type="email" placeholder="prenom@torrefaction.fr"><span class="hint">Nous l’utilisons uniquement pour activer votre compte.</span></div>`, {stack:true}))}
+  ${section('Groupe newsletter', demo('saisie', `
+    <form class="b-input-group" onsubmit="event.preventDefault()"><input class="b-input" id="d-news" type="email" placeholder="Votre email"><button class="b-btn b-btn--secondary" type="submit">S’inscrire</button></form>`, {stack:true}), 'Champ à gauche arrondi en pilule, bouton vert forêt accolé à droite.')}
+  ${section('Erreur', `<div class="empty-page" style="min-height:160px"><span class="soon">Soon</span><p>Aucun style d’erreur Belco relevé ; seule la validation native du navigateur est apparue dans le parcours client.</p></div>`)}
+  `
+});
+
+PAGES.choicebox = () => ({
+  eyebrow:'Composants', title:'Choicebox',
+  lede:'Cartes à cocher du parcours « Devenir client ». La sélection passe le contour et le libellé en flamme.',
+  body:`
+  ${seen([['Devenir client, étape Intérêts','https://www.belco.fr/auth/nouveau-client']])}
+  ${section('Choix multiples', demo('choicebox', `
+    <label class="b-choice"><input type="checkbox" name="interet"><i></i>Café Vert</label>
+    <label class="b-choice"><input type="checkbox" name="interet" checked><i></i>Équipement</label>
+    <label class="b-choice"><input type="checkbox" name="interet"><i></i>Services / Formations</label>`), 'Les pictos de chaque choix (grain, tasse, outils) sont à récupérer sur le site ; ici un cercle en tient la place.')}
+  ${section('Oui / Non', demo('bouton', `
+    <button class="b-btn b-btn--s b-btn--outline" type="button">Non</button>
+    <button class="b-btn b-btn--s" type="button">Oui</button>`), 'Première question du parcours : deux pilules, la réponse attendue en flamme.')}
+  `
+});
+
+PAGES.collapse = () => ({
+  eyebrow:'Composants', title:'Collapse',
+  lede:'Accordéon de la FAQ et des blocs « Notre histoire » de la fiche café. Question en gras, chevron à droite, filet entre les lignes.',
+  body:`
+  ${seen([['FAQ','https://www.belco.fr/faq'],['Fiche café','https://www.belco.fr/cafes/012000100101000/ayni']])}
+  ${section('FAQ', demo('collapse', `
+    <div class="b-collapse">
+      <details open><summary>Passer une commande ${chevDown}</summary><div class="body">Vous pouvez passer commande directement sur notre site, à condition d’avoir créé votre compte client et d’être connecté. Autrement, il est toujours possible de contacter votre commercial dédié.</div></details>
+      <details><summary>Modifier une commande ${chevDown}</summary><div class="body">Contactez votre commercial dédié avant l’expédition.</div></details>
+      <details><summary>Où retrouver les CGV ? ${chevDown}</summary><div class="body">En pied de page, rubrique Conditions générales de vente.</div></details>
+    </div>`, {block:true}))}
+  ${section('Sur fond vert forêt', demo('collapse', `
+    <div class="b-collapse b-collapse--inverse">
+      <details open><summary>Ce café ${chevDown}</summary><div class="body">Ayni est un principe ancestral des cultures andines qui repose sur la réciprocité et l’entraide. Le café Ayni rassemble plusieurs groupes de producteurs de la région de Caranavi.</div></details>
+      <details><summary>Sajama ${chevDown}</summary><div class="body">Coopérative partenaire à l’origine.</div></details>
+    </div>`, {block:true}), 'Bloc « Notre histoire avec » de la fiche café.')}
+  `
+});
+
+PAGES.comparateur = () => ({
+  eyebrow:'Composants', title:'Comparateur',
+  lede:'Barre fixée en bas du catalogue. Jusqu’à cinq cafés, deux au minimum pour comparer.',
+  body:`
+  ${seen([['Catalogue café','https://www.belco.fr/cafes/all']])}
+  ${section('Vide', demo('comparateur', `
+    <div class="b-compare"><b>Comparateur Café Vert</b><span>(0 / 5)</span><div class="slots"><i></i><i></i><i></i><i></i><i></i></div><div class="right"><span>Aucun produit à comparer</span><button class="b-clear" type="button">Tout effacer</button></div></div>`, {block:true}))}
+  ${section('En cours', demo('comparateur', `
+    <div class="b-compare"><b>Comparateur Café Vert</b><span>(1 / 5)</span><div class="slots"><i style="background:var(--color-accent-sage);border-style:solid"></i><i></i><i></i><i></i><i></i></div><div class="right"><span>Encore 1 produit pour comparer</span><button class="b-clear" type="button">Tout effacer</button></div></div>`, {block:true}), 'Sur le site, la barre reste collée au bas de la fenêtre.')}
+  `
+});
+
+PAGES.description = () => ({
+  eyebrow:'Composants', title:'Description',
+  lede:'Liste clé / valeur de la « Fiche d’identité » du café, sur deux colonnes, chaque ligne séparée par un filet.',
+  body:`
+  ${seen([['Fiche café','https://www.belco.fr/cafes/012000100101000/ayni']])}
+  ${section('Fiche d’identité', demo('description', `
+    <div class="b-desc">
+      <div><i></i><span class="k">Origine</span><span class="v">Bolivie</span></div>
+      <div><i></i><span class="k">Séchage</span><span class="v">Lits de séchage</span></div>
+      <div><i></i><span class="k">Région</span><span class="v">La Paz</span></div>
+      <div><i></i><span class="k">Conditionnement</span><span class="v">69 kg · Jute bags</span></div>
+      <div><i></i><span class="k">Terroir</span><span class="v">Caranavi</span></div>
+      <div><i></i><span class="k">Altitude</span><span class="v">1 500</span></div>
+      <div><i></i><span class="k">Espèce</span><span class="v">Arabica</span></div>
+      <div><i></i><span class="k">Période de récolte</span><span class="v">Mai – Septembre</span></div>
+      <div><i></i><span class="k">Variétés</span><span class="v">Caturra rouge, Bourbon rouge, Castillo</span></div>
+      <div><i></i><span class="k">Type de récolte</span><span class="v">Manuelle</span></div>
+      <div><i></i><span class="k">Process</span><span class="v">Lavé</span></div>
+    </div>`, {block:true}), 'Chaque ligne porte un picto à gauche (à récupérer sur le site).')}
+  `
+});
+
+PAGES['etat-vide'] = () => ({
+  eyebrow:'Composants', title:'État vide',
+  lede:'Relevé une seule fois, dans le comparateur. Un texte muet et l’indication de ce qui manque.',
+  body:`
+  ${seen([['Catalogue café, comparateur','https://www.belco.fr/cafes/all']])}
+  ${section('Comparateur', demo('vide', `
+    <div class="b-empty"><b>Aucun produit à comparer</b><span>Encore 2 produits pour comparer</span></div>`, {block:true}))}
+  `
+});
+
+PAGES.filtres = () => ({
+  eyebrow:'Composants', title:'Filtres',
+  lede:'La barre de pilules du catalogue : chaque filtre ouvre un menu, le compte de résultats reste à gauche, Trier et Vue liste à droite.',
+  body:`
+  ${seen([['Catalogue café','https://www.belco.fr/cafes/all'],['Catalogue équipement','https://www.belco.fr/equipements/all']])}
+  ${section('Barre de filtres', demo('filtres', `
+    <div class="b-filterbar">
+      <button class="b-filter" type="button">Sélection Belco ${chevDown}</button>
+      <button class="b-filter" type="button">Transporté à la voile ${chevDown}</button>
+      <button class="b-filter" type="button">Women Coffee ${chevDown}</button>
+      <button class="b-filter is-open" type="button">Origines ${chevDown}</button>
+      <button class="b-filter" type="button">Disponibilité ${chevDown}</button>
+      <button class="b-filter" type="button">Process ${chevDown}</button>
+      <button class="b-filter" type="button">Certifications ${chevDown}</button>
+      <button class="b-clear" type="button">Tout effacer</button>
+    </div>
+    <div class="b-filterbar"><span class="count">400 cafés verts</span><button class="b-filter" type="button">Trier ${chevDown}</button><button class="b-toggle" type="button">${listIco} Vue liste</button></div>`, {stack:true}))}
+  ${section('Chips avec compteur', demo('chip', `
+    <button class="b-chip is-on" type="button">Nouveautés <small>107</small></button>
+    <button class="b-chip" type="button">Best-sellers <small>85</small></button>
+    <button class="b-chip" type="button">En promotion <small>222</small></button>
+    <button class="b-chip" type="button">En stock <small>1312</small></button>`), 'Catalogue équipement.')}
+  `
+});
+
+PAGES['multi-select'] = () => ({
+  eyebrow:'Composants', title:'Multi-select',
+  lede:'Le menu qu’ouvre un filtre : cases à cocher, compteur par valeur, « Tout effacer » en tête.',
+  body:`
+  ${seen([['Catalogue café, filtre Origines','https://www.belco.fr/cafes/all']])}
+  ${section('Origines', demo('menu', `
+    <div class="b-menu">
+      <button class="b-clear" type="button">Tout effacer</button>
+      <label><input class="b-check" type="checkbox"> Bolivie <span class="n">9</span></label>
+      <label><input class="b-check" type="checkbox" checked> Brésil <span class="n">23</span></label>
+      <label><input class="b-check" type="checkbox"> Burundi <span class="n">3</span></label>
+      <label><input class="b-check" type="checkbox"> Colombie <span class="n">87</span></label>
+      <label><input class="b-check" type="checkbox"> Costa Rica <span class="n">6</span></label>
+      <label><input class="b-check" type="checkbox"> Équateur <span class="n">4</span></label>
+      <label><input class="b-check" type="checkbox"> Éthiopie <span class="n">41</span></label>
+    </div>`))}
+  `
+});
+
+PAGES.pictos = () => ({
+  eyebrow:'Composants', title:'Pictos catégories',
+  lede:'La rangée de pictogrammes ronds du catalogue équipement. Les dessins sont ceux de la charte Belco (fond beige, trait vert forêt).',
+  body:`
+  ${seen([['Catalogue équipement','https://www.belco.fr/equipements/all'],['Menu Équipement','https://www.belco.fr/']])}
+  ${section('Rangée', demo('pictos', `
+    <div class="b-pictos">
+      ${['Nouveautés','Pack produits','Moulins à café','Balances à café','Bouilloires à café','Cafetières et drip','Filtres à café','Carafes à café','Tasses','Thermos'].map(l=>`<a class="b-picto" href="#pictos"><i></i>${l}</a>`).join('\n      ')}
+    </div>`, {block:true}), 'Les pictos eux-mêmes (MOULIN_1, BALANCE_1, BOUILLOIRE_1, CHEMEX_1, FILTRE_1, CARAFE_HARIO_1, MUG_1, THERMOS1…) sont des PNG de la charte à intégrer : Soon.')}
+  `
+});
+
+PAGES.scroller = () => ({
+  eyebrow:'Composants', title:'Scroller',
+  lede:'Rangée horizontale qui déborde et se fait glisser : les tuiles de sélection en tête du catalogue café.',
+  body:`
+  ${seen([['Catalogue café','https://www.belco.fr/cafes/all']])}
+  ${section('Sélections', demo('scroller', `
+    <div class="b-scroller">
+      <a class="b-tile" href="#marque-impact-score"><i></i>Impact Score</a>
+      <a class="b-tile b-tile--sage" href="#marque-women-coffee"><i></i>Women coffee</a>
+      <a class="b-tile b-tile--moss" href="#marque-cafe-de-foret"><i></i>Les Cafés de Forêt©</a>
+      <a class="b-tile b-tile--moss" href="#marque-cafe-de-foret"><i></i>Cafés agroforestiers</a>
+      <a class="b-tile" href="#marque-fcco"><i></i>Cafés transportés à la voile</a>
+      <a class="b-tile" href="#scroller"><i></i>Offres entreprises &amp; CHR</a>
+    </div>`, {block:true}))}
+  `
+});
+
+PAGES.select = () => ({
+  eyebrow:'Composants', title:'Select',
+  lede:'Belco n’utilise pas de select natif sur les pages parcourues : la sélection passe par des pilules qui ouvrent un menu (Trier, Marques) ou par le sélecteur de langue.',
+  body:`
+  ${seen([['Catalogue café','https://www.belco.fr/cafes/all'],['Catalogue équipement','https://www.belco.fr/equipements/all']])}
+  ${section('Pilule déroulante', demo('filtres', `
+    <button class="b-filter" type="button">Trier ${chevDown}</button>
+    <button class="b-filter" type="button">Marques ${chevDown}</button>
+    <button class="b-filter is-open" type="button">Origines ${chevDown}</button>`))}
+  ${section('Langue', demo('filtres', `
+    <button class="b-filter" type="button">Français (fr) ${chevDown}</button>`), 'Header et footer : Français (fr), English (en), Deutsch (de).')}
+  `
+});
+
+PAGES.skeleton = () => ({
+  eyebrow:'Composants', title:'Skeleton',
+  lede:'Les cartes fantômes qui apparaissent pendant le chargement du catalogue en scroll infini.',
+  body:`
+  ${seen([['Catalogue café, page 2','https://www.belco.fr/cafes/all?current_page=2']])}
+  ${section('Carte en chargement', demo('skeleton', `
+    <div style="width:280px;border:1px solid var(--color-border);border-radius:var(--radius-lg);overflow:hidden;background:var(--color-white)">
+      <span class="b-skeleton" style="height:180px;border-radius:0"></span>
+      <div style="display:flex;flex-direction:column;gap:10px;padding:16px">
+        <span class="b-skeleton" style="height:12px;width:40%"></span>
+        <span class="b-skeleton" style="height:18px;width:70%"></span>
+        <span class="b-skeleton" style="height:12px;width:55%"></span>
+        <span class="b-skeleton" style="height:36px;border-radius:var(--radius-full)"></span>
+      </div>
+    </div>`))}
+  `
+});
+
+PAGES.statut = () => ({
+  eyebrow:'Composants', title:'Statut',
+  lede:'Disponibilité d’un café sur sa carte : en stock, étape contrat, sur demande. Le site accompagne chaque statut d’un petit picto.',
+  body:`
+  ${seen([['Catalogue café','https://www.belco.fr/cafes/all']])}
+  ${section('États', demo('statut', `
+    <span class="b-status">En stock</span>
+    <span class="b-status b-status--contrat">Étape contrat <small>· Arrivage en 09/12/26</small></span>
+    <span class="b-status b-status--demande">Sur demande</span>`), 'Le point de couleur remplace ici les pictos du site, à récupérer : Soon.')}
+  `
+});
+
+PAGES.stepper = () => ({
+  eyebrow:'Composants', title:'Stepper',
+  lede:'Les trois étapes du parcours « Devenir client » : Intérêts, Société, Compte Belco. L’étape en cours passe en vert forêt.',
+  body:`
+  ${seen([['Devenir client','https://www.belco.fr/auth/nouveau-client']])}
+  ${section('Trois étapes', demo('stepper', `
+    <div class="b-stepper"><span class="b-step is-active">Intérêts</span><i></i><span class="b-step">Société</span><i></i><span class="b-step">Compte Belco</span></div>
+    <div class="b-stepper"><span class="b-step is-done">Intérêts</span><i></i><span class="b-step is-active">Société</span><i></i><span class="b-step">Compte Belco</span></div>`, {stack:true}), 'L’état « terminé » (sauge) n’a pas été observé : le parcours n’a pas été poursuivi pour ne pas créer de compte. À confirmer.')}
+  `
+});
+
+PAGES.tabs = () => ({
+  eyebrow:'Composants', title:'Tabs',
+  lede:'Onglets du blog pour filtrer les articles, et navigation secondaire de la fiche café.',
+  body:`
+  ${seen([['Blog','https://www.belco.fr/blog'],['Fiche café','https://www.belco.fr/cafes/012000100101000/ayni']])}
+  ${section('Blog', demo('tabs', `
+    <div class="b-tabs" role="tablist"><button class="b-tab" role="tab" aria-selected="true" type="button">Tous les articles</button><button class="b-tab" role="tab" aria-selected="false" type="button">Actualités</button><button class="b-tab" role="tab" aria-selected="false" type="button">Café</button><button class="b-tab" role="tab" aria-selected="false" type="button">Équipement</button></div>`, {block:true}))}
+  ${section('Fiche café', demo('tabs', `
+    <div class="b-tabs" role="tablist"><button class="b-tab" role="tab" aria-selected="true" type="button">Histoire et traçabilité</button><button class="b-tab" role="tab" aria-selected="false" type="button">Impact</button><button class="b-tab" role="tab" aria-selected="false" type="button">Qualité</button><button class="b-tab" role="tab" aria-selected="false" type="button">Outils Marketing</button></div>`, {block:true}), 'Sur la fiche, ces onglets sont des ancres vers les sections de la page.')}
+  `
+});
+
+PAGES['toggle-vue'] = () => ({
+  eyebrow:'Composants', title:'Toggle vue',
+  lede:'Bascule grille / liste du catalogue, à côté de Trier.',
+  body:`
+  ${seen([['Catalogue café','https://www.belco.fr/cafes/all']])}
+  ${section('Grille ou liste', demo('toggle', `
+    <button class="b-toggle" type="button">${listIco} Vue liste</button>
+    <button class="b-toggle is-on" type="button">${gridIco} Vue grille</button>`))}
+  `
+});
+
+PAGES['voir-plus'] = () => ({
+  eyebrow:'Composants', title:'Voir plus',
+  lede:'Le blog charge les articles par lots avec un bouton « Afficher plus » ; le catalogue, lui, passe en scroll infini.',
+  body:`
+  ${seen([['Blog','https://www.belco.fr/blog']])}
+  ${section('Afficher plus', demo('bouton', `
+    <div style="width:100%;display:flex;justify-content:center"><button class="b-btn b-btn--outline" type="button">Afficher plus</button></div>`, {block:true}))}
+  `
+});
+
+/* ---------- render ---------- */
+const $ = s => document.querySelector(s);
+const navEl = $('#nav'), pageEl = $('#page'), q = $('#q');
+
+(function injectCss(){
+  const st = document.createElement('style');
+  st.textContent = Object.values(COMPONENT_CSS).join('\n');
+  document.head.appendChild(st);
+})();
+
+const GROUP_HOME = {'Fondations':'introduction','Marques & labels':'marque-belco','Composants':'composants'};
+const EXTRA = [{id:'changelog',label:'Changelog',group:'Suivi',top:'changelog'},{id:'mcp',label:'MCP',group:'Outils',top:'mcp'}];
+
+function buildNav(){
+  navEl.innerHTML = NAV.map(g => `<div class="nav-group"><a class="group-title" href="#${GROUP_HOME[g.group]}">${g.group}</a>${g.items.map(i => `<a class="nav-item ${i.soon?'is-soon':''}" href="#${i.id}" data-id="${i.id}"><span>${i.label}</span>${i.soon?'<span class="soon">Soon</span>':''}</a>`).join('')}</div>`).join('') + '<div class="nav-empty" id="navEmpty" hidden>Aucun résultat.</div>';
+  $('#brand').insertAdjacentHTML('afterbegin', BELCO_LOGO);
+}
+
+function currentId(){
+  const h = (location.hash||'').replace(/^#/,'');
+  return (FLAT.some(i=>i.id===h) || EXTRA.some(i=>i.id===h)) ? h : 'introduction';
+}
+
+function render(){
+  const id = currentId();
+  const item = FLAT.find(i=>i.id===id) || EXTRA.find(i=>i.id===id);
+  const data = PAGES[id] ? PAGES[id]() : soonPage(item);
+  const idx = FLAT.findIndex(i=>i.id===id);
+  const prev = data.nopager ? null : FLAT[idx-1], next = data.nopager ? null : FLAT[idx+1];
+  const top = item.top || 'ds';
+  document.querySelectorAll('.topnav a').forEach(a => a.classList.toggle('is-active', a.dataset.top===top));
+  pageEl.innerHTML = `
+    <header class="page-head">
+      <span class="label">${data.eyebrow||item.group}</span>
+      <div class="head-row"><h1 class="display">${data.title}</h1>${data.soon?'<span class="soon">Soon</span>':''}</div>
+      ${data.lede?`<p class="lede">${data.lede}</p>`:''}
+    </header>
+    ${data.body||''}
+    ${data.nopager ? '' : `<nav class="pager" aria-label="Pages voisines">
+      ${prev?`<a class="prev" href="#${prev.id}"><span class="label">Précédent</span><strong>${chev.replace('M9 6l6 6-6 6','M15 6l-6 6 6 6')} ${prev.label}</strong></a>`:'<span></span>'}
+      ${next?`<a class="next" href="#${next.id}"><span class="label">Suivant</span><strong>${next.label} ${chev}</strong></a>`:''}
+    </nav>`}`;
+  document.querySelectorAll('.nav-item').forEach(a => a.classList.toggle('is-active', a.dataset.id===id));
+  const tc = $('#tokensCode');
+  if (tc) tc.textContent = tokensText();
+  document.body.classList.remove('nav-open');
+  window.scrollTo({top:0});
+  const active = document.querySelector('.nav-item.is-active');
+  if (active) active.scrollIntoView({block:'nearest'});
+}
+
+function tokensText(){
+  try{
+    for (const sh of document.styleSheets){
+      let rules; try{ rules = sh.cssRules; }catch(e){ continue; }
+      for (const r of rules){
+        if (r.selectorText === ':root'){
+          const body = r.style.cssText.split(';').map(s=>s.trim()).filter(Boolean).map(s=>'  '+s+';').join('\n');
+          return ':root {\n'+body+'\n}';
+        }
+      }
+    }
+  }catch(e){}
+  return ':root { /* non lisible */ }';
+}
+
+/* interactions */
+pageEl.addEventListener('click', e => {
+  const t = e.target.closest('.demo-toggle');
+  if (t){
+    const panel = t.nextElementSibling;
+    if (panel && panel.classList.contains('demo-panel')){
+      panel.hidden = !panel.hidden; t.classList.toggle('is-on', !panel.hidden);
+      if (t.dataset.panel==='code') t.querySelector('span').textContent = panel.hidden ? 'Afficher le code' : 'Masquer le code';
+    }
+    return;
+  }
+  const tab = e.target.closest('.demo-tabs button');
+  if (tab){
+    const d = tab.closest('.demo'); const key = d.dataset.key;
+    const panel = tab.closest('.demo-code');
+    panel.querySelectorAll('.demo-tabs button').forEach(b=>b.classList.toggle('is-on', b===tab));
+    const code = panel.querySelector('pre code');
+    const file = panel.querySelector('.demo-file');
+    if (tab.dataset.lang==='css'){ code.textContent = key==='tokens' ? tokensText() : (COMPONENT_CSS[key] || '/* Pas de CSS propre : ce composant n’utilise que les variables de la page Couleurs. */'); if (file) file.textContent = key==='tokens' ? 'tokens.css' : (COMPONENT_CSS[key] ? 'components.css' : ''); }
+    else { const pv = d.querySelector('.demo-preview'); code.textContent = pv ? dedent(pv.innerHTML) : ''; if (file) file.textContent = ''; }
+    return;
+  }
+  const cp = e.target.closest('.copy');
+  if (cp){
+    copyText(cp, cp.parentElement.querySelector('code').textContent, cp.parentElement.querySelector('code'));
+    return;
+  }
+  const bundle = e.target.closest('#copyAgents,#copyTokens,#copyCss');
+  if (bundle){
+    const txt = bundle.id==='copyAgents' ? agentsMd() : bundle.id==='copyTokens' ? tokensText() : Object.values(COMPONENT_CSS).join('\n\n');
+    copyText(bundle, txt, document.querySelector('.demo[data-key="agents"] code'));
+    return;
+  }
+  const bt = e.target.closest('.b-tab');
+  if (bt){ bt.parentElement.querySelectorAll('.b-tab').forEach(b=>b.setAttribute('aria-selected', b===bt?'true':'false')); return; }
+  const chip = e.target.closest('button.b-chip');
+  if (chip){ chip.classList.toggle('is-on'); return; }
+  const tg = e.target.closest('.b-toggle');
+  if (tg){ tg.classList.toggle('is-on'); return; }
+  const f = e.target.closest('.b-filter');
+  if (f){ f.classList.toggle('is-open'); return; }
+});
+function selectText(el){ if(!el) return; const r=document.createRange(); r.selectNodeContents(el); const s=getSelection(); s.removeAllRanges(); s.addRange(r); }
+function copyText(btn, txt, fallbackEl){
+  const label = btn.textContent;
+  const done = () => { btn.textContent='Copié'; setTimeout(()=>btn.textContent=label,1500); };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(done).catch(()=>selectText(fallbackEl));
+  else selectText(fallbackEl);
+}
+
+$('#menuBtn').addEventListener('click', ()=>document.body.classList.toggle('nav-open'));
+$('#scrim').addEventListener('click', ()=>document.body.classList.remove('nav-open'));
+navEl.addEventListener('click', e => { if (e.target.closest('.nav-item')) document.body.classList.remove('nav-open'); });
+
+q.addEventListener('input', () => {
+  const v = q.value.trim().toLowerCase();
+  let n = 0;
+  document.querySelectorAll('.nav-item').forEach(a => { const ok = !v || a.textContent.toLowerCase().includes(v); a.hidden = !ok; if (ok) n++; });
+  document.querySelectorAll('.nav-group').forEach(g => { g.hidden = ![...g.querySelectorAll('.nav-item')].some(a=>!a.hidden); });
+  $('#navEmpty').hidden = n>0;
+  if (v && window.innerWidth<=900) document.body.classList.add('nav-open');
+});
+document.addEventListener('keydown', e => {
+  if ((e.metaKey||e.ctrlKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); q.focus(); q.select(); }
+  if (e.key==='Escape'){ document.body.classList.remove('nav-open'); if (document.activeElement===q){ q.value=''; q.dispatchEvent(new Event('input')); q.blur(); } }
+});
+buildNav();
+window.addEventListener('hashchange', render);
+render();
+</script>
+
+</body>
+</html>

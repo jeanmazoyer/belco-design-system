@@ -1,0 +1,45 @@
+:root{
+  /* palette relevée sur belco.fr */
+  --color-white:#FFFFFF;
+  --color-sand-50:#FBF9F5;
+  --color-sand-100:#F2F0EB;
+  --color-stone-200:#E8E8E8;
+  --color-cream-50:#FFFFEC;
+  --color-forest-600:#5B766B;
+  --color-forest-900:#053021;
+  --color-moss-700:#4C5439;
+  --color-sage-500:#798A72;
+  --color-flame-500:#F85A2F;
+  --color-flame-600:#DE4A22;
+  /* rôles sémantiques */
+  --color-background:var(--color-sand-50);
+  --color-surface:var(--color-sand-100);
+  --color-surface-inverse:var(--color-forest-900);
+  --color-text:var(--color-forest-900);
+  --color-text-muted:var(--color-forest-600);
+  --color-text-inverse:var(--color-cream-50);
+  --color-border:var(--color-stone-200);
+  --color-primary:var(--color-flame-500);
+  --color-primary-hover:var(--color-flame-600);
+  --color-primary-foreground:var(--color-sand-50);
+  --color-secondary:var(--color-forest-900);
+  --color-secondary-foreground:var(--color-cream-50);
+  --color-accent-moss:var(--color-moss-700);
+  --color-accent-sage:var(--color-sage-500);
+  /* typographie */
+  --font-display:"PP Formula Condensed","PP Formula","Barlow Condensed",Impact,sans-serif;
+  --font-sans:"Centra No2","CentraNo2","Outfit",system-ui,sans-serif;
+  --font-mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --font-weight-book:400;
+  --font-weight-medium:500;
+  --font-weight-bold:700;
+  --font-weight-black:900;
+  --text-xs:12px; --text-sm:14px; --text-base:16px; --text-lg:18px; --text-xl:24px; --text-2xl:32px; --text-3xl:42px; --text-4xl:56px; --text-5xl:80px;
+  --leading-xs:16px; --leading-sm:20px; --leading-base:24px; --leading-lg:28px; --leading-xl:30px; --leading-2xl:32px; --leading-3xl:42px; --leading-4xl:56px; --leading-5xl:76px;
+  --tracking-tight:-0.01em; --tracking-normal:0em; --tracking-wide:0.06em;
+  /* espacements, rayons */
+  --spacing-1:4px; --spacing-2:8px; --spacing-3:12px; --spacing-4:16px; --spacing-5:20px; --spacing-6:24px; --spacing-8:32px; --spacing-10:40px; --spacing-12:48px; --spacing-16:64px; --spacing-20:80px; --spacing-24:96px;
+  --radius-sm:6px; --radius-md:12px; --radius-lg:20px; --radius-full:9999px;
+  --opacity-disabled:40%; --opacity-muted:60%;
+  --breakpoint-sm:640px; --breakpoint-md:768px; --breakpoint-lg:1024px; --breakpoint-xl:1440px;
+}
