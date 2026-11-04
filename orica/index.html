@@ -1,0 +1,1406 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Orica Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: same Geist-style shell as the Belco public doc (left nav in three groups, sticky search bar, one reading column
+   with preview cards, "Afficher le code" and "IA Rules"), skinned with the Belco Hub / Orica tokens relevé in the app. Single light theme. */
+:root{
+  /* palette relevée sur hub.belco-sandbox.synako.fr (module Orica) */
+  --color-white:#FFFFFF;
+  --color-grey-50:#F8F9FA;
+  --color-grey-100:#EDF0F4;
+  --color-grey-150:#E5E9EF;
+  --color-grey-200:#D8DEE7;
+  --color-grey-300:#C5CAD2;
+  --color-grey-500:#999EA4;
+  --color-grey-600:#777A7F;
+  --color-grey-700:#4F5459;
+  --color-grey-900:#232930;
+  --color-green-50:#E7F1ED;
+  --color-green-100:#BCE6CE;
+  --color-green-600:#127746;
+  --color-green-700:#156035;
+  --color-green-800:#0D5432;
+  --color-blue-100:#BEE3F8;
+  --color-blue-800:#2A4365;
+  --color-yellow-100:#FFF8DB;
+  --color-yellow-800:#806600;
+  --color-red-500:#FF0000;
+  --color-sand-200:#F0DBB4;
+  --color-clay-200:#DCBFAD;
+  --color-gold-400:#DEAF58;
+  --color-brown-500:#B17149;
+  /* rôles */
+  --color-background:var(--color-grey-50);
+  --color-surface:var(--color-grey-100);
+  --color-surface-strong:var(--color-grey-150);
+  --color-text:var(--color-grey-900);
+  --color-text-muted:var(--color-grey-600);
+  --color-text-faint:var(--color-grey-500);
+  --color-border:var(--color-grey-200);
+  --color-border-light:var(--color-grey-100);
+  --color-primary:var(--color-green-600);
+  --color-primary-foreground:var(--color-white);
+  --color-primary-soft:var(--color-green-50);
+  --color-success-soft:var(--color-green-100);
+  --color-success-text:var(--color-green-700);
+  --color-info-soft:var(--color-blue-100);
+  --color-info-text:var(--color-blue-800);
+  --color-warning-soft:var(--color-yellow-100);
+  --color-warning-text:var(--color-yellow-800);
+  --color-danger:var(--color-red-500);
+  /* typographie : une seule famille */
+  --font-sans:"Centra No2","CentraNo2","Outfit",system-ui,sans-serif;
+  --font-mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --font-weight-book:400; --font-weight-medium:500; --font-weight-semibold:600; --font-weight-bold:700;
+  --text-2xs:10px; --text-xs:12px; --text-sm:13px; --text-base:14px; --text-lg:16px; --text-xl:20px; --text-2xl:25px;
+  --leading-2xs:14px; --leading-xs:16px; --leading-sm:19.5px; --leading-base:20px; --leading-lg:24px; --leading-xl:26px; --leading-2xl:30px;
+  /* espacements, rayons, ombres */
+  --spacing-1:4px; --spacing-2:8px; --spacing-3:12px; --spacing-4:16px; --spacing-5:20px; --spacing-6:24px; --spacing-8:32px; --spacing-10:40px; --spacing-12:48px; --spacing-16:64px;
+  --radius-xs:2.6px; --radius-sm:5.2px; --radius-md:7.8px; --radius-lg:10.4px; --radius-xl:13px; --radius-full:9999px;
+  --shadow-sm:0 2px 4px rgba(16,15,15,.05);
+  --shadow-md:0 4px 12px rgba(16,15,15,.05);
+  --shadow-lg:0 32px 64px rgba(16,15,15,.05), 0 -16px 32px rgba(16,15,15,.05);
+  --sidebar-width:64px; --topbar-height:65px;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--color-background);color:var(--color-text);font:var(--font-weight-book) var(--text-sm)/var(--leading-sm) var(--font-sans);-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:40;background:var(--color-white)}
+a{color:inherit}
+button{font:inherit;color:inherit}
+h1,h2,h3,h4{margin:0;text-wrap:balance}
+p{margin:0}
+.display{font-weight:var(--font-weight-bold);letter-spacing:0}
+.label{font-size:var(--text-2xs);line-height:var(--leading-2xs);font-weight:var(--font-weight-medium);letter-spacing:.06em;text-transform:uppercase;color:var(--color-text-muted)}
+.muted{color:var(--color-text-muted)}
+code.inline{font:12px/1 var(--font-mono);background:var(--color-surface);padding:2px 6px;border-radius:4px}
+
+/* ---------- shell ---------- */
+.shell{display:flex;min-height:100%}
+.sidebar{position:sticky;top:0;align-self:flex-start;height:100vh;height:100dvh;width:260px;flex-shrink:0;overflow-y:auto;background:var(--color-white);border-right:1px solid var(--color-border-light);display:flex;flex-direction:column;gap:24px;padding-block:16px 48px;padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:12px}
+.brand{display:flex;align-items:center;gap:12px;padding:4px 10px;text-decoration:none}
+.brand svg{width:auto;height:38px;flex-shrink:0}
+.brand span{display:flex;flex-direction:column;font-size:var(--text-sm);font-weight:var(--font-weight-semibold);line-height:16px;color:var(--color-text)}
+.brand span small{font-weight:var(--font-weight-book);color:var(--color-text-muted);font-size:var(--text-xs)}
+.nav-group{display:flex;flex-direction:column;gap:2px}
+.group-title{display:flex;align-items:center;height:30px;padding:0 10px;margin-bottom:2px;font-size:var(--text-sm);font-weight:var(--font-weight-bold);color:var(--color-text);text-decoration:none;border-radius:var(--radius-sm)}
+.group-title:hover{background:var(--color-surface)}
+.nav-item{display:flex;align-items:center;justify-content:space-between;gap:8px;height:30px;padding:0 10px;border-radius:var(--radius-lg);font-size:var(--text-sm);line-height:var(--leading-sm);text-decoration:none;color:var(--color-text-muted)}
+.nav-item:hover{background:var(--color-surface);color:var(--color-text)}
+.nav-item.is-active{background:var(--color-primary-soft);color:var(--color-green-800);font-weight:var(--font-weight-semibold)}
+.nav-item.is-soon{color:var(--color-text-faint)}
+.nav-item .soon{flex-shrink:0}
+.nav-item[hidden]{display:none}
+.soon{display:inline-flex;align-items:center;height:18px;padding:0 7px;border-radius:var(--radius-sm);background:var(--color-surface);color:var(--color-text-muted);font-size:10px;line-height:12px;font-weight:var(--font-weight-medium);letter-spacing:.06em;text-transform:uppercase}
+.nav-empty{padding:8px 10px;font-size:var(--text-sm);color:var(--color-text-muted)}
+
+.content{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;display:flex;align-items:center;gap:12px;height:var(--topbar-height);background:var(--color-white);border-bottom:1px solid var(--color-border-light);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.menu-btn{display:none;align-items:center;justify-content:center;width:36px;height:36px;border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-white);cursor:pointer;flex-shrink:0}
+.topbar .o-search{flex:1;max-width:420px;min-width:0}
+.kbd{display:inline-flex;align-items:center;height:20px;padding:0 6px;border:1px solid var(--color-border);border-radius:4px;background:var(--color-white);font:11px/1 var(--font-mono);color:var(--color-text-muted);flex-shrink:0}
+.topnav{margin-left:auto;display:flex;align-items:center;gap:4px}
+.topnav a{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:var(--radius-lg);font-size:var(--text-sm);font-weight:var(--font-weight-medium);color:var(--color-text-muted);text-decoration:none;white-space:nowrap}
+.topnav a:hover{background:var(--color-surface);color:var(--color-text)}
+.topnav a.is-active{color:var(--color-green-800);background:var(--color-primary-soft)}
+.scrim{display:none;position:fixed;inset:0;background:rgba(0,0,0,.48);z-index:25}
+
+.page{width:100%;max-width:1060px;padding-block:36px 96px;padding-left:max(56px,env(safe-area-inset-left,0px));padding-right:max(56px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:36px}
+.page-head{display:flex;flex-direction:column;gap:10px}
+.page-head h1{font-size:var(--text-2xl);line-height:var(--leading-2xl);font-weight:var(--font-weight-bold)}
+.page-head .lede{font-size:var(--text-base);line-height:var(--leading-lg);color:var(--color-text-muted);max-width:66ch}
+.page-head .head-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.section{display:flex;flex-direction:column;gap:14px}
+.section > h2{font-size:var(--text-lg);line-height:var(--leading-lg);font-weight:var(--font-weight-bold);padding-bottom:10px;border-bottom:1px solid var(--color-border-light)}
+.section > p{max-width:66ch;font-size:var(--text-base);line-height:var(--leading-lg)}
+.section .note{font-size:var(--text-sm);line-height:var(--leading-sm);color:var(--color-text-muted);max-width:66ch}
+.seen{display:flex;flex-wrap:wrap;gap:6px 10px;font-size:var(--text-sm);color:var(--color-text-muted)}
+.seen b{color:var(--color-text);font-weight:var(--font-weight-medium)}
+
+/* demo card */
+.demo{border:1px solid var(--color-border-light);border-radius:var(--radius-xl);background:var(--color-white);overflow:hidden;box-shadow:var(--shadow-sm)}
+.demo-preview{padding:28px;display:flex;flex-wrap:wrap;align-items:center;gap:14px;min-width:0}
+.demo-preview.is-block{display:block}
+.demo-preview.is-stack{flex-direction:column;align-items:stretch}
+.demo-preview.is-grey{background:var(--color-background)}
+.demo-foot{border-top:1px solid var(--color-border-light);display:flex;flex-direction:column}
+.demo-toggle{display:flex;align-items:center;gap:8px;width:100%;padding:11px 18px;border:0;background:transparent;cursor:pointer;text-align:left;font-size:var(--text-sm);font-weight:var(--font-weight-medium)}
+.demo-toggle:hover{background:var(--color-background)}
+.demo-toggle svg{transition:transform .15s;flex-shrink:0}
+.demo-toggle.is-on svg{transform:rotate(90deg)}
+.demo-toggle .demo-file{margin-left:auto}
+.demo-panel{border-top:1px solid var(--color-border-light);background:var(--color-surface)}
+.demo-panel + .demo-toggle{border-top:1px solid var(--color-border-light)}
+.demo-toggle + .demo-toggle{border-top:1px solid var(--color-border-light)}
+.demo-toggle--rules{background:var(--color-white)}
+.demo-code{border-top:1px solid var(--color-border-light);background:var(--color-surface)}
+.demo-tabs{display:flex;align-items:center;gap:4px;padding:8px 12px 0}
+.demo-tabs button{height:26px;padding:0 10px;border:0;border-radius:var(--radius-sm);background:transparent;font-size:var(--text-2xs);font-weight:var(--font-weight-bold);letter-spacing:.06em;text-transform:uppercase;color:var(--color-text-muted);cursor:pointer}
+.demo-tabs button.is-on{background:var(--color-white);color:var(--color-text)}
+.demo-file{margin-left:auto;font:12px/1 var(--font-mono);color:var(--color-text-muted)}
+.demo-code pre,.demo-panel pre{margin:0;padding:16px 18px 20px;overflow-x:auto;font:12.5px/1.55 var(--font-mono);color:var(--color-text);white-space:pre;tab-size:2}
+.demo-panel pre{white-space:pre-wrap;overflow-wrap:anywhere;padding-top:40px}
+.demo-code .codewrap,.demo-panel .codewrap{position:relative}
+.copy-btn{position:absolute;right:12px;top:8px;height:26px;padding:0 10px;border:1px solid var(--color-border);border-radius:var(--radius-lg);background:var(--color-white);font-size:var(--text-xs);font-weight:var(--font-weight-medium);cursor:pointer}
+.filetree{margin:0;padding:16px 20px;font:12.5px/1.7 var(--font-mono);background:var(--color-surface);border-radius:var(--radius-lg);overflow-x:auto}
+.bundle-actions{display:flex;flex-wrap:wrap;gap:8px}
+
+.pager{display:flex;justify-content:space-between;gap:16px;padding-top:20px;border-top:1px solid var(--color-border-light)}
+.pager a{display:flex;flex-direction:column;gap:2px;text-decoration:none;max-width:48%}
+.pager a.next{text-align:right;margin-left:auto}
+.pager strong{font-size:var(--text-base);font-weight:var(--font-weight-medium);display:flex;align-items:center;gap:6px}
+.pager a.next strong{justify-content:flex-end}
+
+/* intro bento */
+.bento{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.bento a{display:flex;flex-direction:column;gap:10px;text-decoration:none;border:1px solid var(--color-border-light);border-radius:var(--radius-xl);background:var(--color-white);padding:14px;min-width:0;box-shadow:var(--shadow-sm)}
+.bento a:hover{border-color:var(--color-border)}
+.bento-preview{height:170px;border-radius:var(--radius-lg);background:var(--color-background);display:flex;align-items:center;justify-content:center;gap:10px;padding:18px;overflow:hidden}
+.bento h3{font-size:var(--text-base);font-weight:var(--font-weight-bold)}
+.bento p{font-size:var(--text-sm);line-height:var(--leading-sm);color:var(--color-text-muted)}
+.bars{display:flex;gap:10px;align-items:flex-end}
+.bars i{display:block;width:14px;height:84px;border-radius:var(--radius-full);border:1px solid var(--color-border-light)}
+
+/* colours */
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px}
+.swatch{display:flex;flex-direction:column;gap:8px;min-width:0}
+.swatch i{display:block;height:84px;border-radius:var(--radius-lg);border:1px solid var(--color-border-light)}
+.swatch b{font-size:var(--text-sm);font-weight:var(--font-weight-medium)}
+.swatch small{font-size:var(--text-2xs);letter-spacing:.06em;text-transform:uppercase;color:var(--color-text-muted)}
+.tablewrap{overflow-x:auto;border:1px solid var(--color-border-light);border-radius:var(--radius-xl);background:var(--color-white)}
+table.roles{border-collapse:collapse;width:100%;min-width:640px;font-size:var(--text-sm)}
+table.roles th,table.roles td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--color-border-light);vertical-align:middle}
+table.roles th{font-size:var(--text-2xs);letter-spacing:.06em;text-transform:uppercase;color:var(--color-grey-700);font-weight:var(--font-weight-book);background:var(--color-surface)}
+table.roles tr:last-child td{border-bottom:0}
+table.roles .dot{display:inline-block;width:26px;height:26px;border-radius:var(--radius-full);border:1px solid var(--color-border-light);vertical-align:middle}
+table.roles code{font:12px/1 var(--font-mono)}
+
+/* typography / materials */
+.type-scale{display:flex;flex-direction:column}
+.type-row{display:grid;grid-template-columns:220px minmax(0,1fr);gap:28px;padding:18px 0;border-bottom:1px solid var(--color-border-light);align-items:start}
+.type-row:last-child{border-bottom:0}
+.type-row .meta{display:flex;flex-direction:column;gap:2px;padding-top:2px}
+.type-row .meta b{font-size:var(--text-sm);font-weight:var(--font-weight-medium)}
+.type-row .meta small{font-size:var(--text-2xs);letter-spacing:.06em;text-transform:uppercase;color:var(--color-text-muted)}
+.type-row .spec{min-width:0;overflow-wrap:anywhere}
+.preset-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;width:100%}
+.preset{display:flex;flex-direction:column;gap:8px;min-width:0}
+.preset .box{height:110px;display:flex;align-items:flex-end;padding:12px;font-size:var(--text-xs);color:inherit}
+.preset b{font:var(--font-weight-medium) var(--text-sm)/var(--leading-sm) var(--font-mono)}
+.preset small{font-size:var(--text-xs);color:var(--color-text-muted);line-height:var(--leading-xs)}
+.space-row{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap}
+.space-row figure{margin:0;display:flex;flex-direction:column;gap:6px;min-width:56px}
+.space-row i{display:block;background:var(--color-primary);border-radius:2px}
+.space-row figcaption{font-size:var(--text-xs);color:var(--color-text-muted)}
+
+/* screens & components index */
+.comp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.comp-grid a{display:flex;align-items:center;justify-content:space-between;gap:8px;height:48px;padding:0 14px;border:1px solid var(--color-border-light);border-radius:var(--radius-lg);background:var(--color-white);text-decoration:none;font-size:var(--text-sm);font-weight:var(--font-weight-medium);box-shadow:var(--shadow-sm)}
+.comp-grid a:hover{border-color:var(--color-border)}
+.comp-grid a.is-soon{color:var(--color-text-muted);font-weight:var(--font-weight-book)}
+.empty-page{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:240px;border:1px dashed var(--color-border);border-radius:var(--radius-xl);background:var(--color-white);text-align:center;padding:28px;color:var(--color-text-muted)}
+.empty-page .display{font-size:var(--text-2xl);line-height:var(--leading-2xl);color:var(--color-text)}
+.facts{display:grid;grid-template-columns:180px minmax(0,1fr);gap:8px 20px;font-size:var(--text-sm)}
+.facts dt{color:var(--color-text-muted)}
+.facts dd{margin:0;overflow-wrap:anywhere}
+.changelog{display:flex;flex-direction:column}
+.changelog > div{display:grid;grid-template-columns:150px minmax(0,1fr);gap:8px 20px;padding:18px 0;border-bottom:1px solid var(--color-border-light)}
+.changelog > div:last-child{border-bottom:0}
+.changelog time{font-size:var(--text-sm);color:var(--color-text-muted)}
+.changelog ul{margin:0;padding-left:18px;font-size:var(--text-sm);line-height:var(--leading-sm);display:flex;flex-direction:column;gap:4px}
+.changelog h3{font-size:var(--text-base);font-weight:var(--font-weight-bold);margin-bottom:6px}
+.screen-frame{width:100%;border:1px solid var(--color-border-light);border-radius:var(--radius-xl);overflow:hidden;background:var(--color-background)}
+
+@media (max-width:900px){
+  .sidebar{position:fixed;left:0;top:0;z-index:30;transform:translateX(-100%);transition:transform .2s ease}
+  body.nav-open .sidebar{transform:none}
+  body.nav-open .scrim{display:block}
+  .menu-btn{display:inline-flex}
+  .page{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));gap:28px}
+  .bento{grid-template-columns:minmax(0,1fr)}
+  .type-row{grid-template-columns:minmax(0,1fr);gap:6px}
+  .facts,.changelog > div{grid-template-columns:minmax(0,1fr)}
+  .topnav a{padding:0 8px;font-size:var(--text-xs)}
+  .topbar .o-search .kbd{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+:focus-visible{outline:2px solid var(--color-primary);outline-offset:2px}
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <nav class="sidebar" id="sidebar" aria-label="Navigation de la documentation">
+    <a class="brand" href="#introduction" id="brand"><span>Orica<small>Belco Hub · Design System</small></span></a>
+    <div id="nav"></div>
+  </nav>
+  <div class="scrim" id="scrim"></div>
+  <div class="content">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" type="button" aria-label="Ouvrir la navigation"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+      <label class="o-search" for="q"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="q" type="search" placeholder="Chercher un composant, un écran…" autocomplete="off"><span class="kbd">⌘K</span></label>
+      <nav class="topnav" id="topnav" aria-label="Sections">
+        <a href="#introduction" data-top="ds">Design System</a>
+        <a href="#changelog" data-top="changelog">Changelog</a>
+        <a href="#mcp" data-top="mcp">MCP</a>
+      </nav>
+    </header>
+    <main class="page" id="page"></main>
+  </div>
+</div>
+
+<script>
+const BELCO_LOGO = `<svg width="79" height="88" viewBox="0 0 79 88" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Belco">
+<path d="M13.7109 53.7965L16.7352 58.8316C18.2597 61.3692 17.9861 64.0303 15.6564 65.4411C14.4424 66.1759 13.1146 66.1481 12.0051 65.4535C12.4016 67.3582 11.7469 68.9389 10.161 69.8989C7.65303 71.4178 5.01289 70.4423 3.20259 67.4323L0 62.1009L13.7109 53.7935V53.7965ZM11.0954 61.8477C11.7101 62.8696 12.6874 63.2987 13.6679 62.7029C14.6668 62.0978 14.7282 61.042 14.1135 60.0171L13.004 58.1679L9.98889 59.9955L11.0984 61.8447L11.0954 61.8477ZM5.56612 65.7622C6.3222 67.0218 7.40715 67.491 8.52283 66.8149C9.62007 66.1512 9.71842 64.9379 8.97463 63.6969L7.61614 61.4341L4.20763 63.4994L5.56612 65.7622Z" fill="#232930"/>
+<path d="M22.4107 65.9116L30.6015 70.5948L29.0617 73.3084L23.8521 70.3324L22.2478 73.1663L26.9963 75.883L25.5026 78.5194L20.754 75.8027L19.0114 78.8775L24.2578 81.8782L22.718 84.5918L14.4902 79.887L22.4107 65.9116Z" fill="#232930"/>
+<path d="M39.1898 71.9165V84.7589H44.7713V88.0004H35.7598V71.9165H39.1898Z" fill="#232930"/>
+<path d="M52.5966 68.6861C53.8291 68.0316 55.2675 67.7137 56.7305 67.7939L58.427 71.0261C56.9272 70.7823 55.581 70.9243 54.2655 71.622C51.7975 72.9278 50.9892 75.8235 52.2831 78.284C53.5525 80.7012 56.3586 81.7107 58.8666 80.3801C60.1605 79.6948 61.0487 78.6791 61.7464 77.2961L63.443 80.5283C62.5824 81.8928 61.4575 82.8529 60.3234 83.4549C56.1158 85.6838 51.3672 84.1742 49.1451 79.9479C46.9567 75.7834 48.5089 70.8564 52.5966 68.6923" fill="#232930"/>
+<path d="M76.5989 69.0786C73.8697 72.8511 68.7 73.7062 64.9596 70.9803C61.2222 68.2513 60.4323 63.0495 63.1616 59.2739C65.8909 55.5015 71.0605 54.6463 74.8009 57.3723C78.5383 60.1013 79.3251 65.3031 76.5959 69.0786M65.8632 61.2466C64.2619 63.4601 64.7905 66.4823 67.0281 68.1185C69.2656 69.7516 72.293 69.3194 73.8943 67.109C75.4956 64.8956 74.97 61.8733 72.7294 60.2371C70.4888 58.604 67.4645 59.0362 65.8632 61.2466Z" fill="#232930"/>
+<path d="M51.2384 4.75244C48.0819 1.59123 44.3937 -0.0542058 40.5826 0.00136228C35.9108 0.0692789 31.6694 1.94316 28.3101 5.42851C23.0544 10.8804 20.2698 19.7095 20.4603 30.2891C20.7769 47.6387 29.1461 60.8145 39.9279 60.938C50.8542 61.0615 59.8995 47.4967 60.0901 30.6966C60.21 20.1232 56.8998 10.4235 51.2353 4.75244M47.0031 5.1692C47.7192 5.66931 48.4139 6.24969 49.0839 6.91959C52.3295 10.1703 54.7453 15.1282 56.0208 20.8271C55.446 20.8456 54.8283 20.9752 54.1644 21.2284C50.9587 22.4509 50.9833 26.7018 50.9956 29.5142C50.9987 30.1903 51.0018 30.8293 50.9587 31.243C50.8358 32.4346 50.4916 33.052 50.2334 33.2187C50.0152 33.3577 49.6248 33.2712 49.339 33.1724C48.8042 32.9903 48.6843 31.6104 48.7642 30.8324C49.1945 29.1191 50.8112 21.5433 47.8514 14.3873C46.6189 11.4083 46.7603 7.49071 47.0001 5.17228M41.1204 57.8231C41.8519 55.3534 42.6971 50.806 41.0651 45.9901C39.3655 40.9674 39.6882 36.7164 40.4258 33.7281L37.3093 33.7096C36.5809 37.1085 36.3872 41.6836 38.1791 46.9749C39.7189 51.5161 38.5664 55.8936 37.967 57.6471C29.9605 55.9183 23.7613 44.4744 23.5 30.2366C23.4078 25.1552 24.0809 20.4597 25.4118 16.4464C25.6208 17.3448 25.8943 18.3234 26.26 19.3761C27.5632 23.1424 26.5674 27.6558 26.134 29.2518C27.2098 28.8783 28.3316 28.5448 29.4903 28.2608C29.9728 25.7819 30.3601 21.9045 29.1368 18.3697C27.8368 14.6096 27.8214 11.9639 27.8736 11.0224C28.6543 9.73196 29.5241 8.56811 30.4923 7.56171C30.563 7.48762 30.6398 7.42588 30.7105 7.35488C30.7043 9.25345 30.9318 11.788 31.7555 14.8473L31.9552 15.5882C33.4613 21.1574 34.1405 23.6981 32.9634 27.5755C34.0268 27.4119 35.1117 27.2822 36.2182 27.1958C37.1495 23.1517 36.3288 20.0861 34.8966 14.7856L34.6968 14.0477C33.4213 9.31211 33.7471 6.06137 33.9592 4.84505C35.1117 4.19058 36.3381 3.72134 37.6259 3.42806C37.34 6.29599 37.1771 12.6369 39.8634 20.1818C39.9679 20.6264 40.6256 23.7536 39.7374 27.063C39.9248 27.063 40.1093 27.063 40.2998 27.063C41.1635 27.0723 42.0179 27.1093 42.86 27.1649C43.7544 23.1053 42.8508 19.5521 42.7986 19.3483L42.7586 19.2218C40.0017 11.5348 40.4811 5.10745 40.7362 3.06996C40.7793 3.06996 40.8254 3.06996 40.8684 3.06996C41.9626 3.0823 43.0475 3.28297 44.111 3.6596C43.7913 5.91628 43.2903 11.3403 45.0361 15.5666C47.7438 22.1144 45.995 29.3691 45.786 30.1748L45.7491 30.357C45.5217 32.0734 45.8137 35.2068 48.3524 36.0743C48.921 36.2688 49.4343 36.3522 49.8861 36.3553C50.762 36.3645 51.4228 36.0898 51.8716 35.7996C53.0456 35.0463 53.7771 33.5799 53.9861 31.564C54.0445 30.9837 54.0415 30.2983 54.0384 29.5019C54.0292 27.6527 54.0138 24.5594 55.2401 24.0932C55.864 23.8555 56.2544 23.8524 56.3988 23.9234C56.4849 23.9636 56.5218 24.0809 56.5095 24.0284L56.5986 24.0099C56.909 26.1709 57.0627 28.4028 57.0381 30.6657C56.8752 45.1412 49.8369 56.9463 41.1174 57.8231" fill="#232930"/>
+<path d="M39.759 27.3623C39.759 27.3623 39.7436 27.3839 39.7344 27.3994C39.759 27.3994 39.7866 27.3994 39.8112 27.3994L39.7928 27.387L39.759 27.3654V27.3623Z" fill="#232930"/>
+</svg>`;
+
+/* ---------- Orica component CSS: one source, injected and shown under "Afficher le code" ---------- */
+const COMPONENT_CSS = {
+matieres: `/* surfaces */
+.m-page-card{background:var(--color-white);border:1px solid var(--color-grey-50);border-radius:var(--radius-xl);box-shadow:var(--shadow-sm)}
+.m-row{background:var(--color-white);border-bottom:1px solid var(--color-border-light)}
+.m-field{background:var(--color-white);border:1px solid var(--color-border-light);border-radius:var(--radius-md)}
+.m-control{background:var(--color-white);border:1px solid var(--color-border-light);border-radius:var(--radius-lg)}
+.m-tile{background:var(--color-surface);border-radius:var(--radius-lg)}
+/* flottants */
+.m-menu{background:var(--color-white);border:1px solid var(--color-border-light);border-radius:var(--radius-lg);box-shadow:var(--shadow-md)}
+.m-drawer{background:var(--color-white);box-shadow:var(--shadow-lg)}
+.m-overlay{background:rgba(0,0,0,.48)}`,
+
+bouton: `.o-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:33px;padding:0 14px;border:1px solid var(--color-primary);border-radius:var(--radius-lg);background:var(--color-primary);color:var(--color-primary-foreground);font:var(--font-weight-medium) var(--text-base)/var(--leading-base) var(--font-sans);text-decoration:none;white-space:nowrap;cursor:pointer}
+.o-btn:hover{filter:brightness(.94)}
+.o-btn--lg{height:39px;padding:0 16px;font-weight:var(--font-weight-semibold)}
+.o-btn--secondary{background:var(--color-surface-strong);border-color:var(--color-border);color:var(--color-text)}
+.o-btn--secondary:hover{background:var(--color-border)}
+.o-btn--soft{background:var(--color-surface);border-color:var(--color-surface);color:var(--color-text)}
+.o-btn--outline{background:transparent;border-color:var(--color-text);color:var(--color-text)}
+.o-btn--ghost{background:transparent;border-color:transparent;color:var(--color-text)}
+.o-btn--ghost:hover{background:var(--color-surface)}
+.o-btn--danger-text{background:transparent;border-color:transparent;color:var(--color-danger)}
+.o-btn--icon{width:33px;padding:0}
+.o-btn[disabled]{opacity:.5;pointer-events:none}
+.o-btn svg{flex-shrink:0}
+.o-link{font:var(--font-weight-medium) var(--text-sm)/var(--leading-sm) var(--font-sans);color:var(--color-primary);text-decoration:none}
+.o-link:hover{text-decoration:underline}
+.o-help{position:fixed;right:20px;bottom:20px;display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 14px;border-radius:var(--radius-full);background:var(--color-grey-900);color:var(--color-white);font:var(--font-weight-medium) var(--text-sm)/1 var(--font-sans);box-shadow:var(--shadow-md)}`,
+
+badge: `.o-status{display:inline-flex;align-items:center;height:20px;padding:0 9px;border-radius:var(--radius-full);background:var(--color-primary);color:var(--color-white);font:var(--font-weight-bold) var(--text-2xs)/1 var(--font-sans);white-space:nowrap}
+.o-status--off{background:var(--color-surface-strong);color:var(--color-grey-600)}
+.o-tag{display:inline-flex;align-items:center;gap:4px;height:21px;padding:0 8px;border-radius:var(--radius-sm);background:var(--color-surface);color:var(--color-text);font:var(--font-weight-medium) var(--text-2xs)/1 var(--font-sans);white-space:nowrap}
+.o-tag--success{background:var(--color-success-soft);color:var(--color-success-text)}
+.o-tag--success-strong{background:var(--color-primary-soft);color:var(--color-green-800);font-weight:var(--font-weight-bold)}
+.o-tag--info{background:var(--color-info-soft);color:var(--color-info-text)}
+.o-tag--warning{background:var(--color-warning-soft);color:var(--color-warning-text)}
+.o-tag--faint{background:var(--color-background);color:var(--color-text-muted)}
+.o-tag--dark{background:var(--color-grey-900);color:var(--color-white)}
+.o-tag--sand{background:var(--color-sand-200);color:var(--color-text)}
+.o-tag--clay{background:var(--color-clay-200);color:var(--color-text)}
+.o-tag--gold{background:var(--color-gold-400);color:var(--color-white)}
+.o-tag--brown{background:var(--color-brown-500);color:var(--color-white)}
+.o-count{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:20px;padding:0 6px;border-radius:var(--radius-sm);background:var(--color-surface);color:var(--color-text);font:var(--font-weight-semibold) var(--text-2xs)/1 var(--font-sans);font-variant-numeric:tabular-nums}`,
+
+choix: `.o-choices{display:flex;flex-wrap:wrap;gap:8px}
+.o-choice{display:inline-flex;align-items:center;gap:8px;height:39px;padding:0 12px;border:1px solid var(--color-border-light);border-radius:var(--radius-sm);background:var(--color-background);color:var(--color-text);font:var(--font-weight-medium) var(--text-base)/1 var(--font-sans);cursor:pointer}
+.o-choice:hover{border-color:var(--color-border)}
+.o-choice.is-on{background:var(--color-primary-soft);border-color:var(--color-primary);color:var(--color-green-800)}
+.o-choice i{width:16px;height:16px;border-radius:var(--radius-full);border:1px solid currentColor;opacity:.6}`,
+
+recherche: `.o-search{display:flex;align-items:center;gap:10px;height:33px;padding:0 12px;border:1px solid var(--color-border-light);border-radius:var(--radius-lg);background:var(--color-white);color:var(--color-text);cursor:text}
+.o-search:focus-within{border-color:var(--color-border)}
+.o-search input{flex:1;min-width:0;border:0;background:transparent;outline:none;font:var(--font-weight-book) var(--text-sm)/var(--leading-sm) var(--font-sans);color:var(--color-text)}
+.o-search input::placeholder{color:var(--color-text-faint)}
+.o-search svg{flex-shrink:0;color:var(--color-text-muted)}`,
+
+saisie: `.o-field{display:flex;flex-direction:column;gap:6px;width:100%;max-width:420px}
+.o-field > label{font:var(--font-weight-semibold) var(--text-base)/var(--leading-base) var(--font-sans)}
+.o-field > label .req{color:var(--color-danger);margin-left:2px}
+.o-field .hint{font:var(--font-weight-book) var(--text-xs)/var(--leading-xs) var(--font-sans);color:var(--color-text-muted)}
+.o-input{height:33px;width:100%;padding:0 10px;border:1px solid var(--color-border-light);border-radius:var(--radius-md);background:var(--color-white);font:var(--font-weight-book) var(--text-sm)/var(--leading-sm) var(--font-sans);color:var(--color-text);outline:none}
+.o-input::placeholder{color:var(--color-text-faint)}
+.o-input:focus{border-color:var(--color-border)}
+.o-textarea{min-height:80px;padding:8px 10px;resize:vertical}
+.o-form-card{display:flex;flex-direction:column;gap:20px;width:100%;max-width:560px;padding:24px;background:var(--color-white);border:1px solid var(--color-grey-50);border-radius:var(--radius-xl);box-shadow:var(--shadow-sm)}
+.o-form-card .o-field{max-width:none}`,
+
+select: `.o-select{display:inline-flex;align-items:center;justify-content:space-between;gap:10px;height:33px;min-width:120px;padding:0 10px 0 13px;border:1px solid var(--color-border-light);border-radius:var(--radius-lg);background:var(--color-white);color:var(--color-text);font:var(--font-weight-book) var(--text-sm)/1 var(--font-sans);cursor:pointer;white-space:nowrap}
+.o-select:hover{border-color:var(--color-border)}
+.o-select.is-open{border-color:var(--color-border)}
+.o-select svg{flex-shrink:0;color:var(--color-text-muted)}
+.o-menu{width:240px;max-width:100%;padding:6px;border:1px solid var(--color-border-light);border-radius:var(--radius-lg);background:var(--color-white);box-shadow:var(--shadow-md)}
+.o-menu label,.o-menu a,.o-menu button{display:flex;align-items:center;gap:10px;width:100%;height:29px;padding:0 8px;border:0;border-radius:var(--radius-sm);background:transparent;font:var(--font-weight-book) var(--text-sm)/1 var(--font-sans);color:var(--color-text);text-decoration:none;cursor:pointer;text-align:left}
+.o-menu label:hover,.o-menu a:hover,.o-menu button:hover{background:var(--color-surface)}
+.o-menu .n{margin-left:auto;color:var(--color-text-muted);font-variant-numeric:tabular-nums}
+.o-menu .danger{color:var(--color-danger)}
+.o-check{appearance:none;width:15px;height:15px;margin:0;border:1px solid var(--color-grey-300);border-radius:3px;background:var(--color-white);display:inline-grid;place-content:center;cursor:pointer;flex-shrink:0}
+.o-check::before{content:"";width:9px;height:9px;transform:scale(0);background:var(--color-white);clip-path:polygon(14% 44%,0 65%,50% 100%,100% 16%,80% 0,43% 62%)}
+.o-check:checked{background:var(--color-primary);border-color:var(--color-primary)}
+.o-check:checked::before{transform:scale(1)}
+.o-radio{appearance:none;width:15px;height:15px;margin:0;border:1px solid var(--color-grey-300);border-radius:50%;background:var(--color-white);display:inline-grid;place-content:center;cursor:pointer}
+.o-radio::before{content:"";width:7px;height:7px;border-radius:50%;transform:scale(0);background:var(--color-primary)}
+.o-radio:checked{border-color:var(--color-primary)}
+.o-radio:checked::before{transform:scale(1)}
+.o-checkrow{display:inline-flex;align-items:center;gap:8px;font:var(--font-weight-book) var(--text-sm)/var(--leading-sm) var(--font-sans);cursor:pointer}`,
+
+filtres: `.o-filterbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;width:100%}
+.o-filterbar .o-search{flex:1;min-width:200px;max-width:360px}
+.o-filterbar .o-select{min-width:0}
+.o-filterbar .push{margin-left:auto}
+.o-drawer{width:364px;max-width:100%;min-height:360px;display:flex;flex-direction:column;background:var(--color-white);box-shadow:var(--shadow-lg)}
+.o-drawer header{display:flex;align-items:center;justify-content:space-between;height:52px;padding:0 16px;border-bottom:1px solid var(--color-border-light);font:var(--font-weight-bold) var(--text-base)/1 var(--font-sans)}
+.o-drawer .group{display:flex;flex-direction:column;gap:8px;padding:14px 16px;border-bottom:1px solid var(--color-border-light)}
+.o-drawer .group > b{font:var(--font-weight-semibold) var(--text-sm)/1 var(--font-sans)}
+.o-drawer footer{margin-top:auto;display:flex;justify-content:flex-end;gap:8px;padding:12px 16px;border-top:1px solid var(--color-border-light)}`,
+
+tabs: `.o-tabs{display:flex;gap:4px;margin:0;padding:0;list-style:none;border-bottom:1px solid var(--color-border-light)}
+.o-tab{display:inline-flex;align-items:center;gap:6px;height:43px;padding:0 12px;border:0;border-bottom:2px solid transparent;background:transparent;font:var(--font-weight-medium) var(--text-base)/1 var(--font-sans);color:var(--color-text);cursor:pointer;white-space:nowrap}
+.o-tab:hover{color:var(--color-primary)}
+.o-tab[aria-selected="true"]{color:var(--color-primary);border-bottom-color:var(--color-primary)}
+.o-tab .o-count{height:18px;min-width:18px}
+.o-seg{display:inline-flex;padding:3px;border-radius:var(--radius-lg);background:var(--color-surface)}
+.o-seg button{height:27px;padding:0 12px;border:0;border-radius:var(--radius-md);background:transparent;font:var(--font-weight-medium) var(--text-sm)/1 var(--font-sans);color:var(--color-text-muted);cursor:pointer}
+.o-seg button.is-on{background:var(--color-grey-900);color:var(--color-white)}
+.o-seg--univers button.is-on{background:var(--color-grey-900)}`,
+
+tableau: `.o-tablewrap{width:100%;overflow-x:auto;border:1px solid var(--color-border-light);border-radius:var(--radius-xl);background:var(--color-white)}
+.o-table{width:100%;min-width:640px;border-collapse:collapse;font:var(--font-weight-book) var(--text-sm)/var(--leading-sm) var(--font-sans)}
+.o-table th{height:34px;padding:0 12px;text-align:left;background:var(--color-surface);color:var(--color-grey-700);font:var(--font-weight-book) var(--text-2xs)/1 var(--font-sans);white-space:nowrap}
+.o-table td{height:46px;padding:0 12px;border-bottom:1px solid var(--color-border-light);vertical-align:middle;white-space:nowrap}
+.o-table tr:last-child td{border-bottom:0}
+.o-table tr:hover td{background:var(--color-background)}
+.o-table .cell-title{font-weight:var(--font-weight-semibold)}
+.o-table .cell-sub{display:block;font-size:var(--text-2xs);color:var(--color-text-muted)}
+.o-table .num{text-align:right;font-variant-numeric:tabular-nums}
+.o-table .actions{text-align:right}
+.o-icon-btn{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border:0;border-radius:var(--radius-sm);background:var(--color-surface);color:var(--color-text);cursor:pointer}
+.o-icon-btn--warning{background:var(--color-gold-400);color:var(--color-white)}
+.o-icon-btn--danger{background:var(--color-brown-500);color:var(--color-white)}
+.o-icon-btn--success{background:var(--color-primary);color:var(--color-white)}`,
+
+ligne: `.o-ref{display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:14px;align-items:center;width:100%;padding:12px 16px;background:var(--color-white);border-bottom:1px solid var(--color-border-light)}
+.o-ref:last-child{border-bottom:0}
+.o-ref .main{display:flex;flex-direction:column;gap:4px;min-width:0}
+.o-ref .code{font:var(--font-weight-book) var(--text-2xs)/1 var(--font-sans);color:var(--color-text-faint)}
+.o-ref .name{font:var(--font-weight-semibold) var(--text-sm)/var(--leading-sm) var(--font-sans);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.o-ref .stats{display:flex;gap:20px;padding-top:4px}
+.o-ref .stat{display:flex;flex-direction:column;gap:2px}
+.o-ref .stat small{font:var(--font-weight-book) var(--text-2xs)/1 var(--font-sans);color:var(--color-text-muted)}
+.o-ref .stat b{font:var(--font-weight-semibold) var(--text-sm)/1 var(--font-sans);font-variant-numeric:tabular-nums}
+.o-ref .side{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.o-list{display:flex;flex-direction:column;width:100%;border:1px solid var(--color-border-light);border-radius:var(--radius-xl);background:var(--color-white);overflow:hidden}`,
+
+avatar: `.o-avatar{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:var(--radius-full);background:var(--color-surface);border:1px solid var(--color-border-light);color:var(--color-text);font:var(--font-weight-semibold) var(--text-xs)/1 var(--font-sans);overflow:hidden;flex-shrink:0}
+.o-avatar--user{background:var(--color-primary);border-color:var(--color-primary);color:var(--color-white)}
+.o-avatar--sm{width:24px;height:24px;font-size:var(--text-2xs)}
+.o-avatar--flag{font-size:16px}`,
+
+kpi: `.o-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;width:100%}
+.o-kpi{display:flex;flex-direction:column;gap:10px;padding:14px 16px;background:var(--color-white);border:1px solid var(--color-grey-50);border-radius:var(--radius-xl);box-shadow:var(--shadow-sm)}
+.o-kpi .head{display:flex;align-items:center;gap:8px;font:var(--font-weight-medium) var(--text-xs)/1 var(--font-sans);color:var(--color-text-muted)}
+.o-kpi .head i{width:18px;height:18px;border-radius:var(--radius-sm);background:var(--color-primary-soft)}
+.o-kpi .value{display:flex;align-items:baseline;gap:8px;font:var(--font-weight-bold) var(--text-2xl)/1 var(--font-sans);font-variant-numeric:tabular-nums}
+.o-kpi .value small{font:var(--font-weight-book) var(--text-xs)/1 var(--font-sans);color:var(--color-text-muted)}
+.o-kpi .sub{display:flex;justify-content:space-between;font:var(--font-weight-book) var(--text-2xs)/1 var(--font-sans);color:var(--color-text-muted);font-variant-numeric:tabular-nums}
+.o-progress{display:block;width:100%;height:6px;border-radius:var(--radius-full);background:var(--color-surface);overflow:hidden}
+.o-progress i{display:block;height:100%;border-radius:var(--radius-full);background:var(--color-primary)}
+.o-progress--info i{background:var(--color-blue-800)}
+.o-progress--warning i{background:var(--color-gold-400)}
+.o-progress--sm{height:4px}`,
+
+accordeon: `.o-acc{display:flex;flex-direction:column;width:100%;border:1px solid var(--color-border-light);border-radius:var(--radius-xl);background:var(--color-white);overflow:hidden}
+.o-acc details{border-bottom:1px solid var(--color-border-light)}
+.o-acc details:last-child{border-bottom:0}
+.o-acc summary{list-style:none;display:flex;align-items:center;gap:12px;height:46px;padding:0 16px;cursor:pointer;font:var(--font-weight-semibold) var(--text-sm)/1 var(--font-sans)}
+.o-acc summary::-webkit-details-marker{display:none}
+.o-acc summary svg{transition:transform .15s;color:var(--color-text-muted)}
+.o-acc details[open] summary svg{transform:rotate(90deg)}
+.o-acc summary .meta{margin-left:auto;display:flex;align-items:center;gap:12px;font:var(--font-weight-book) var(--text-xs)/1 var(--font-sans);color:var(--color-text-muted);font-variant-numeric:tabular-nums}
+.o-acc .row{display:grid;grid-template-columns:minmax(0,1fr) 120px 110px auto;gap:12px;align-items:center;padding:8px 16px 8px 44px;border-top:1px solid var(--color-border-light);font:var(--font-weight-book) var(--text-sm)/1 var(--font-sans)}
+.o-acc .row .num{text-align:right;font-variant-numeric:tabular-nums;color:var(--color-text-muted)}
+.o-acc-tools{display:flex;gap:12px;font:var(--font-weight-medium) var(--text-xs)/1 var(--font-sans)}
+.o-acc-tools button{border:0;background:transparent;color:var(--color-primary);cursor:pointer;padding:0;font:inherit}`,
+
+pagination: `.o-pager{display:inline-flex;align-items:center;gap:6px;font:var(--font-weight-medium) var(--text-xs)/1 var(--font-sans);color:var(--color-text-muted);font-variant-numeric:tabular-nums}
+.o-pager button{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border:1px solid var(--color-border-light);border-radius:var(--radius-full);background:var(--color-white);color:var(--color-text);cursor:pointer}
+.o-pager button:hover{border-color:var(--color-border)}
+.o-pager button[disabled]{opacity:.4;pointer-events:none}`,
+
+vide: `.o-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;width:100%;min-height:160px;padding:28px;background:var(--color-white);border:1px solid var(--color-border-light);border-radius:var(--radius-xl);text-align:center;font:var(--font-weight-book) var(--text-xs)/var(--leading-xs) var(--font-sans);color:var(--color-text-muted)}
+.o-empty i{width:40px;height:40px;border-radius:var(--radius-full);background:var(--color-primary-soft)}`,
+
+shell: `.o-rail{display:flex;flex-direction:column;align-items:center;gap:4px;width:64px;padding:12px 0;background:var(--color-white);border-right:1px solid var(--color-border-light)}
+.o-rail a{display:flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:var(--radius-lg);color:var(--color-grey-300);text-decoration:none}
+.o-rail a.is-active{background:var(--color-surface-strong);color:var(--color-grey-900)}
+.o-rail a i{width:18px;height:18px;border-radius:4px;background:currentColor;opacity:.5}
+.o-rail .spacer{flex:1}
+.o-env{display:flex;align-items:center;justify-content:center;height:20px;background:var(--color-primary);color:var(--color-white);font:var(--font-weight-medium) var(--text-2xs)/1 var(--font-sans);letter-spacing:.04em;text-transform:uppercase}
+.o-pagehead{display:flex;align-items:center;gap:12px;height:65px;padding:0 20px;border-bottom:1px solid var(--color-border-light);background:var(--color-background)}
+.o-pagehead h1{font:var(--font-weight-bold) var(--text-2xl)/var(--leading-2xl) var(--font-sans)}
+.o-pagehead .push{margin-left:auto;display:flex;align-items:center;gap:8px}
+.o-back{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:var(--radius-full);color:var(--color-text-muted)}`
+};
+
+/* ---------- IA Rules ---------- */
+const AI_RULES = {
+couleurs: `# Couleurs — Orica (Belco Hub)
+Statut : relevé sur hub.belco-sandbox.synako.fr, module Orica (styles calculés). Fichier : couleurs.md
+
+## Palette
+grey-50 #F8F9FA (fond) · grey-100 #EDF0F4 (surface, filets légers, en-têtes de tableau) · grey-150 #E5E9EF · grey-200 #D8DEE7 (filets) · grey-300 #C5CAD2 · grey-500 #999EA4 · grey-600 #777A7F · grey-700 #4F5459 · grey-900 #232930 (texte)
+green-600 #127746 (primaire Orica) · green-50 #E7F1ED · green-100 #BCE6CE · green-700 #156035 · green-800 #0D5432
+blue-100 #BEE3F8 / blue-800 #2A4365 (info) · yellow-100 #FFF8DB / yellow-800 #806600 (attente) · red-500 #FF0000 (danger, texte seulement)
+Badges qualité : sand-200 #F0DBB4 · clay-200 #DCBFAD · gold-400 #DEAF58 · brown-500 #B17149
+
+## Rôles
+--color-background → grey-50 ; --color-surface → grey-100 ; --color-surface-strong → grey-150
+--color-text → grey-900 ; --color-text-muted → grey-600 ; --color-text-faint → grey-500
+--color-border → grey-200 ; --color-border-light → grey-100
+--color-primary → green-600 ; --color-primary-soft → green-50 ; --color-primary-foreground → white
+--color-success-soft/text → green-100 / green-700 ; --color-info-soft/text → blue-100 / blue-800 ; --color-warning-soft/text → yellow-100 / yellow-800 ; --color-danger → red-500
+
+## Règles
+- Le vert #127746 est la couleur d'Orica. Les autres modules du Hub ont leur propre accent (Blink orange #D65932, Le Lab magenta #B510A4) : hors périmètre, ne pas les mélanger.
+- Un seul bouton primaire vert par en-tête de page.
+- Le rouge n'est jamais un fond : texte seulement (« Se déconnecter », astérisque obligatoire).
+- Statuts : pilule pleine (vert / gris) pour actif / inactif ; chips pastel (vert, bleu, jaune, gris) pour les étapes d'un flux.
+- Pas de mode sombre.`,
+
+typographie: `# Typographie — Orica
+Statut : relevé sur le Hub. Fichier : typographie.md
+
+## Famille
+Centra No2 uniquement (Book 400, Medium 500, Semibold 600, Bold 700, ExtraBold 800). Oswald et Open Sans sont chargées par l'app mais jamais utilisées dans les styles calculés : ne pas les employer.
+Fallback : Outfit.
+
+## Échelle (px / interlignage)
+Titre de page 25/30 Bold · Titre de carte 16/24 Bold · Libellé de formulaire 14/20 Semibold · Bouton 14 Medium ou Semibold · Corps 13/19.5 Book · Aide 12/16 · En-tête de tableau et badges 10 Book à Bold
+
+## Règles
+- Jamais de majuscules sur les titres ; capitales seulement sur les micro-libellés de 10 px.
+- Le corps est en 13 px : c'est un outil de travail dense, pas un site.
+- Chiffres tabulaires dans les tableaux, KPI et compteurs.`,
+
+matieres: `# Matières — Orica
+Statut : relevé sur le Hub. Fichier : matieres.md
+
+## Surfaces
+- .m-page-card : blanc, rayon 13 px, ombre sm → cartes de page, formulaires, KPI
+- .m-row : blanc, filet grey-100 en bas → lignes de liste et de tableau
+- .m-field : blanc, filet grey-100, rayon 7.8 px → champs de formulaire
+- .m-control : blanc, filet grey-100, rayon 10.4 px → boutons, selects, recherche
+- .m-tile : grey-100, rayon 10.4 px → tuile active de la barre latérale, boutons doux
+
+## Flottants
+- .m-menu : blanc, filet, rayon 10.4 px, ombre md → menus déroulants
+- .m-drawer : blanc, ombre lg, 364 px à droite, sur un voile noir à 48 % → panneau Filtres
+- Modal et tooltip : non relevés (Soon)
+
+## Rayons
+2.6 · 5.2 (chips, badges, choix) · 7.8 (champs) · 10.4 (boutons, selects, cartes KPI) · 13 (cartes de page) · pilule (statuts, avatars, pagination)
+
+## Ombres
+sm 0 2px 4px rgba(16,15,15,.05) · md 0 4px 12px rgba(16,15,15,.05) · lg 0 32px 64px + 0 -16px 32px rgba(16,15,15,.05)
+
+## Règles
+- Les ombres existent mais restent presque invisibles (5 %) : elles séparent, elles ne décorent pas.
+- Une surface blanche posée sur le gris de page = un contenu ; le gris-100 = en-tête, filtre ou outil.`,
+
+bouton: `# Bouton — Orica
+Statut : relevé sur le Hub (toutes les listes, formulaire fournisseur). Fichier : bouton.md
+
+## Classes
+- .o-btn : primaire vert #127746, blanc, 33 px, rayon 10.4, Medium 14 (« Nouvelle référence », « Nouveau fournisseur »).
+- .o-btn--lg : 39 px, Semibold (actions d'en-tête de page).
+- .o-btn--secondary : gris #E5E9EF, filet grey-200 (« Importer Excel »).
+- .o-btn--soft : gris #EDF0F4 sans filet, avec icône + (« Ajouter une adresse », « Ajouter un contact », « Ajouter un rôle »).
+- .o-btn--outline : filet texte, fond transparent.
+- .o-btn--ghost : texte seul (« Parcours prospect », « Gérer les tags »).
+- .o-btn--danger-text : texte rouge (« Se déconnecter »).
+- .o-btn--icon : carré 33 px pour une icône seule.
+- .o-help : bouton flottant « Aide » noir, en bas à droite de chaque écran.
+
+## Règles
+- Un seul primaire par en-tête de page, aligné à droite du titre.
+- Les actions de formulaire « Ajouter … » sont des boutons doux avec +, jamais des primaires.
+- Pas de bouton en majuscules ; libellé en Medium 14.`,
+
+badge: `# Badge & statut — Orica
+Statut : relevé sur le Hub (références, fournisseurs, contrats, direct trade). Fichier : badge.md
+
+## Classes
+- .o-status : pilule pleine 20 px, Bold 10 : vert = actif, .o-status--off gris = inactif / archivé.
+- .o-tag : chip 21 px rayon 5.2, Medium 10, gris par défaut ; --success (vert pâle), --success-strong (vert plus foncé, texte vert 800), --info (bleu pâle), --warning (jaune pâle), --faint (gris très clair), --dark (noir, « Sourcing Exclusive »).
+- Badges qualité : --sand, --clay, --gold, --brown (poids, labels de dégustation).
+- .o-count : compteur 20 px gris Semibold 10 (après un titre d'onglet : « Fournisseurs 694 »).
+
+## Règles
+- Pilule pleine = état binaire ; chip pastel = étape d'un flux (brouillon, soumis, validé…).
+- Les badges d'une ligne se rangent à droite, par ordre : qualité, label, poids.
+- Jamais plus de quatre badges par ligne.`,
+
+choix: `# Chips de choix — Orica
+Statut : relevé sur le formulaire « Nouveau fournisseur ». Fichier : choix.md
+
+- .o-choices : rangée de .o-choice (39 px, rayon 5.2, fond grey-50, filet grey-100, icône + libellé Medium 14).
+- Sélection : .is-on → fond vert pâle, filet vert, texte vert 800.
+- Valeurs du site : Univers (Café, Cacao) ; Types juridiques (Privé, Public, Association, Coopérative, Institution, ONG).
+
+## Règles
+- Choix unique ou multiple selon le champ ; le libellé du champ porte l'astérisque si requis.
+- Icône à gauche, 16 px.`,
+
+recherche: `# Champ de recherche — Orica
+Statut : relevé sur toutes les listes. Fichier : recherche.md
+
+- .o-search : 33 px, blanc, filet grey-100, rayon 10.4, loupe grise à gauche, placeholder gris clair (« Rechercher une référence… »).
+- Placé en tête de la barre de filtres, juste après le compteur.
+
+## Règles
+- La recherche filtre la liste en direct ; pas de bouton.
+- Largeur 200 à 360 px dans la barre, 100 % sur mobile.`,
+
+saisie: `# Champ de saisie — Orica
+Statut : relevé sur « Nouveau fournisseur ». Fichier : saisie.md
+
+- .o-field : libellé Semibold 14 avec astérisque rouge si requis, champ, aide 12 px.
+- .o-input : 33 px, blanc, filet grey-100, rayon 7.8, 13 px. .o-textarea : 80 px min.
+- .o-form-card : carte blanche rayon 13, ombre sm, 560 px max, sections empilées (gap 20).
+- Libellés relevés : Raison sociale*, Univers*, Flo ID, Partenaire depuis, Adresse principale*, Contact*, Roles*, Types juridiques, Commentaire.
+
+## Règles
+- Un formulaire = une page avec flèche retour + titre, jamais une modale (non relevée).
+- Les sous-objets (adresse, contact, rôle) s'ajoutent par bouton doux « Ajouter … ».
+- État d'erreur : non relevé (Soon).`,
+
+select: `# Select & menus — Orica
+Statut : relevé sur toutes les listes. Fichier : select.md
+
+- .o-select : pilule 33 px blanche, filet grey-100, rayon 10.4, libellé + chevron (« Origines », « Statuts », « Crop »).
+- .o-menu : panneau blanc rayon 10.4 ombre md, lignes 29 px ; cases .o-check (15 px, vert) avec compteur à droite ; liens ou boutons pour les menus d'action (« Nouveau fournisseur », « Nouveau prospect », « Se déconnecter » en rouge).
+- .o-radio : 15 px, point vert.
+
+## Règles
+- Multi-sélection = cases + compteurs ; sélection simple = radios.
+- Le menu utilisateur (avatar) contient langue (Français, English, Español) et déconnexion.`,
+
+filtres: `# Barre de filtres & panneau — Orica
+Statut : relevé sur références, fournisseurs, contrats, direct trade. Fichier : filtres.md
+
+- .o-filterbar : compteur (.o-count) → recherche → selects → case « Inclure … » → bouton « Filtres » (.o-btn--soft) → à droite, actions secondaires.
+- .o-drawer : panneau 364 px à droite, en-tête 52 px avec titre et fermeture, groupes de cases ou radios, pied avec « Réinitialiser » et « Appliquer » ; voile rgba(0,0,0,.48).
+- Groupes relevés : Type de café, Type de sourcing (Direct Trade, Cross Trade, Sourcing Exclusive, Alpha), Produits visibles sur Belco.fr, Produits en sommeil, Sourcing steps, Impact score, Due diligence (À soumettre, Soumise, Validée, Rejetée), UB.
+
+## Règles
+- Les filtres fréquents sont dans la barre ; les rares dans le panneau.
+- Le compteur de résultats se met à jour à chaque filtre.`,
+
+tabs: `# Tabs & segmented — Orica
+Statut : relevé sur fournisseurs, contrats, plans d'achat. Fichier : tabs.md
+
+- .o-tabs / .o-tab : onglets soulignés 43 px, Medium 14, actif en vert avec trait de 2 px ; compteur .o-count après le libellé (« Fournisseurs 694 », « Prospects 14 », « Brouillons 9 »).
+- .o-seg : segmented control fond gris, segment actif noir (« Par origines / Par UB / Kanban », « Liste / Calendrier »).
+- Univers : segment « Café / Cacao » dans l'en-tête de page.
+
+## Règles
+- Onglets = sous-ensembles d'une même liste ; segmented = autre vue des mêmes données.
+- L'onglet actif est vert, jamais souligné en gris.`,
+
+tableau: `# Tableau — Orica
+Statut : relevé sur fournisseurs, contrats, direct trade, spécifications, glossaire. Fichier : tableau.md
+
+- .o-tablewrap > .o-table : en-tête gris-100, texte grey-700 10 px Book ; lignes 46 px, filet grey-100, survol gris de page.
+- Cellules : .cell-title (Semibold) + .cell-sub (10 px gris) ; .num aligné à droite tabulaire ; .actions à droite avec .o-icon-btn (24 px, rayon 5.2 ; --warning or, --danger brun, --success vert).
+- Colonnes relevées (contrats) : Créé le, BTB, Désignation, Embarquement, POL / POD, Produits · Volume · Montant, Statut.
+
+## Règles
+- Première colonne = identité (avatar ou drapeau + nom) ; dernière = statut puis actions.
+- Pas de bordures verticales ; le survol suffit à suivre la ligne.
+- Pagination « n / N » avec flèches rondes, à droite sous le tableau.`,
+
+ligne: `# Ligne de référence — Orica
+Statut : relevé sur l'écran Références. Fichier : ligne.md
+
+- .o-list > .o-ref : grille 32 px (drapeau) · contenu · badges ; code 10 px gris clair, nom Semibold 13, triplet de stats (Qté actuel, Qté retenu, Position stock) ; badges qualité et poids à droite.
+
+## Règles
+- Le drapeau de l'origine remplace la photo.
+- Trois statistiques maximum sous le nom, toujours dans le même ordre.
+- La ligne entière est cliquable.`,
+
+avatar: `# Avatar — Orica
+Statut : relevé dans le menu utilisateur et les listes. Fichier : avatar.md
+
+- .o-avatar : rond 32 px gris clair avec initiales Semibold 12 ; --user : vert avec initiales blanches ; --flag : drapeau emoji 16 px ; --sm : 24 px.
+
+## Règles
+- Initiales (deux lettres) tant qu'il n'y a pas de photo.
+- Dans un tableau, 24 px ; dans l'en-tête, 32 px.`,
+
+kpi: `# Cartes KPI & progression — Orica
+Statut : relevé sur Plans d'achat. Fichier : kpi.md
+
+- .o-kpis : grille de .o-kpi (carte blanche rayon 13, ombre sm) : icône + libellé 12 px, valeur Bold 25 tabulaire, barre .o-progress, deux sous-valeurs 10 px.
+- .o-progress : 6 px, fond gris, remplissage vert ; --info bleu, --warning or ; --sm 4 px dans les lignes.
+
+## Règles
+- Quatre KPI maximum en tête d'écran.
+- La barre montre toujours réalisé / objectif, jamais une valeur seule.`,
+
+accordeon: `# Accordéon — Orica
+Statut : relevé sur Plans d'achat (groupes par origine). Fichier : accordeon.md
+
+- .o-acc : carte blanche, groupes <details> ; en-tête 46 px avec chevron, nom Semibold 13, méta à droite (volumes tabulaires) ; lignes enfant en grille (nom, volume, objectif, action).
+- .o-acc-tools : « Tout fermer » / « Tout ouvrir » en vert au-dessus.
+
+## Règles
+- Un niveau d'imbrication maximum.
+- L'action de ligne (« Nouvelle offre ») est un bouton doux, pas un primaire.`,
+
+pagination: `# Pagination — Orica
+Statut : relevé sous les tableaux (contrats, spécifications, géographie). Fichier : pagination.md
+
+- .o-pager : « 1 / 1 » Medium 12 gris + deux flèches rondes 22 px ; flèche désactivée à 40 %.
+
+## Règles
+- Alignée à droite, sous le tableau.
+- Les listes de références chargent en continu : pas de pagination là.`,
+
+vide: `# État vide — Orica
+Statut : relevé sur Géographie (« Aucune région trouvée ») et Clients. Fichier : vide.md
+
+- .o-empty : carte blanche, picto rond vert pâle 40 px, texte gris 12 px.
+
+## Règles
+- Dire ce qui est vide et, si possible, proposer l'action de création.`,
+
+shell: `# Coquille & en-tête — Orica
+Statut : relevé sur tous les écrans. Fichier : shell.md
+
+- .o-env : bandeau vert 20 px en haut (« Ceci est un environnement de démo »).
+- .o-rail : barre latérale 64 px blanche, tuiles 46 px rayon 10.4 ; active : fond grey-150, icône foncée ; en bas, avatar utilisateur.
+- .o-pagehead : 65 px, titre Bold 25 + segment univers Café / Cacao, primaire à droite ; sur une page de création, flèche retour .o-back avant le titre.
+
+## Règles
+- Ordre du rail Orica : Références, Fournisseurs, Plans d'achat, Direct Trade, Contrats d'achat, Géographie, Spécifications, Glossaire.
+- Les onglets de la liste viennent sous l'en-tête, puis la barre de filtres, puis la liste.`
+};
+const RULE_FILE = {tokens:'couleurs'};
+
+/* ---------- navigation ---------- */
+const NAV = [
+  {group:'Fondations', items:[
+    {id:'introduction',label:'Introduction'},
+    {id:'couleurs',label:'Couleurs'},
+    {id:'typographie',label:'Typographie'},
+    {id:'fonts',label:'Fonts'},
+    {id:'matieres',label:'Matières'},
+    {id:'terminal',label:'Terminal',soon:true}
+  ]},
+  {group:'Écrans Orica', items:[
+    {id:'ecran-references',label:'Références'},
+    {id:'ecran-fournisseurs',label:'Fournisseurs'},
+    {id:'ecran-plans-achat',label:'Plans d’achat'},
+    {id:'ecran-direct-trade',label:'Direct Trade'},
+    {id:'ecran-contrats',label:'Contrats d’achat'},
+    {id:'ecran-geographie',label:'Géographie'},
+    {id:'ecran-specifications',label:'Spécifications'},
+    {id:'ecran-glossaire',label:'Glossaire'},
+    {id:'ecran-formulaire',label:'Formulaire de création'}
+  ]},
+  {group:'Composants', items:[
+    {id:'composants',label:'Tous les composants'},
+    {id:'accordeon',label:'Accordéon'},
+    {id:'avatar',label:'Avatar'},
+    {id:'badge',label:'Badge & statut'},
+    {id:'barre-de-filtres',label:'Barre de filtres'},
+    {id:'bouton',label:'Bouton'},
+    {id:'breadcrumbs',label:'Breadcrumbs',soon:true},
+    {id:'carte-kpi',label:'Carte KPI'},
+    {id:'carte-geographique',label:'Carte géographique',soon:true},
+    {id:'champ-de-recherche',label:'Champ de recherche'},
+    {id:'champ-de-saisie',label:'Champ de saisie'},
+    {id:'chips-de-choix',label:'Chips de choix'},
+    {id:'coquille',label:'Coquille & en-tête'},
+    {id:'date-picker',label:'Date picker',soon:true},
+    {id:'drawer',label:'Drawer de filtres'},
+    {id:'etat-vide',label:'État vide'},
+    {id:'kanban',label:'Kanban',soon:true},
+    {id:'ligne-de-reference',label:'Ligne de référence'},
+    {id:'menu-deroulant',label:'Menu déroulant'},
+    {id:'modal',label:'Modal',soon:true},
+    {id:'pagination',label:'Pagination'},
+    {id:'progression',label:'Progression'},
+    {id:'segmented',label:'Segmented control'},
+    {id:'select',label:'Select & multi-select'},
+    {id:'skeleton',label:'Skeleton',soon:true},
+    {id:'stepper',label:'Stepper',soon:true},
+    {id:'switch',label:'Switch',soon:true},
+    {id:'tableau',label:'Tableau'},
+    {id:'tabs',label:'Tabs'},
+    {id:'toast',label:'Toast',soon:true},
+    {id:'tooltip',label:'Tooltip',soon:true},
+    {id:'upload',label:'Import de fichier',soon:true}
+  ]}
+];
+const FLAT = NAV.flatMap(g => g.items.map(i => ({...i, group:g.group})));
+const GROUP_HOME = {'Fondations':'introduction','Écrans Orica':'ecran-references','Composants':'composants'};
+const EXTRA = [{id:'changelog',label:'Changelog',group:'Suivi',top:'changelog'},{id:'mcp',label:'MCP',group:'Outils',top:'mcp'}];
+
+/* ---------- helpers ---------- */
+const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function dedent(s){ const lines = s.replace(/^\n/,'').replace(/\s+$/,'').split('\n'); const ind = Math.min(...lines.filter(l=>l.trim()).map(l=>l.match(/^\s*/)[0].length)); return lines.map(l=>l.slice(ind)).join('\n'); }
+const chev = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
+const chevDown = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+const chevL = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>';
+const chevR = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
+const plus = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
+const searchIco = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>';
+const pencil = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4l10-10-4-4L4 16v4z"/></svg>';
+const trash = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>';
+const check = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>';
+
+function rulesFor(key){ const rk = RULE_FILE[key] || key; return {file:`rules/${rk}.md`, text: AI_RULES[rk] || `# ${rk}\nStatut : Soon. Pas encore relevé dans Orica, aucune règle à donner à une IA.`}; }
+function rulesRow(key){ const r = rulesFor(key); return `<button class="demo-toggle demo-toggle--rules" type="button" data-panel="rules">${chev}<span>IA Rules</span><span class="demo-file">${r.file}</span></button>
+    <div class="demo-panel demo-rules" hidden><div class="codewrap"><button class="copy-btn copy" type="button">Copier</button><pre><code>${esc(r.text)}</code></pre></div></div>`; }
+function demo(key, html, opts={}){
+  const src = dedent(html);
+  const cls = ['demo-preview', opts.block?'is-block':'', opts.stack?'is-stack':'', opts.grey?'is-grey':''].join(' ');
+  return `<div class="demo" data-key="${key}">
+    <div class="${cls}">${src}</div>
+    <div class="demo-foot">
+      <button class="demo-toggle" type="button" data-panel="code">${chev}<span>Afficher le code</span></button>
+      <div class="demo-panel demo-code" hidden>
+        <div class="demo-tabs"><button type="button" data-lang="html" class="is-on">HTML</button><button type="button" data-lang="css">CSS</button><span class="demo-file"></span></div>
+        <div class="codewrap"><button class="copy-btn copy" type="button">Copier</button><pre><code>${esc(src)}</code></pre></div>
+      </div>
+      ${rulesRow(key)}
+    </div>
+  </div>`;
+}
+function section(title, body, note){ return `<section class="section"><h2>${title}</h2>${note?`<p class="note">${note}</p>`:''}${body}</section>`; }
+function seen(list){ return `<div class="seen"><span>Relevé sur :</span>${list.map(t=>`<b>${t}</b>`).join('<span>·</span>')}</div>`; }
+function soonPage(item){ return { eyebrow:item.group, title:item.label, soon:true, lede:'Pas encore relevé dans le module Orica. Ce composant existe peut-être dans un autre module du Hub ou dans un parcours non parcouru.', body:`<div class="empty-page"><span class="display">Soon</span><p>Dès qu’un écran d’Orica le montre, il entre ici avec son aperçu, son code et ses règles.</p></div>` }; }
+
+/* ---------- reusable fragments (styles only, sample content is neutral) ---------- */
+const FILTERBAR = `
+    <div class="o-filterbar">
+      <span class="o-count">694</span>
+      <label class="o-search">${searchIco}<input type="search" placeholder="Rechercher un fournisseur…"></label>
+      <button class="o-select" type="button">Roles ${chevDown}</button>
+      <button class="o-select" type="button">Pays ${chevDown}</button>
+      <button class="o-select" type="button">Types juridiques ${chevDown}</button>
+      <button class="o-select" type="button">Tags ${chevDown}</button>
+      <label class="o-checkrow"><input class="o-check" type="checkbox"> Inclure inactifs</label>
+      <button class="o-btn o-btn--soft push" type="button">Filtres</button>
+    </div>`;
+const TABLE = `
+    <div class="o-tablewrap"><table class="o-table">
+      <thead><tr><th>Nom</th><th>Type</th><th>Pays</th><th>Statut</th><th class="num">Offres</th><th class="num">Contrats</th><th class="actions">Actions</th></tr></thead>
+      <tbody>
+        <tr><td><span class="o-avatar o-avatar--sm o-avatar--flag">🇧🇷</span>&nbsp; <span class="cell-title">Fournisseur A</span></td><td><span class="o-tag">Exportateur</span></td><td>Brésil</td><td><span class="o-status">Actif</span></td><td class="num">12</td><td class="num">4</td><td class="actions"><button class="o-icon-btn o-icon-btn--warning" type="button" aria-label="Modifier">${pencil}</button> <button class="o-icon-btn o-icon-btn--danger" type="button" aria-label="Archiver">${trash}</button></td></tr>
+        <tr><td><span class="o-avatar o-avatar--sm o-avatar--flag">🇨🇴</span>&nbsp; <span class="cell-title">Coopérative B</span><span class="cell-sub">Filiale Colombie</span></td><td><span class="o-tag">Producteur</span></td><td>Colombie</td><td><span class="o-status">Actif</span></td><td class="num">3</td><td class="num">1</td><td class="actions"><button class="o-icon-btn o-icon-btn--warning" type="button" aria-label="Modifier">${pencil}</button> <button class="o-icon-btn o-icon-btn--danger" type="button" aria-label="Archiver">${trash}</button></td></tr>
+        <tr><td><span class="o-avatar o-avatar--sm o-avatar--flag">🇪🇹</span>&nbsp; <span class="cell-title">Station C</span></td><td><span class="o-tag">Wet Mill</span></td><td>Éthiopie</td><td><span class="o-status o-status--off">Inactif</span></td><td class="num">0</td><td class="num">0</td><td class="actions"><button class="o-icon-btn o-icon-btn--warning" type="button" aria-label="Modifier">${pencil}</button> <button class="o-icon-btn o-icon-btn--success" type="button" aria-label="Réactiver">${check}</button></td></tr>
+      </tbody>
+    </table></div>
+    <div style="display:flex;justify-content:flex-end;width:100%"><span class="o-pager"><button type="button" disabled aria-label="Précédent">${chevL}</button> 1 / 1 <button type="button" disabled aria-label="Suivant">${chevR}</button></span></div>`;
+const PAGEHEAD = (title, action, back) => `
+    <div class="o-pagehead">${back?`<span class="o-back">${chevL}</span>`:''}<h1>${title}</h1><span class="o-seg o-seg--univers"><button class="is-on" type="button">Café</button><button type="button">Cacao</button></span><span class="push">${action?`<button class="o-btn o-btn--lg" type="button">${plus} ${action}</button>`:''}</span></div>`;
+
+/* ---------- pages ---------- */
+const PAGES = {};
+
+PAGES.introduction = () => ({
+  eyebrow:'Fondations', title:'Orica Design System',
+  lede:'Le système de design du module Orica du Belco Hub, relevé dans l’application telle qu’elle tourne : un outil de sourcing dense, gris et vert, en Centra No2 13 px. Même structure que la documentation du site belco.fr ; styles et composants différents.',
+  body:`
+  <div class="bento">
+    <a href="#ecran-references"><div class="bento-preview"><div class="o-list" style="width:100%"><div class="o-ref"><span class="o-avatar o-avatar--flag">🇧🇴</span><div class="main"><span class="code">RÉFÉRENCE</span><span class="name">Nom du café · Terroir · Process</span></div><div class="side"><span class="o-tag o-tag--sand">Label</span><span class="o-tag o-tag--clay">69 kg</span></div></div></div></div><h3>Écrans Orica</h3><p>Références, fournisseurs, plans d’achat, contrats… neuf écrans et leurs patterns de page.</p></a>
+    <a href="#composants"><div class="bento-preview"><span class="o-btn">${plus} Nouvelle référence</span><span class="o-status">Actif</span><span class="o-select">Origines ${chevDown}</span></div><h3>Composants</h3><p>Boutons, badges, filtres, tableaux, KPI : les briques du Hub, en HTML et CSS.</p></a>
+    <a href="#couleurs"><div class="bento-preview"><div class="bars"><i style="background:var(--color-grey-900)"></i><i style="background:var(--color-grey-600)"></i><i style="background:var(--color-grey-200)"></i><i style="background:var(--color-green-600)"></i><i style="background:var(--color-green-100)"></i><i style="background:var(--color-blue-100)"></i><i style="background:var(--color-yellow-100)"></i><i style="background:var(--color-gold-400)"></i></div></div><h3>Couleurs</h3><p>Gris neutres, vert Orica, pastels sémantiques, badges qualité.</p></a>
+    <a href="#matieres"><div class="bento-preview"><div class="preset-grid" style="grid-template-columns:repeat(3,1fr);gap:10px;max-width:320px"><div class="box m-page-card" style="height:70px"></div><div class="box m-menu" style="height:70px"></div><div class="box m-field" style="height:70px"></div></div></div><h3>Matières</h3><p>Surfaces blanches sur gris de page, ombres à 5 %, rayons 5 / 8 / 10 / 13.</p></a>
+    <a href="#typographie"><div class="bento-preview"><div style="display:flex;flex-direction:column;gap:6px;align-items:center"><span style="font-size:25px;font-weight:700;line-height:30px">Titre de page</span><span style="font-size:13px;color:var(--color-text-muted)">Corps 13 px · Centra No2</span><span class="o-tag">BADGE 10 PX</span></div></div><h3>Typographie</h3><p>Une seule famille, une échelle serrée de 10 à 25 px.</p></a>
+    <a href="#ecran-formulaire"><div class="bento-preview"><div class="o-form-card" style="padding:14px;gap:10px;max-width:280px"><div class="o-field"><label>Raison sociale<span class="req">*</span></label><input class="o-input" placeholder=""></div><div class="o-choices"><span class="o-choice is-on"><i></i>Café</span><span class="o-choice"><i></i>Cacao</span></div></div></div><h3>Formulaires</h3><p>Pages de création avec retour, libellés en gras, chips de choix et boutons doux « Ajouter ».</p></a>
+  </div>
+  ${section('Comment lire cette documentation', `<p>Chaque page montre le rendu, puis le code HTML et CSS et un fichier IA Rules. Les entrées marquées <span class="soon">Soon</span> n’ont pas été relevées dans Orica : elles restent vides tant qu’un écran ne les montre pas. Les contenus des aperçus sont neutres ; aucune donnée métier n’a été copiée.</p>`)}
+  `
+});
+
+PAGES.couleurs = () => {
+  const palette = [
+    ['grey-900','#232930','Texte'],['grey-700','#4F5459','En-têtes de tableau'],['grey-600','#777A7F','Texte atténué'],['grey-500','#999EA4','Placeholders'],['grey-300','#C5CAD2','Contours de cases'],['grey-200','#D8DEE7','Filets'],['grey-150','#E5E9EF','Boutons secondaires'],['grey-100','#EDF0F4','Surfaces'],['grey-50','#F8F9FA','Fond de page'],['white','#FFFFFF','Cartes'],
+    ['green-800','#0D5432','Texte sur vert pâle'],['green-700','#156035','Texte succès'],['green-600','#127746','Primaire Orica'],['green-100','#BCE6CE','Succès pâle'],['green-50','#E7F1ED','Vert très pâle'],
+    ['blue-800','#2A4365','Texte info'],['blue-100','#BEE3F8','Info pâle'],['yellow-800','#806600','Texte attente'],['yellow-100','#FFF8DB','Attente pâle'],['red-500','#FF0000','Danger (texte)'],
+    ['sand-200','#F0DBB4','Badge qualité'],['clay-200','#DCBFAD','Badge qualité'],['gold-400','#DEAF58','Badge qualité, icône modifier'],['brown-500','#B17149','Badge qualité, icône archiver']
+  ];
+  const roles = [
+    ['--color-primary','green-600','Bouton primaire, onglet actif, cases cochées, progression.'],
+    ['--color-primary-soft','green-50','Tuile active, chips de choix sélectionnées.'],
+    ['--color-background','grey-50','Fond de page, en-tête de page.'],
+    ['--color-surface','grey-100','En-têtes de tableau, boutons doux, segmented, menus utilisateur.'],
+    ['--color-surface-strong','grey-150','Bouton secondaire, tuile active du rail.'],
+    ['--color-text','grey-900','Texte principal, segment actif.'],
+    ['--color-text-muted','grey-600','Sous-titres, méta, flèches.'],
+    ['--color-text-faint','grey-500','Placeholders, codes de référence.'],
+    ['--color-border','grey-200','Filets de boutons secondaires, survol des contrôles.'],
+    ['--color-border-light','grey-100','Filets de lignes, de champs et de cartes.'],
+    ['--color-success-soft / -text','green-100 / green-700','Chips « validé », « actif » pâles.'],
+    ['--color-info-soft / -text','blue-100 / blue-800','Chips d’information (type, filiale).'],
+    ['--color-warning-soft / -text','yellow-100 / yellow-800','Chips « en attente », « brouillon ».'],
+    ['--color-danger','red-500','Texte de déconnexion, astérisque obligatoire.']
+  ];
+  return {
+    eyebrow:'Fondations', title:'Couleurs',
+    lede:'Des gris neutres pour le fond et la structure, un vert pour l’action et l’état actif, des pastels pour les étapes, quatre tons chauds pour les badges qualité. Relevé dans les styles calculés d’Orica.',
+    body:`
+    ${section('Palette', `<div class="swatches">${palette.map(([n,h,l])=>`<div class="swatch"><i style="background:var(--color-${n})"></i><b>${n}</b><small>${h} · ${l}</small></div>`).join('')}</div>`, 'Les autres modules du Hub ont leur accent (Blink orange #D65932, Le Lab magenta #B510A4) : hors périmètre de cette doc.')}
+    ${section('Rôles sémantiques', `<div class="tablewrap"><table class="roles"><thead><tr><th></th><th>Token</th><th>Alias</th><th>Usage</th></tr></thead><tbody>${roles.map(([t,a,u])=>`<tr><td><span class="dot" style="background:var(${t.split(' ')[0]})"></span></td><td><code>${t}</code></td><td class="muted">→ ${a}</td><td>${u}</td></tr>`).join('')}</tbody></table></div>`)}
+    ${section('Variables CSS et règles', `<div class="demo" data-key="tokens"><div class="demo-code" style="border-top:0"><div class="demo-tabs"><button type="button" data-lang="css" class="is-on">CSS</button><span class="demo-file">tokens.css</span></div><div class="codewrap"><button class="copy-btn copy" type="button">Copier</button><pre><code id="tokensCode"></code></pre></div></div><div class="demo-foot">${rulesRow('tokens')}</div></div>`)}
+    `
+  };
+};
+
+PAGES.typographie = () => {
+  const rows = [
+    ['Titre de page','Centra No2 Bold · 25 / 30','font-size:25px;line-height:30px;font-weight:700','Plans d’achat'],
+    ['Titre de carte','Centra No2 Bold · 16 / 24','font-size:16px;line-height:24px;font-weight:700','Comparaison des offres'],
+    ['Libellé','Centra No2 Semibold · 14 / 20','font-size:14px;line-height:20px;font-weight:600','Raison sociale *'],
+    ['Bouton','Centra No2 Medium · 14','font-size:14px;line-height:20px;font-weight:500','Nouvelle référence'],
+    ['Corps','Centra No2 Book · 13 / 19.5','font-size:13px;line-height:19.5px;max-width:66ch','Entre 150 et 300 cafés disponibles toute l’année, du volume au microlot, avec une traçabilité réelle et totale.'],
+    ['Aide','Centra No2 Book · 12 / 16','font-size:12px;line-height:16px;color:var(--color-text-muted)','Visible uniquement par l’équipe sourcing.'],
+    ['Micro','Centra No2 Book → Bold · 10','font-size:10px;line-height:14px;font-weight:500;color:var(--color-grey-700)','NOM · TYPE · STATUT · OFFRES']
+  ];
+  return {
+    eyebrow:'Fondations', title:'Typographie',
+    lede:'Une seule famille, Centra No2, de 10 à 25 px. Pas de police de titre : la hiérarchie se fait par la graisse et le gris.',
+    body:`
+    ${section('Échelle', demo('typographie', `
+    <div class="type-scale">
+      ${rows.map(([n,s,st,t])=>`<div class="type-row"><div class="meta"><b>${n}</b><small>${s}</small></div><div class="spec" style="${st}">${t}</div></div>`).join('\n      ')}
+    </div>`, {block:true}), 'Oswald et Open Sans sont chargées par l’application mais n’apparaissent dans aucun style calculé.')}
+    `
+  };
+};
+
+PAGES.fonts = () => ({
+  eyebrow:'Fondations', title:'Fonts',
+  lede:'Centra No2 en 400, 500, 600, 700 et 800. Cette page l’utilise si elle est installée sur votre poste ; sinon elle bascule sur Outfit.',
+  body:`
+  ${section('Déclaration', demo('fonts', `
+    <pre style="margin:0;font:12.5px/1.55 var(--font-mono);white-space:pre-wrap">--font-sans: "Centra No2", "CentraNo2", "Outfit", system-ui, sans-serif;</pre>`, {block:true}), 'Fichiers sous licence Colophon, à fournir par Belco.')}
+  `
+});
+
+PAGES.matieres = () => ({
+  eyebrow:'Fondations', title:'Matières',
+  lede:'Surfaces blanches posées sur le gris de page, filets très légers, ombres à 5 % d’opacité. Classées comme dans Geist : surfaces, puis flottants.',
+  body:`
+  ${section('Surfaces', demo('matieres', `
+    <div class="preset-grid">
+      <div class="preset"><div class="box m-page-card">Carte de page, KPI, formulaire</div><b>.m-page-card</b><small>Blanc · rayon 13 · ombre sm</small></div>
+      <div class="preset"><div class="box m-row" style="border:1px solid var(--color-border-light)">Ligne de liste ou de tableau</div><b>.m-row</b><small>Blanc · filet grey-100 en bas</small></div>
+      <div class="preset"><div class="box m-field">Champ de formulaire</div><b>.m-field</b><small>Blanc · filet · rayon 7.8</small></div>
+      <div class="preset"><div class="box m-control">Bouton, select, recherche</div><b>.m-control</b><small>Blanc · filet · rayon 10.4</small></div>
+      <div class="preset"><div class="box m-tile">Tuile active, bouton doux</div><b>.m-tile</b><small>Gris-100 · rayon 10.4</small></div>
+    </div>`, {block:true}))}
+  ${section('Flottants', demo('matieres', `
+    <div class="preset-grid">
+      <div class="preset"><div class="box m-menu">Menu déroulant</div><b>.m-menu</b><small>Blanc · filet · rayon 10.4 · ombre md</small></div>
+      <div class="preset"><div class="box m-drawer" style="border-radius:0">Panneau Filtres</div><b>.m-drawer</b><small>Blanc · ombre lg · voile 48 %</small></div>
+      <div class="preset"><div class="box" style="border:1px dashed var(--color-border);border-radius:var(--radius-lg);color:var(--color-text-muted)"><span class="soon">Soon</span></div><b>.m-modal</b><small>Non relevé dans Orica</small></div>
+    </div>`, {block:true}))}
+  ${section('Rayons et ombres', demo('matieres', `
+    <div class="preset-grid">
+      ${[['xs','2.6'],['sm','5.2'],['md','7.8'],['lg','10.4'],['xl','13']].map(([k,v])=>`<div class="preset"><div class="box" style="background:var(--color-surface);border-radius:var(--radius-${k})"></div><b>radius-${k}</b><small>${v} px</small></div>`).join('')}
+      <div class="preset"><div class="box" style="background:var(--color-white);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm)"></div><b>shadow-sm</b><small>0 2px 4px · 5 %</small></div>
+      <div class="preset"><div class="box" style="background:var(--color-white);border-radius:var(--radius-lg);box-shadow:var(--shadow-md)"></div><b>shadow-md</b><small>0 4px 12px · 5 %</small></div>
+      <div class="preset"><div class="box" style="background:var(--color-white);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg)"></div><b>shadow-lg</b><small>0 32px 64px + 0 -16px 32px · 5 %</small></div>
+    </div>`, {block:true, grey:true}))}
+  ${section('Espacements', demo('matieres', `
+    <div class="space-row">${[1,2,3,4,5,6,8,10,12,16].map(n=>`<figure><i style="width:var(--spacing-${n});height:var(--spacing-${n})"></i><figcaption>spacing-${n}</figcaption></figure>`).join('')}</div>`, {block:true}), 'Grille de 4 px.')}
+  `
+});
+
+PAGES.terminal = () => ({ eyebrow:'Fondations', title:'Terminal', soon:true, lede:'Entrée conservée pour garder la structure de Geist (thèmes de terminal). Sans objet pour Orica.', body:`<div class="empty-page"><span class="display">Soon</span><p>Rien à relever : Orica n’a pas d’outil en ligne de commande.</p></div>` });
+
+/* ---- écrans ---- */
+const SCREENS = {
+  'ecran-references': {title:'Références', pattern:'Liste de lignes riches', action:'Nouvelle référence', tabs:['Références','Offres & Farm samples'], filters:['Achat','Origines','Traçabilité','Disponibilité','Crop'], extra:'Case « Inclure en sommeil », bouton « Filtres » ouvrant le panneau latéral.', body:'liste',
+    desc:'L’écran d’entrée d’Orica. En-tête avec le titre, le segment Café / Cacao et le primaire ; deux onglets ; une barre de filtres ; puis une liste de lignes riches (drapeau, code, nom, trois statistiques, badges) qui se charge en continu.'},
+  'ecran-fournisseurs': {title:'Fournisseurs', pattern:'Tableau', action:'Nouveau fournisseur', tabs:['Fournisseurs et prospects','Fournisseurs 694','Prospects 14'], filters:['Roles','Pays','Types juridiques','Filiales de sourcing','Tags','Certifications'], extra:'Le primaire est un menu déroulant (Nouveau fournisseur / Nouveau prospect) ; « Parcours prospect » et « Gérer les tags » en boutons fantômes.', body:'table',
+    desc:'Tableau à neuf colonnes : nom avec drapeau, type en chip, statut en pilule, contacts, compteurs d’offres et de contrats, actions. Onglets avec compteurs.'},
+  'ecran-plans-achat': {title:'Plans d’achat', pattern:'KPI + accordéon', action:null, tabs:['Plan détaillé','Echantillons','Objectifs'], filters:['Origine','Statuts'], extra:'Segmented « Par origines / Par UB / Kanban » dans l’en-tête ; « Tout fermer / Tout ouvrir » au-dessus de l’accordéon ; une progression globale en haut à droite.', body:'kpi',
+    desc:'Quatre cartes KPI (volumes, nombre d’offres, qualité, FOB) avec barres de progression, puis les origines en accordéon : chaque groupe porte ses volumes et ses lignes avec un bouton « Nouvelle offre ».'},
+  'ecran-direct-trade': {title:'Direct Trade', pattern:'Tableau', action:null, tabs:[], filters:['Origines','Statut'], extra:'Statuts en chips pastel : jaune (en cours), vert (devis validé), gris (clos).', body:'table',
+    desc:'Tableau à huit colonnes : numéro, origine, client, mois d’embarquement, devis validé le, références, fournisseur, statut.'},
+  'ecran-contrats': {title:'Contrats d’achat', pattern:'Tableau', action:'Nouveau contrat', tabs:['Contrats actifs 1','Brouillons 9','Contrats regroupés','Contrats archivés'], filters:['Origine','Fournisseur','Période','Crop','POL','POD','Statut','Type','Incoterm'], extra:'Case « Inclure terminés / annulés » ; pagination « 1 / 1 » sous le tableau.', body:'table',
+    desc:'Le tableau le plus large : créé le, BTB, désignation, embarquement, POL / POD, produits · volume · montant, statut. Les filtres occupent toute la largeur sur deux lignes.'},
+  'ecran-geographie': {title:'Géographie & Localisations', pattern:'Tableau ou état vide', action:'Nouveau lieu', tabs:['Régions','Terroirs','Villages','Fermes'], filters:['Univers'], extra:'Un select « Origine » au-dessus des onglets ; les onglets « Origines » et « Filtres » à droite ; état vide illustré quand aucune région ne correspond.', body:'empty',
+    desc:'Même tableau que les autres écrans, avec un état vide dédié : picto rond vert pâle et message « Aucune région trouvée ».'},
+  'ecran-specifications': {title:'Spécifications', pattern:'Tableau avec actions', action:'Ajouter nouvelle entrée', tabs:['Certifications','Mesures impact','Grades','Process','Type de séchage','Séchages','Variétés','Unités de besoin','Projets','Leviers des projets','Organismes certificateurs','Voyage sourcing'], filters:['Univers'], extra:'« Importer Excel » en secondaire à côté du primaire ; colonnes d’actions avec trois boutons icônes colorés.', body:'table',
+    desc:'Douze onglets de référentiels, chacun un tableau : nom, code, date, coches, et une colonne d’actions (modifier, archiver, valider).'},
+  'ecran-glossaire': {title:'Glossaire', pattern:'Tableau multilingue', action:'Ajouter nouvelle entrée', tabs:[], filters:[], extra:'« Importer Excel » en secondaire ; colonnes Français, Anglais, Espagnol, Définition, Mis à jour.', body:'table',
+    desc:'Tableau simple à cinq colonnes avec la définition en texte long, tronquée sur deux lignes.'},
+  'ecran-formulaire': {title:'Formulaire de création', pattern:'Page avec retour', action:null, tabs:[], filters:[], extra:'Pas de modale : la création est une page à part, avec flèche de retour avant le titre.', body:'form',
+    desc:'Relevé sur « Nouveau fournisseur » : carte blanche, champs empilés avec libellés en gras et astérisque, chips de choix pour l’univers et le type juridique, boutons doux « Ajouter … » pour les sous-objets, zone de commentaire.'}
+};
+for (const id in SCREENS){
+  PAGES[id] = () => {
+    const s = SCREENS[id];
+    let body = '';
+    if (s.body==='liste') body = `
+    <div class="o-list">
+      <div class="o-ref"><span class="o-avatar o-avatar--flag">🇧🇴</span><div class="main"><span class="code">RÉF-00000</span><span class="name">Origine · Région · Producteur · Variété · Process · Bio</span><div class="stats"><span class="stat"><small>Qté actuel</small><b>140</b></span><span class="stat"><small>Qté retenu</small><b>21</b></span><span class="stat"><small>Position stock</small><b>3</b></span></div></div><div class="side"><span class="o-tag">Label process</span><span class="o-tag o-tag--dark">Sourcing Exclusive</span><span class="o-tag o-tag--gold">Tasted</span><span class="o-tag o-tag--sand">69 kg</span></div></div>
+      <div class="o-ref"><span class="o-avatar o-avatar--flag">🇧🇷</span><div class="main"><span class="code">RÉF-00001</span><span class="name">Origine · Région · Producteur · Variété · Process</span><div class="stats"><span class="stat"><small>Qté actuel</small><b>0</b></span><span class="stat"><small>Qté retenu</small><b>0</b></span><span class="stat"><small>Position stock</small><b>—</b></span></div></div><div class="side"><span class="o-tag o-tag--clay">Terroir tasted</span><span class="o-tag o-tag--sand">60 kg</span></div></div>
+      <div class="o-ref"><span class="o-avatar o-avatar--flag">🇪🇹</span><div class="main"><span class="code">RÉF-00002</span><span class="name">Origine · Région · Station · Variété · Process</span><div class="stats"><span class="stat"><small>Qté actuel</small><b>12</b></span><span class="stat"><small>Qté retenu</small><b>4</b></span><span class="stat"><small>Position stock</small><b>1</b></span></div></div><div class="side"><span class="o-tag o-tag--brown">Estate tasted</span><span class="o-tag o-tag--sand">60 kg</span></div></div>
+    </div>`;
+    if (s.body==='table') body = TABLE;
+    if (s.body==='kpi') body = `
+    <div class="o-kpis">
+      <div class="o-kpi"><div class="head"><i></i>Volume offres</div><div class="value">531 <small>t.</small></div><span class="o-progress"><i style="width:62%"></i></span><div class="sub"><span>Réalisé 62 %</span><span>Objectif 860 t.</span></div></div>
+      <div class="o-kpi"><div class="head"><i></i>Offres</div><div class="value">395</div><span class="o-progress o-progress--info"><i style="width:48%"></i></span><div class="sub"><span>Validées 190</span><span>En cours 205</span></div></div>
+      <div class="o-kpi"><div class="head"><i></i>Qualité</div><div class="value">25 <small>%</small></div><span class="o-progress o-progress--warning"><i style="width:25%"></i></span><div class="sub"><span>Dégustés</span><span>Objectif 60 %</span></div></div>
+      <div class="o-kpi"><div class="head"><i></i>FOB</div><div class="value">35,5 <small>%</small></div><span class="o-progress"><i style="width:36%"></i></span><div class="sub"><span>Contractualisé</span><span>Objectif 100 %</span></div></div>
+    </div>
+    <div class="o-acc-tools"><button type="button">Tout fermer</button><button type="button">Tout ouvrir</button></div>
+    <div class="o-acc">
+      <details open><summary>${chevR} Origine A<span class="meta"><span>83 t. / 58 t.</span><span class="o-progress o-progress--sm" style="width:90px"><i style="width:70%"></i></span></span></summary>
+        <div class="row"><span>Label lavé</span><span class="num">64 t.</span><span class="num">38 t.</span><button class="o-btn o-btn--soft" type="button">Nouvelle offre</button></div>
+        <div class="row"><span>Microlot</span><span class="num">0,5 t.</span><span class="num">2 t.</span><button class="o-btn o-btn--soft" type="button">Nouvelle offre</button></div>
+      </details>
+      <details><summary>${chevR} Origine B<span class="meta"><span>72 t. / 40 t.</span><span class="o-progress o-progress--sm" style="width:90px"><i style="width:55%"></i></span></span></summary><div class="row"><span>Label process</span><span class="num">10 t.</span><span class="num">12 t.</span><button class="o-btn o-btn--soft" type="button">Nouvelle offre</button></div></details>
+    </div>`;
+    if (s.body==='empty') body = `<div class="o-empty"><i></i><span>Aucune région trouvée</span></div>`;
+    if (s.body==='form') body = `
+    <div class="o-form-card">
+      <div class="o-field"><label>Raison sociale<span class="req">*</span></label><input class="o-input" type="text" placeholder=""></div>
+      <div class="o-field"><label>Univers<span class="req">*</span></label><div class="o-choices"><label class="o-choice is-on"><i></i>Café</label><label class="o-choice"><i></i>Cacao</label></div></div>
+      <div class="o-field"><label>Partenaire depuis</label><button class="o-select" type="button" style="width:100%"><span class="muted">Choisir une année</span> ${chevDown}</button></div>
+      <div class="o-field"><label>Adresse principale<span class="req">*</span></label><button class="o-btn o-btn--soft" type="button" style="align-self:flex-start">${plus} Ajouter une adresse</button></div>
+      <div class="o-field"><label>Contact<span class="req">*</span></label><button class="o-btn o-btn--soft" type="button" style="align-self:flex-start">${plus} Ajouter un contact</button></div>
+      <div class="o-field"><label>Types juridiques</label><div class="o-choices"><label class="o-choice"><i></i>Privé</label><label class="o-choice"><i></i>Public</label><label class="o-choice"><i></i>Association</label><label class="o-choice is-on"><i></i>Coopérative</label><label class="o-choice"><i></i>Institution</label><label class="o-choice"><i></i>ONG</label></div></div>
+      <div class="o-field"><label>Commentaire</label><textarea class="o-input o-textarea" placeholder="Remarques et informations utiles"></textarea></div>
+      <div style="display:flex;justify-content:flex-end;gap:8px"><button class="o-btn o-btn--secondary" type="button">Annuler</button><button class="o-btn" type="button">Enregistrer</button></div>
+    </div>`;
+    const filterbar = s.filters.length ? `
+    <div class="o-filterbar"><span class="o-count">—</span><label class="o-search">${searchIco}<input type="search" placeholder="Rechercher…"></label>${s.filters.map(f=>`<button class="o-select" type="button">${f} ${chevDown}</button>`).join('')}<button class="o-btn o-btn--soft push" type="button">Filtres</button></div>` : '';
+    const tabs = s.tabs.length ? `
+    <ul class="o-tabs" role="tablist">${s.tabs.map((t,i)=>{const m=t.match(/^(.*?)\s(\d+)$/);return `<li><button class="o-tab" role="tab" aria-selected="${i===0}" type="button">${m?m[1]+' <span class="o-count">'+m[2]+'</span>':t}</button></li>`}).join('')}</ul>` : '';
+    return {
+      eyebrow:'Écrans Orica', title:s.title,
+      lede:s.desc,
+      body:`
+      ${section('Pattern de page', `<dl class="facts"><dt>Pattern</dt><dd>${s.pattern}</dd><dt>Action principale</dt><dd>${s.action||'Aucune'}</dd><dt>Onglets</dt><dd>${s.tabs.length?s.tabs.join(' · '):'Aucun'}</dd><dt>Filtres</dt><dd>${s.filters.length?s.filters.join(' · '):'Aucun'}</dd><dt>Particularités</dt><dd>${s.extra}</dd></dl>`)}
+      ${section('Composition', demo('shell', `
+    <div class="screen-frame">${PAGEHEAD(s.title, s.action, s.body==='form')}
+      <div style="display:flex;flex-direction:column;gap:12px;padding:16px 20px">${tabs}${filterbar}${body}</div>
+    </div>`, {block:true, grey:true}), 'Contenu neutre : la mise en page et les composants sont ceux de l’écran, pas ses données.')}
+      `
+    };
+  };
+}
+
+/* ---- composants ---- */
+PAGES.composants = () => ({
+  eyebrow:'Composants', title:'Tous les composants',
+  lede:'Les briques d’Orica par ordre alphabétique. Les entrées Soon attendent un écran du Hub qui les montre.',
+  body:`<div class="comp-grid">${NAV[2].items.filter(i=>i.id!=='composants').map(i=>`<a href="#${i.id}" class="${i.soon?'is-soon':''}">${i.label}${i.soon?'<span class="soon">Soon</span>':chev}</a>`).join('')}</div>`
+});
+
+PAGES.bouton = () => ({
+  eyebrow:'Composants', title:'Bouton',
+  lede:'Un primaire vert par en-tête, des secondaires gris, des boutons doux « Ajouter » dans les formulaires, du texte seul pour les actions discrètes.',
+  body:`
+  ${seen(['En-têtes de liste','Formulaire fournisseur','Spécifications','Menu utilisateur'])}
+  ${section('Variantes', demo('bouton', `
+    <button class="o-btn" type="button">${plus} Nouvelle référence</button>
+    <button class="o-btn o-btn--secondary" type="button">Importer Excel</button>
+    <button class="o-btn o-btn--soft" type="button">${plus} Ajouter une adresse</button>
+    <button class="o-btn o-btn--outline" type="button">Filtres</button>
+    <button class="o-btn o-btn--ghost" type="button">Parcours prospect</button>
+    <button class="o-btn o-btn--danger-text" type="button">Se déconnecter</button>`))}
+  ${section('Tailles et états', demo('bouton', `
+    <button class="o-btn o-btn--lg" type="button">${plus} Nouveau fournisseur</button>
+    <button class="o-btn" type="button">Enregistrer</button>
+    <button class="o-btn" type="button" disabled>Enregistrer</button>
+    <button class="o-btn o-btn--secondary o-btn--icon" type="button" aria-label="Plus">${chevDown}</button>
+    <a class="o-link" href="#bouton">Gérer les tags</a>`), 'Large (39 px) dans l’en-tête de page, standard (33 px) partout ailleurs.')}
+  ${section('Aide flottante', demo('bouton', `
+    <span class="o-help" style="position:static">? Aide</span>`), 'Présent en bas à droite de chaque écran du Hub.')}
+  `
+});
+
+PAGES.badge = () => ({
+  eyebrow:'Composants', title:'Badge & statut',
+  lede:'Deux familles : la pilule pleine pour un état binaire, la chip pastel pour une étape ou une qualité.',
+  body:`
+  ${seen(['Références','Fournisseurs','Contrats d’achat','Direct Trade'])}
+  ${section('Statuts', demo('badge', `
+    <span class="o-status">Actif</span>
+    <span class="o-status o-status--off">Inactif</span>
+    <span class="o-count">694</span>`))}
+  ${section('Chips d’étape', demo('badge', `
+    <span class="o-tag">Brouillon</span>
+    <span class="o-tag o-tag--warning">En cours</span>
+    <span class="o-tag o-tag--info">Soumise</span>
+    <span class="o-tag o-tag--success">Devis validé</span>
+    <span class="o-tag o-tag--success-strong">Validée</span>
+    <span class="o-tag o-tag--faint">Clos</span>
+    <span class="o-tag o-tag--dark">Sourcing Exclusive</span>`))}
+  ${section('Badges qualité', demo('badge', `
+    <span class="o-tag o-tag--sand">69 kg</span>
+    <span class="o-tag o-tag--clay">Terroir tasted</span>
+    <span class="o-tag o-tag--gold">Label tasted</span>
+    <span class="o-tag o-tag--brown">Estate tasted</span>`), 'Quatre tons chauds relevés sur les lignes de références.')}
+  `
+});
+
+PAGES['chips-de-choix'] = () => ({
+  eyebrow:'Composants', title:'Chips de choix',
+  lede:'Les options d’un champ de formulaire, affichées comme des tuiles avec icône. La sélection passe en vert pâle.',
+  body:`
+  ${seen(['Nouveau fournisseur : Univers, Types juridiques'])}
+  ${section('Choix unique', demo('choix', `
+    <div class="o-choices"><label class="o-choice is-on"><i></i>Café</label><label class="o-choice"><i></i>Cacao</label></div>`))}
+  ${section('Choix multiples', demo('choix', `
+    <div class="o-choices"><label class="o-choice"><i></i>Privé</label><label class="o-choice"><i></i>Public</label><label class="o-choice"><i></i>Association</label><label class="o-choice is-on"><i></i>Coopérative</label><label class="o-choice"><i></i>Institution</label><label class="o-choice"><i></i>ONG</label></div>`), 'Les icônes de chaque choix sont celles du Hub, à récupérer : un cercle en tient la place.')}
+  `
+});
+
+PAGES['champ-de-recherche'] = () => ({
+  eyebrow:'Composants', title:'Champ de recherche',
+  lede:'En tête de chaque barre de filtres, juste après le compteur de résultats.',
+  body:`
+  ${seen(['Toutes les listes'])}
+  ${section('Repos et focus', demo('recherche', `
+    <label class="o-search" style="width:320px;max-width:100%">${searchIco}<input type="search" placeholder="Rechercher une référence…"></label>
+    <label class="o-search" style="width:320px;max-width:100%;border-color:var(--color-border)">${searchIco}<input type="search" value="Caranavi"></label>`, {stack:true}))}
+  `
+});
+
+PAGES['champ-de-saisie'] = () => ({
+  eyebrow:'Composants', title:'Champ de saisie',
+  lede:'Libellé en gras avec astérisque rouge si requis, champ bas de 33 px au filet très léger, aide en dessous.',
+  body:`
+  ${seen(['Nouveau fournisseur'])}
+  ${section('Texte et zone de texte', demo('saisie', `
+    <div class="o-field"><label for="o-rs">Raison sociale<span class="req">*</span></label><input class="o-input" id="o-rs" type="text" placeholder="Nom légal du fournisseur"><span class="hint">Tel qu’il apparaît sur les contrats.</span></div>
+    <div class="o-field"><label for="o-com">Commentaire</label><textarea class="o-input o-textarea" id="o-com" placeholder="Remarques et informations utiles"></textarea></div>`, {stack:true}))}
+  ${section('Erreur', `<div class="empty-page" style="min-height:140px"><span class="soon">Soon</span><p>Aucun état d’erreur relevé dans Orica.</p></div>`)}
+  `
+});
+
+PAGES.select = () => ({
+  eyebrow:'Composants', title:'Select & multi-select',
+  lede:'La pilule blanche à chevron de la barre de filtres, et le menu qu’elle ouvre : cases à cocher avec compteurs, ou radios.',
+  body:`
+  ${seen(['Toutes les listes','Panneau Filtres'])}
+  ${section('Pilules', demo('select', `
+    <button class="o-select" type="button">Origines ${chevDown}</button>
+    <button class="o-select is-open" type="button">Statuts ${chevDown}</button>
+    <button class="o-select" type="button"><span class="muted">Crop</span> ${chevDown}</button>`))}
+  ${section('Menu à cases', demo('select', `
+    <div class="o-menu">
+      <label><input class="o-check" type="checkbox" checked> Bolivie <span class="n">6</span></label>
+      <label><input class="o-check" type="checkbox"> Brésil <span class="n">86</span></label>
+      <label><input class="o-check" type="checkbox"> Colombie <span class="n">49</span></label>
+      <label><input class="o-check" type="checkbox"> Éthiopie <span class="n">41</span></label>
+    </div>`))}
+  ${section('Radios', demo('select', `
+    <label class="o-checkrow"><input class="o-radio" type="radio" name="o-r" checked> Oui</label>
+    <label class="o-checkrow"><input class="o-radio" type="radio" name="o-r"> Non</label>`))}
+  `
+});
+
+PAGES['menu-deroulant'] = () => ({
+  eyebrow:'Composants', title:'Menu déroulant',
+  lede:'Deux usages relevés : le primaire qui propose plusieurs créations, et le menu utilisateur (langue, déconnexion).',
+  body:`
+  ${seen(['Fournisseurs (Nouveau fournisseur ▾)','Avatar utilisateur'])}
+  ${section('Menu d’actions', demo('select', `
+    <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start"><button class="o-btn" type="button">${plus} Nouveau fournisseur ${chevDown}</button><div class="o-menu" style="width:200px"><button type="button">Nouveau fournisseur</button><button type="button">Nouveau prospect</button></div></div>`))}
+  ${section('Menu utilisateur', demo('select', `
+    <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start"><span class="o-avatar o-avatar--user">JM</span><div class="o-menu" style="width:200px"><button type="button">🇫🇷 Français</button><button type="button">🇬🇧 English</button><button type="button">🇪🇸 Español</button><button type="button" class="danger">Se déconnecter</button></div></div>`))}
+  `
+});
+
+PAGES['barre-de-filtres'] = () => ({
+  eyebrow:'Composants', title:'Barre de filtres',
+  lede:'Compteur, recherche, selects, case, puis « Filtres » : le même ordre sur tous les écrans de liste.',
+  body:`
+  ${seen(['Références','Fournisseurs','Contrats d’achat','Direct Trade'])}
+  ${section('Barre', demo('filtres', FILTERBAR, {block:true}))}
+  `
+});
+
+PAGES.drawer = () => ({
+  eyebrow:'Composants', title:'Drawer de filtres',
+  lede:'Panneau de 364 px qui glisse depuis la droite sur un voile à 48 %, avec les filtres rares groupés.',
+  body:`
+  ${seen(['Références, bouton Filtres'])}
+  ${section('Panneau', demo('filtres', `
+    <div class="o-drawer">
+      <header>Filtres <button class="o-btn o-btn--ghost o-btn--icon" type="button" aria-label="Fermer">✕</button></header>
+      <div class="group"><b>Type de sourcing</b><label class="o-checkrow"><input class="o-check" type="checkbox"> Direct Trade</label><label class="o-checkrow"><input class="o-check" type="checkbox" checked> Cross Trade</label><label class="o-checkrow"><input class="o-check" type="checkbox"> Sourcing Exclusive</label><label class="o-checkrow"><input class="o-check" type="checkbox"> Alpha</label></div>
+      <div class="group"><b>Produits visibles sur Belco.fr</b><label class="o-checkrow"><input class="o-radio" type="radio" name="o-v" checked> Oui</label><label class="o-checkrow"><input class="o-radio" type="radio" name="o-v"> Non</label></div>
+      <div class="group"><b>Due diligence</b><label class="o-checkrow"><input class="o-check" type="checkbox"> À soumettre</label><label class="o-checkrow"><input class="o-check" type="checkbox"> Soumise</label><label class="o-checkrow"><input class="o-check" type="checkbox"> Validée</label><label class="o-checkrow"><input class="o-check" type="checkbox"> Rejetée</label></div>
+      <footer><button class="o-btn o-btn--secondary" type="button">Réinitialiser</button><button class="o-btn" type="button">Appliquer</button></footer>
+    </div>`, {grey:true}), 'Les boutons de pied sont déduits de l’usage ; seuls les groupes et leurs valeurs ont été relevés.')}
+  `
+});
+
+PAGES.tabs = () => ({
+  eyebrow:'Composants', title:'Tabs',
+  lede:'Onglets soulignés en vert, avec un compteur après le libellé quand l’onglet est un sous-ensemble.',
+  body:`
+  ${seen(['Fournisseurs','Contrats d’achat','Plans d’achat','Spécifications'])}
+  ${section('Onglets', demo('tabs', `
+    <ul class="o-tabs" role="tablist"><li><button class="o-tab" role="tab" aria-selected="true" type="button">Fournisseurs et prospects</button></li><li><button class="o-tab" role="tab" aria-selected="false" type="button">Fournisseurs <span class="o-count">694</span></button></li><li><button class="o-tab" role="tab" aria-selected="false" type="button">Prospects <span class="o-count">14</span></button></li></ul>`, {block:true}))}
+  `
+});
+
+PAGES.segmented = () => ({
+  eyebrow:'Composants', title:'Segmented control',
+  lede:'Bascule entre plusieurs vues des mêmes données ; le segment actif est noir.',
+  body:`
+  ${seen(['En-tête (Café / Cacao)','Plans d’achat (Par origines / Par UB / Kanban)'])}
+  ${section('Vues', demo('tabs', `
+    <span class="o-seg"><button class="is-on" type="button">Par origines</button><button type="button">Par UB</button><button type="button">Kanban</button></span>
+    <span class="o-seg o-seg--univers"><button class="is-on" type="button">Café</button><button type="button">Cacao</button></span>`))}
+  `
+});
+
+PAGES.tableau = () => ({
+  eyebrow:'Composants', title:'Tableau',
+  lede:'En-tête gris en 10 px, lignes de 46 px au filet léger, survol gris de page, actions en boutons icônes colorés à droite.',
+  body:`
+  ${seen(['Fournisseurs','Contrats d’achat','Direct Trade','Spécifications','Glossaire'])}
+  ${section('Tableau avec actions et pagination', demo('tableau', TABLE, {stack:true}))}
+  `
+});
+
+PAGES['ligne-de-reference'] = () => ({
+  eyebrow:'Composants', title:'Ligne de référence',
+  lede:'La ligne riche de l’écran Références : drapeau, code, nom, trois statistiques, badges à droite.',
+  body:`
+  ${seen(['Références'])}
+  ${section('Lignes', demo('ligne', `
+    <div class="o-list">
+      <div class="o-ref"><span class="o-avatar o-avatar--flag">🇧🇴</span><div class="main"><span class="code">RÉF-00000</span><span class="name">Origine · Région · Producteur · Variété · Process · Bio</span><div class="stats"><span class="stat"><small>Qté actuel</small><b>140</b></span><span class="stat"><small>Qté retenu</small><b>21</b></span><span class="stat"><small>Position stock</small><b>3</b></span></div></div><div class="side"><span class="o-tag">Label process</span><span class="o-tag o-tag--dark">Sourcing Exclusive</span><span class="o-tag o-tag--sand">69 kg</span></div></div>
+      <div class="o-ref"><span class="o-avatar o-avatar--flag">🇧🇷</span><div class="main"><span class="code">RÉF-00001</span><span class="name">Origine · Région · Producteur · Variété · Process</span><div class="stats"><span class="stat"><small>Qté actuel</small><b>0</b></span><span class="stat"><small>Qté retenu</small><b>0</b></span><span class="stat"><small>Position stock</small><b>—</b></span></div></div><div class="side"><span class="o-tag o-tag--clay">Terroir tasted</span><span class="o-tag o-tag--sand">60 kg</span></div></div>
+    </div>`, {block:true}))}
+  `
+});
+
+PAGES.avatar = () => ({
+  eyebrow:'Composants', title:'Avatar',
+  lede:'Initiales dans un rond, vert pour l’utilisateur connecté ; drapeau de l’origine dans les listes.',
+  body:`
+  ${seen(['Menu utilisateur','Références','Fournisseurs'])}
+  ${section('Variantes', demo('avatar', `
+    <span class="o-avatar o-avatar--user">JM</span>
+    <span class="o-avatar">AB</span>
+    <span class="o-avatar o-avatar--flag">🇨🇴</span>
+    <span class="o-avatar o-avatar--sm o-avatar--flag">🇪🇹</span>`))}
+  `
+});
+
+PAGES['carte-kpi'] = () => ({
+  eyebrow:'Composants', title:'Carte KPI',
+  lede:'Icône et libellé, grande valeur, barre de progression, deux sous-valeurs. Quatre en tête de Plans d’achat.',
+  body:`
+  ${seen(['Plans d’achat'])}
+  ${section('Cartes', demo('kpi', `
+    <div class="o-kpis">
+      <div class="o-kpi"><div class="head"><i></i>Volume offres</div><div class="value">531 <small>t.</small></div><span class="o-progress"><i style="width:62%"></i></span><div class="sub"><span>Réalisé 62 %</span><span>Objectif 860 t.</span></div></div>
+      <div class="o-kpi"><div class="head"><i></i>Offres</div><div class="value">395</div><span class="o-progress o-progress--info"><i style="width:48%"></i></span><div class="sub"><span>Validées 190</span><span>En cours 205</span></div></div>
+      <div class="o-kpi"><div class="head"><i></i>Qualité</div><div class="value">25 <small>%</small></div><span class="o-progress o-progress--warning"><i style="width:25%"></i></span><div class="sub"><span>Dégustés</span><span>Objectif 60 %</span></div></div>
+    </div>`, {block:true, grey:true}), 'Valeurs d’exemple.')}
+  `
+});
+
+PAGES.progression = () => ({
+  eyebrow:'Composants', title:'Progression',
+  lede:'Barre de 6 px (4 px dans les lignes), fond gris, remplissage vert, bleu ou or.',
+  body:`
+  ${seen(['Plans d’achat'])}
+  ${section('Barres', demo('kpi', `
+    <div style="display:flex;flex-direction:column;gap:12px;width:320px;max-width:100%"><span class="o-progress"><i style="width:62%"></i></span><span class="o-progress o-progress--info"><i style="width:48%"></i></span><span class="o-progress o-progress--warning"><i style="width:25%"></i></span><span class="o-progress o-progress--sm"><i style="width:70%"></i></span></div>`))}
+  `
+});
+
+PAGES.accordeon = () => ({
+  eyebrow:'Composants', title:'Accordéon',
+  lede:'Groupes repliables par origine, avec leurs volumes dans l’en-tête et des lignes enfants alignées en grille.',
+  body:`
+  ${seen(['Plans d’achat'])}
+  ${section('Groupes', demo('accordeon', `
+    <div class="o-acc-tools"><button type="button">Tout fermer</button><button type="button">Tout ouvrir</button></div>
+    <div class="o-acc">
+      <details open><summary>${chevR} Origine A<span class="meta"><span>83 t. / 58 t.</span><span class="o-progress o-progress--sm" style="width:90px"><i style="width:70%"></i></span></span></summary>
+        <div class="row"><span>Label lavé</span><span class="num">64 t.</span><span class="num">38 t.</span><button class="o-btn o-btn--soft" type="button">Nouvelle offre</button></div>
+        <div class="row"><span>Microlot</span><span class="num">0,5 t.</span><span class="num">2 t.</span><button class="o-btn o-btn--soft" type="button">Nouvelle offre</button></div>
+      </details>
+      <details><summary>${chevR} Origine B<span class="meta"><span>72 t. / 40 t.</span><span class="o-progress o-progress--sm" style="width:90px"><i style="width:55%"></i></span></span></summary><div class="row"><span>Label process</span><span class="num">10 t.</span><span class="num">12 t.</span><button class="o-btn o-btn--soft" type="button">Nouvelle offre</button></div></details>
+    </div>`, {stack:true}))}
+  `
+});
+
+PAGES.pagination = () => ({
+  eyebrow:'Composants', title:'Pagination',
+  lede:'« n / N » et deux flèches rondes, à droite sous le tableau.',
+  body:`
+  ${seen(['Contrats d’achat','Spécifications','Géographie'])}
+  ${section('Pager', demo('pagination', `
+    <span class="o-pager"><button type="button" disabled aria-label="Précédent">${chevL}</button> 1 / 1 <button type="button" disabled aria-label="Suivant">${chevR}</button></span>
+    <span class="o-pager"><button type="button" aria-label="Précédent">${chevL}</button> 3 / 12 <button type="button" aria-label="Suivant">${chevR}</button></span>`))}
+  `
+});
+
+PAGES['etat-vide'] = () => ({
+  eyebrow:'Composants', title:'État vide',
+  lede:'Picto rond vert pâle et message court, dans la carte qui aurait contenu la liste.',
+  body:`
+  ${seen(['Géographie'])}
+  ${section('Vide', demo('vide', `
+    <div class="o-empty"><i></i><span>Aucune région trouvée</span></div>`, {block:true}))}
+  `
+});
+
+PAGES.coquille = () => ({
+  eyebrow:'Composants', title:'Coquille & en-tête',
+  lede:'Bandeau d’environnement, rail d’icônes de 64 px, en-tête de page de 65 px avec le titre, le segment univers et le primaire.',
+  body:`
+  ${seen(['Tous les écrans'])}
+  ${section('Rail et en-tête', demo('shell', `
+    <div class="screen-frame"><div class="o-env">Ceci est un environnement de démo</div><div style="display:flex;min-height:220px"><div class="o-rail"><a href="#coquille"><i></i></a><a href="#coquille" class="is-active"><i></i></a><a href="#coquille"><i></i></a><a href="#coquille"><i></i></a><span class="spacer"></span><span class="o-avatar o-avatar--user o-avatar--sm">JM</span></div><div style="flex:1;min-width:0">${PAGEHEAD('Références','Nouvelle référence')}</div></div></div>`, {block:true, grey:true}))}
+  ${section('Page de création', demo('shell', `
+    <div class="screen-frame">${PAGEHEAD('Nouveau fournisseur', null, true)}</div>`, {block:true, grey:true}), 'Flèche de retour avant le titre, pas de primaire : les actions sont en pied de formulaire.')}
+  `
+});
+
+PAGES.changelog = () => ({
+  eyebrow:'Suivi', title:'Changelog',
+  lede:'Ajouts, modifications et suppressions de composants, de fondations et d’écrans, par version.',
+  body:`${section('Historique', `<div class="changelog">
+    <div><time datetime="2026-11-04">4 novembre 2026</time><div><h3>v0.1</h3><p class="label" style="margin-bottom:6px">Ajouté</p><ul>
+      <li>Fondations : Couleurs (24 teintes, 14 rôles), Typographie (7 styles), Fonts, Matières (surfaces, flottants, rayons, ombres).</li>
+      <li>Écrans Orica (9) : Références, Fournisseurs, Plans d’achat, Direct Trade, Contrats d’achat, Géographie, Spécifications, Glossaire, Formulaire de création.</li>
+      <li>Composants relevés (20) : Accordéon, Avatar, Badge & statut, Barre de filtres, Bouton, Carte KPI, Champ de recherche, Champ de saisie, Chips de choix, Coquille & en-tête, Drawer de filtres, État vide, Ligne de référence, Menu déroulant, Pagination, Progression, Segmented control, Select & multi-select, Tableau, Tabs.</li>
+      <li>Composants en Soon (11) : Breadcrumbs, Carte géographique, Date picker, Kanban, Modal, Skeleton, Stepper, Switch, Toast, Tooltip, Import de fichier.</li>
+    </ul></div></div>
+  </div>`)}`, nopager:true
+});
+
+const RULE_ORDER = ['couleurs','typographie','matieres','shell','bouton','badge','choix','recherche','saisie','select','filtres','tabs','tableau','ligne','avatar','kpi','accordeon','pagination','vide'];
+function agentsMd(){
+  const soon = NAV.flatMap(g=>g.items).filter(i=>i.soon).map(i=>i.label).join(', ');
+  return `# Orica (Belco Hub) — règles pour les IA
+
+Source : hub.belco-sandbox.synako.fr, module Orica, relevé le 4 novembre 2026. Styles et composants uniquement ; aucune donnée métier.
+Fonte : Centra No2, corps 13 px. Primaire vert #127746. Fond gris #F8F9FA, surfaces blanches, ombres à 5 %.
+Tokens CSS : voir tokens.css. Composants : components.css (classes .o-*).
+Non relevés (ne pas les produire sans capture) : ${soon}.
+
+## Sommaire
+${RULE_ORDER.map(k=>`- rules/${k}.md`).join('\n')}
+
+---
+` + RULE_ORDER.map(k=>AI_RULES[k]).join('\n\n---\n\n') + '\n';
+}
+PAGES.mcp = () => ({
+  eyebrow:'Outils', title:'MCP',
+  lede:'Chaque composant a son fichier de règles ; tout est assemblé ici en un AGENTS.md à copier dans un projet, un prompt ou un futur serveur MCP.',
+  body:`
+  ${section('Structure des fichiers', `<pre class="filetree">orica-design-system/
+├── AGENTS.md
+├── tokens.css
+├── components.css
+└── rules/
+${RULE_ORDER.map((k,i)=>`    ${i===RULE_ORDER.length-1?'└──':'├──'} ${k}.md`).join('\n')}</pre>
+  <div class="bundle-actions"><button class="o-btn" type="button" id="copyAgents">Copier AGENTS.md</button><button class="o-btn o-btn--secondary" type="button" id="copyTokens">Copier tokens.css</button><button class="o-btn o-btn--secondary" type="button" id="copyCss">Copier components.css</button></div>`)}
+  ${section('AGENTS.md', `<div class="demo is-open" data-key="agents"><div class="demo-code" style="border-top:0"><div class="demo-tabs"><span class="demo-file">AGENTS.md · ${Math.round(agentsMd().length/1024)} Ko</span></div><div class="codewrap"><button class="copy-btn copy" type="button">Copier</button><pre><code>${esc(agentsMd())}</code></pre></div></div></div>`)}
+  ${section('Serveur MCP', `<div class="empty-page" style="min-height:160px"><span class="soon">Soon</span><p>Même principe que pour la doc Belco : un serveur servira ces fichiers quand les composants seront stabilisés.</p></div>`)}
+  `, nopager:true
+});
+
+/* ---------- render ---------- */
+const $ = s => document.querySelector(s);
+const navEl = $('#nav'), pageEl = $('#page'), q = $('#q');
+(function injectCss(){ const st = document.createElement('style'); st.textContent = Object.values(COMPONENT_CSS).join('\n'); document.head.appendChild(st); })();
+
+function buildNav(){
+  navEl.innerHTML = NAV.map(g => `<div class="nav-group"><a class="group-title" href="#${GROUP_HOME[g.group]}">${g.group}</a>${g.items.map(i => `<a class="nav-item ${i.soon?'is-soon':''}" href="#${i.id}" data-id="${i.id}"><span>${i.label}</span>${i.soon?'<span class="soon">Soon</span>':''}</a>`).join('')}</div>`).join('') + '<div class="nav-empty" id="navEmpty" hidden>Aucun résultat.</div>';
+  $('#brand').insertAdjacentHTML('afterbegin', BELCO_LOGO);
+}
+function currentId(){ const h = (location.hash||'').replace(/^#/,''); return (FLAT.some(i=>i.id===h) || EXTRA.some(i=>i.id===h)) ? h : 'introduction'; }
+function render(){
+  const id = currentId();
+  const item = FLAT.find(i=>i.id===id) || EXTRA.find(i=>i.id===id);
+  const data = PAGES[id] ? PAGES[id]() : soonPage(item);
+  const idx = FLAT.findIndex(i=>i.id===id);
+  const prev = data.nopager ? null : FLAT[idx-1], next = data.nopager ? null : FLAT[idx+1];
+  const top = item.top || 'ds';
+  document.querySelectorAll('.topnav a').forEach(a => a.classList.toggle('is-active', a.dataset.top===top));
+  pageEl.innerHTML = `
+    <header class="page-head">
+      <span class="label">${data.eyebrow||item.group}</span>
+      <div class="head-row"><h1>${data.title}</h1>${data.soon?'<span class="soon">Soon</span>':''}</div>
+      ${data.lede?`<p class="lede">${data.lede}</p>`:''}
+    </header>
+    ${data.body||''}
+    ${data.nopager ? '' : `<nav class="pager" aria-label="Pages voisines">
+      ${prev?`<a class="prev" href="#${prev.id}"><span class="label">Précédent</span><strong>${chevL} ${prev.label}</strong></a>`:'<span></span>'}
+      ${next?`<a class="next" href="#${next.id}"><span class="label">Suivant</span><strong>${next.label} ${chevR}</strong></a>`:''}
+    </nav>`}`;
+  document.querySelectorAll('.nav-item').forEach(a => a.classList.toggle('is-active', a.dataset.id===id));
+  const tc = $('#tokensCode'); if (tc) tc.textContent = tokensText();
+  document.body.classList.remove('nav-open');
+  window.scrollTo({top:0});
+  const active = document.querySelector('.nav-item.is-active'); if (active) active.scrollIntoView({block:'nearest'});
+}
+function tokensText(){
+  try{ for (const sh of document.styleSheets){ let rules; try{ rules = sh.cssRules; }catch(e){ continue; } for (const r of rules){ if (r.selectorText === ':root'){ const body = r.style.cssText.split(';').map(s=>s.trim()).filter(Boolean).map(s=>'  '+s+';').join('\n'); return ':root {\n'+body+'\n}'; } } } }catch(e){}
+  return ':root { /* non lisible */ }';
+}
+pageEl.addEventListener('click', e => {
+  const t = e.target.closest('.demo-toggle');
+  if (t){ const panel = t.nextElementSibling; if (panel && panel.classList.contains('demo-panel')){ panel.hidden = !panel.hidden; t.classList.toggle('is-on', !panel.hidden); if (t.dataset.panel==='code') t.querySelector('span').textContent = panel.hidden ? 'Afficher le code' : 'Masquer le code'; } return; }
+  const tab = e.target.closest('.demo-tabs button');
+  if (tab){ const d = tab.closest('.demo'); const key = d.dataset.key; const panel = tab.closest('.demo-code'); panel.querySelectorAll('.demo-tabs button').forEach(b=>b.classList.toggle('is-on', b===tab)); const code = panel.querySelector('pre code'); const file = panel.querySelector('.demo-file');
+    if (tab.dataset.lang==='css'){ code.textContent = key==='tokens' ? tokensText() : (COMPONENT_CSS[key] || '/* Pas de CSS propre : ce composant n’utilise que les variables de la page Couleurs. */'); if (file) file.textContent = key==='tokens' ? 'tokens.css' : (COMPONENT_CSS[key] ? 'components.css' : ''); }
+    else { const pv = d.querySelector('.demo-preview'); code.textContent = pv ? dedent(pv.innerHTML) : ''; if (file) file.textContent = ''; }
+    return; }
+  const cp = e.target.closest('.copy'); if (cp){ copyText(cp, cp.parentElement.querySelector('code').textContent, cp.parentElement.querySelector('code')); return; }
+  const bundle = e.target.closest('#copyAgents,#copyTokens,#copyCss');
+  if (bundle){ const txt = bundle.id==='copyAgents' ? agentsMd() : bundle.id==='copyTokens' ? tokensText() : Object.values(COMPONENT_CSS).join('\n\n'); copyText(bundle, txt, document.querySelector('.demo[data-key="agents"] code')); return; }
+  const ot = e.target.closest('.o-tab'); if (ot){ ot.closest('.o-tabs').querySelectorAll('.o-tab').forEach(b=>b.setAttribute('aria-selected', b===ot?'true':'false')); return; }
+  const seg = e.target.closest('.o-seg button'); if (seg){ seg.parentElement.querySelectorAll('button').forEach(b=>b.classList.toggle('is-on', b===seg)); return; }
+  const ch = e.target.closest('.o-choice'); if (ch && !ch.querySelector('input')){ ch.classList.toggle('is-on'); return; }
+  const sel = e.target.closest('.o-select'); if (sel){ sel.classList.toggle('is-open'); return; }
+});
+function selectText(el){ if(!el) return; const r=document.createRange(); r.selectNodeContents(el); const s=getSelection(); s.removeAllRanges(); s.addRange(r); }
+function copyText(btn, txt, fallbackEl){ const label = btn.textContent; const done = () => { btn.textContent='Copié'; setTimeout(()=>btn.textContent=label,1500); }; if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(done).catch(()=>selectText(fallbackEl)); else selectText(fallbackEl); }
+$('#menuBtn').addEventListener('click', ()=>document.body.classList.toggle('nav-open'));
+$('#scrim').addEventListener('click', ()=>document.body.classList.remove('nav-open'));
+navEl.addEventListener('click', e => { if (e.target.closest('.nav-item')) document.body.classList.remove('nav-open'); });
+q.addEventListener('input', () => { const v = q.value.trim().toLowerCase(); let n = 0; document.querySelectorAll('.nav-item').forEach(a => { const ok = !v || a.textContent.toLowerCase().includes(v); a.hidden = !ok; if (ok) n++; }); document.querySelectorAll('.nav-group').forEach(g => { g.hidden = ![...g.querySelectorAll('.nav-item')].some(a=>!a.hidden); }); $('#navEmpty').hidden = n>0; if (v && window.innerWidth<=900) document.body.classList.add('nav-open'); });
+document.addEventListener('keydown', e => { if ((e.metaKey||e.ctrlKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); q.focus(); q.select(); } if (e.key==='Escape'){ document.body.classList.remove('nav-open'); if (document.activeElement===q){ q.value=''; q.dispatchEvent(new Event('input')); q.blur(); } } });
+buildNav();
+window.addEventListener('hashchange', render);
+render();
+</script>
+
+</body>
+</html>

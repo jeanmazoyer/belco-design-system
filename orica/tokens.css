@@ -1,0 +1,59 @@
+:root{
+  /* palette relevée sur hub.belco-sandbox.synako.fr (module Orica) */
+  --color-white:#FFFFFF;
+  --color-grey-50:#F8F9FA;
+  --color-grey-100:#EDF0F4;
+  --color-grey-150:#E5E9EF;
+  --color-grey-200:#D8DEE7;
+  --color-grey-300:#C5CAD2;
+  --color-grey-500:#999EA4;
+  --color-grey-600:#777A7F;
+  --color-grey-700:#4F5459;
+  --color-grey-900:#232930;
+  --color-green-50:#E7F1ED;
+  --color-green-100:#BCE6CE;
+  --color-green-600:#127746;
+  --color-green-700:#156035;
+  --color-green-800:#0D5432;
+  --color-blue-100:#BEE3F8;
+  --color-blue-800:#2A4365;
+  --color-yellow-100:#FFF8DB;
+  --color-yellow-800:#806600;
+  --color-red-500:#FF0000;
+  --color-sand-200:#F0DBB4;
+  --color-clay-200:#DCBFAD;
+  --color-gold-400:#DEAF58;
+  --color-brown-500:#B17149;
+  /* rôles */
+  --color-background:var(--color-grey-50);
+  --color-surface:var(--color-grey-100);
+  --color-surface-strong:var(--color-grey-150);
+  --color-text:var(--color-grey-900);
+  --color-text-muted:var(--color-grey-600);
+  --color-text-faint:var(--color-grey-500);
+  --color-border:var(--color-grey-200);
+  --color-border-light:var(--color-grey-100);
+  --color-primary:var(--color-green-600);
+  --color-primary-foreground:var(--color-white);
+  --color-primary-soft:var(--color-green-50);
+  --color-success-soft:var(--color-green-100);
+  --color-success-text:var(--color-green-700);
+  --color-info-soft:var(--color-blue-100);
+  --color-info-text:var(--color-blue-800);
+  --color-warning-soft:var(--color-yellow-100);
+  --color-warning-text:var(--color-yellow-800);
+  --color-danger:var(--color-red-500);
+  /* typographie : une seule famille */
+  --font-sans:"Centra No2","CentraNo2","Outfit",system-ui,sans-serif;
+  --font-mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --font-weight-book:400; --font-weight-medium:500; --font-weight-semibold:600; --font-weight-bold:700;
+  --text-2xs:10px; --text-xs:12px; --text-sm:13px; --text-base:14px; --text-lg:16px; --text-xl:20px; --text-2xl:25px;
+  --leading-2xs:14px; --leading-xs:16px; --leading-sm:19.5px; --leading-base:20px; --leading-lg:24px; --leading-xl:26px; --leading-2xl:30px;
+  /* espacements, rayons, ombres */
+  --spacing-1:4px; --spacing-2:8px; --spacing-3:12px; --spacing-4:16px; --spacing-5:20px; --spacing-6:24px; --spacing-8:32px; --spacing-10:40px; --spacing-12:48px; --spacing-16:64px;
+  --radius-xs:2.6px; --radius-sm:5.2px; --radius-md:7.8px; --radius-lg:10.4px; --radius-xl:13px; --radius-full:9999px;
+  --shadow-sm:0 2px 4px rgba(16,15,15,.05);
+  --shadow-md:0 4px 12px rgba(16,15,15,.05);
+  --shadow-lg:0 32px 64px rgba(16,15,15,.05), 0 -16px 32px rgba(16,15,15,.05);
+  --sidebar-width:64px; --topbar-height:65px;
+}
