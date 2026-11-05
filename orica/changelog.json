@@ -1,0 +1,40 @@
+[
+  {
+    "date": "2026-11-05",
+    "version": "test",
+    "title": "Test du flux PR (à fermer)",
+    "added": [
+      "Entrée de test, PR fermée sans fusion."
+    ]
+  },
+  {
+    "date": "2026-11-05",
+    "version": "test",
+    "title": "Test du flux PR (à fermer)",
+    "added": [
+      "Entrée de test, PR fermée sans fusion."
+    ]
+  },
+  {
+    "date": "2026-11-05",
+    "version": "v1.0",
+    "title": "Relevé ISO",
+    "modified": [
+      "Toute la documentation est reconstruite à partir du code servi : 801 variables du thème Chakra, 500 classes Emotion avec leurs états, 95 icônes SVG, 97 échantillons HTML sur 9 écrans. Les versions réécrites (v0.1) sont retirées."
+    ],
+    "added": [
+      "Fondations : Icônes. Composants : Segmented control, Menu déroulant, Heading & divider, Lien. Écrans : Panneau Filtres."
+    ],
+    "removed": [
+      "Chips de choix (c’étaient des chakra-button), Progression (c’est une barre empilée dans la carte KPI), Toggle vue (non relevé dans Orica)."
+    ]
+  },
+  {
+    "date": "2026-11-04",
+    "version": "v0.1",
+    "title": "Relevé visuel",
+    "added": [
+      "Première version, composants réécrits à partir des styles calculés et de captures. Remplacée par la v1.0."
+    ]
+  }
+]
