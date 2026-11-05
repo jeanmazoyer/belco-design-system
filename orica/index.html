@@ -505,6 +505,21 @@ body.chat-open .chat-btn-top{background:var(--color-primary-soft);border-color:v
 body.chat-open{--chat-w:460px}
 @media (min-width:1300px){body.chat-open .content{padding-right:var(--chat-w)}}
 @media (max-width:800px){.chat-btn-top{width:32px;padding:0;justify-content:center;font-size:0;gap:0}.chat-row{grid-template-columns:1fr}}
+/* images jointes */
+.chat-form{flex-direction:column;align-items:stretch;gap:8px}
+.chat-compose{display:flex;gap:8px;align-items:flex-end}
+.chat-attach{width:38px;height:38px;flex-shrink:0;border:1px solid var(--color-border);border-radius:var(--radius-lg)}
+.chat-tray{display:flex;gap:8px;flex-wrap:wrap}
+.chat-thumb{position:relative;margin:0;width:64px;height:64px;border-radius:var(--radius-md);overflow:hidden;border:1px solid var(--color-border);background:var(--color-surface)}
+.chat-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.chat-thumb button{position:absolute;top:2px;right:2px;width:20px;height:20px;border:0;border-radius:50%;background:rgba(35,41,48,.8);color:#fff;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0}
+.chat-thumb button svg{width:11px;height:11px}
+.chat-imgs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.chat-imgs img{max-width:100%;width:auto;height:auto;max-height:220px;border-radius:var(--radius-md);border:1px solid rgba(255,255,255,.2);display:block}
+.chat-drop{position:absolute;inset:0;z-index:4;display:flex;align-items:center;justify-content:center;background:rgba(231,241,237,.92);border:2px dashed var(--color-primary);border-radius:0;pointer-events:none;font-size:var(--text-sm);font-weight:var(--font-weight-semibold);color:var(--color-green-800)}
+.chat-prop-opt{display:flex;align-items:flex-start;gap:8px;font-size:var(--text-xs);color:var(--color-text);line-height:16px;cursor:pointer}
+.chat-prop-opt input{margin-top:1px;accent-color:var(--color-primary)}
+.chat-prop-opt small{display:block;color:var(--color-text-muted)}
 
 </style>
 <style id="prodFonts">@font-face { font-family: CentraNo2; font-style: normal; font-weight: 400; font-display: auto; src: local("Centra No2 Book"), local("CentraNo2-Book"), local("Centra No2"), url("fonts/centrano2-book-webfont.woff2") format("woff2"), local("Centra No2 Book"), local("CentraNo2-Book"), local("Centra No2"), url("fonts/centrano2-book-webfont.woff") format("woff"); ascent-override: 100%; descent-override: 20%; }
@@ -2877,7 +2892,8 @@ buildNav(); window.addEventListener('hashchange',render); render();
   const save = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } };
   let settings = Object.assign({ anthropicKey: '', model: MODELS[0][0], githubToken: '', owner: REPO.owner, repo: REPO.name }, load(LS, {}));
   let prs = load(LSPR, []);
-  const st = { open: false, busy: false, messages: [], proposals: [], abort: null, previewOn: null };
+  const st = { open: false, busy: false, messages: [], proposals: [], abort: null, previewOn: null, pending: [], images: [] };
+  const MAX_IMG = 4, MAX_EDGE = 1568;
 
   /* ---- contexte donné au modèle ---- */
   const RULE_KEYS = Object.keys(RULES_MD);
@@ -2890,6 +2906,9 @@ GARDE-FOUS, NON NÉGOCIABLES
 4. Toute proposition sur tokens.css doit expliquer l’impact sur le thème Chakra d’Orica (clé du thème, ex. colors.primary.500) : tant que la production n’a pas intégré le changement, la doc et la prod divergent et l’audit le signalera. Dis-le explicitement.
 5. Rien n’est inventé : pas de composant, variante, token ou classe qui n’existe pas dans le relevé. Les composants marqués Soon ne sont pas documentés tant qu’un écran ne les montre pas. Si tu ne sais pas, dis-le.
 6. Avant de proposer, lis l’état courant du fichier (lire_fichier) et renvoie le fichier COMPLET modifié, pas un extrait. Garde le format existant (tokens.css : « :root, :host { … } », une variable par ligne ; changelog.json : tableau d’objets {date, version, title, added, modified, removed}, nouvelle entrée en premier).
+
+IMAGES
+- L’utilisateur peut joindre des captures (écran Orica, maquette, export Figma). Analyse-les par rapport au relevé : composants reconnus (classes et fiches), tokens attendus, écarts visibles (couleur, rayon, espacement, typographie, état manquant). Une couleur lue sur une image est approximative : compare-la aux tokens les plus proches sans affirmer un hex exact. Une image n’est jamais une preuve que la prod a changé : seul un nouveau relevé l’est.
 
 MÉTHODE
 - Pour une question : réponds avec les outils de lecture (lire_tokens, lire_regles, rechercher_css, scores_audit) et cite tes sources.
@@ -2986,11 +3005,16 @@ Scores d’audit (fidélité /100, calculés sur le CSS relevé : tokens 50 %, �
       const slug = p.titre.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'proposition';
       const branch = `proposition/${new Date().toISOString().slice(0, 10)}-${slug}-${Math.random().toString(36).slice(2, 6)}`;
       await gh(`/repos/${owner}/${repo}/git/refs`, { method: 'POST', body: JSON.stringify({ ref: 'refs/heads/' + branch, sha: ref.object.sha }) });
+      const shots = [];
+      if (p.withImages && st.images.length) {
+        const dir = `orica/propositions/${branch.replace(/^proposition\//, '')}`;
+        for (let i = 0; i < st.images.length; i++) { const im = st.images[i]; const ext = im.type === 'image/png' ? 'png' : 'jpg'; const path = `${dir}/capture-${i + 1}.${ext}`; await gh(`/repos/${owner}/${repo}/contents/${path}`, { method: 'PUT', body: JSON.stringify({ message: `${p.titre} (capture ${i + 1})`, content: im.data, branch }) }); shots.push({ path, url: `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${path}` }); }
+      }
       for (const f of p.files) {
         let sha = f.sha; if (!sha) { try { sha = (await gh(`/repos/${owner}/${repo}/contents/${f.path}?ref=${base}`)).sha; } catch (e) { sha = undefined; } }
         await gh(`/repos/${owner}/${repo}/contents/${f.path}`, { method: 'PUT', body: JSON.stringify({ message: `${p.titre} (${f.path})`, content: b64utf8(f.content), branch, sha: sha || undefined }) });
       }
-      const body = `## Proposition ouverte depuis la documentation (chat)\n\n**Justification**\n${p.justification || '—'}\n\n**Impact sur le thème Chakra d’Orica**\n${p.impact || '—'}\n\n**Fichiers**\n${p.files.map(f => `- \`${f.path}\` (+${f.diff.added} / −${f.diff.removed})`).join('\n')}\n\n> ⚠️ **Garde-fou** — cette documentation est un relevé ISO de la production. Fusionner cette PR change la documentation et ses règles, pas l’application : le changement doit être répercuté dans le thème Chakra d’Orica, sinon le prochain relevé et l’audit signaleront l’écart.\n\n- [ ] Validé par un designer\n- [ ] Répercuté (ou planifié) dans le thème Orica : _lien_\n\n_Proposée par ${me.login} via le chat de la doc · modèle ${settings.model}_`;
+      const body = `## Proposition ouverte depuis la documentation (chat)\n\n**Justification**\n${p.justification || '—'}\n\n**Impact sur le thème Chakra d’Orica**\n${p.impact || '—'}\n\n**Fichiers**\n${p.files.map(f => `- \`${f.path}\` (+${f.diff.added} / −${f.diff.removed})`).join('\n')}\n\n${shots.length ? `**Captures de référence**\n${shots.map((sh, i) => `![capture ${i + 1}](${sh.url})`).join('\n')}\n\n` : ''}> ⚠️ **Garde-fou** — cette documentation est un relevé ISO de la production. Fusionner cette PR change la documentation et ses règles, pas l’application : le changement doit être répercuté dans le thème Chakra d’Orica, sinon le prochain relevé et l’audit signaleront l’écart.\n\n- [ ] Validé par un designer\n- [ ] Répercuté (ou planifié) dans le thème Orica : _lien_\n\n_Proposée par ${me.login} via le chat de la doc · modèle ${settings.model}_`;
       const pr = await gh(`/repos/${owner}/${repo}/pulls`, { method: 'POST', body: JSON.stringify({ title: p.titre, head: branch, base, body }) });
       p.status = 'pull request ouverte'; p.pr = { number: pr.number, url: pr.html_url, branch };
       prs.unshift({ number: pr.number, url: pr.html_url, title: p.titre, date: new Date().toISOString() }); prs = prs.slice(0, 20); save(LSPR, prs);
@@ -3001,14 +3025,15 @@ Scores d’audit (fidélité /100, calculés sur le CSS relevé : tokens 50 %, �
   }
 
   /* ---- UI ---- */
-  const ICON = { chat: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-8 8H8l-5 3 1.5-4.5A8 8 0 1 1 21 12z"/></svg>', close: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>', gear: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>', send: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg>', warn: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>', pr: '<svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M1.5 3.25a2.25 2.25 0 1 1 3 2.122v5.256a2.251 2.251 0 1 1-1.5 0V5.372A2.25 2.25 0 0 1 1.5 3.25Zm5.677-.177L9.573.677A.25.25 0 0 1 10 .854V2.5h1A2.5 2.5 0 0 1 13.5 5v5.628a2.251 2.251 0 1 1-1.5 0V5a1 1 0 0 0-1-1h-1v1.646a.25.25 0 0 1-.427.177L7.177 3.427a.25.25 0 0 1 0-.354ZM3.75 2.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm0 9.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm8.25.75a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Z"/></svg>' };
+  const ICON = { clip: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.4 11.1l-8.5 8.5a5.5 5.5 0 0 1-7.8-7.8l9.2-9.2a3.5 3.5 0 0 1 5 5l-9.2 9.2a1.5 1.5 0 0 1-2.1-2.1L16 6.7"/></svg>', chat: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-8 8H8l-5 3 1.5-4.5A8 8 0 1 1 21 12z"/></svg>', close: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>', gear: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>', send: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg>', warn: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>', pr: '<svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M1.5 3.25a2.25 2.25 0 1 1 3 2.122v5.256a2.251 2.251 0 1 1-1.5 0V5.372A2.25 2.25 0 0 1 1.5 3.25Zm5.677-.177L9.573.677A.25.25 0 0 1 10 .854V2.5h1A2.5 2.5 0 0 1 13.5 5v5.628a2.251 2.251 0 1 1-1.5 0V5a1 1 0 0 0-1-1h-1v1.646a.25.25 0 0 1-.427.177L7.177 3.427a.25.25 0 0 1 0-.354ZM3.75 2.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm0 9.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm8.25.75a.75.75 0 1 0 1.5 0 .75.75 0 0 0-1.5 0Z"/></svg>' };
   const panel = document.createElement('aside'); panel.id = 'chat'; panel.hidden = true; panel.setAttribute('aria-label', 'Chat du design system');
   panel.innerHTML = `
     <header class="chat-head"><span class="chat-badge">${ICON.chat}</span><div><strong>Chat du design system</strong><span>Orica · propositions → pull requests</span></div><button type="button" class="chat-ib" id="chatSettings" aria-label="Réglages">${ICON.gear}</button><button type="button" class="chat-ib" id="chatClose" aria-label="Fermer">${ICON.close}</button></header>
     <div class="chat-guard">${ICON.warn}<p><strong>Documentation synchronisée avec la production.</strong> Le chat ne modifie rien directement : chaque évolution devient une proposition, puis une pull request à valider.</p></div>
     <div class="chat-log" id="chatLog"></div>
     <div class="chat-prs" id="chatPRs" hidden></div>
-    <form class="chat-form" id="chatForm"><textarea id="chatInput" rows="1" placeholder="Poser une question ou décrire une évolution…" aria-label="Message"></textarea><button type="submit" class="chat-send" id="chatSend" aria-label="Envoyer">${ICON.send}</button></form>
+    <form class="chat-form" id="chatForm"><div class="chat-tray" id="chatTray" hidden></div><div class="chat-compose"><button type="button" class="chat-ib chat-attach" id="chatAttach" aria-label="Joindre une image" title="Joindre une image (ou coller / glisser)">${ICON.clip}</button><input type="file" id="chatFile" accept="image/png,image/jpeg,image/webp,image/gif" multiple hidden><textarea id="chatInput" rows="1" placeholder="Poser une question, décrire une évolution, coller une capture…" aria-label="Message"></textarea><button type="submit" class="chat-send" id="chatSend" aria-label="Envoyer">${ICON.send}</button></div></form>
+    <div class="chat-drop" id="chatDrop" hidden><span>Déposer l’image ici</span></div>
     <div class="chat-modal" id="chatModal" hidden><div class="chat-modal-card">
       <div class="chat-modal-head"><h2>Réglages</h2><button type="button" class="chat-ib" id="chatModalClose" aria-label="Fermer">${ICON.close}</button></div>
       <p class="chat-modal-note" id="chatModalNote" hidden></p>
@@ -3064,13 +3089,41 @@ Scores d’audit (fidélité /100, calculés sur le CSS relevé : tokens 50 %, �
       <p>${esc(p.justification)}</p>
       <div class="chat-prop-impact"><span class="label">Impact thème Chakra</span><p>${esc(p.impact || '—')}</p></div>
       ${p.files.map(f => `<details class="chat-diff" open><summary><code>${esc(f.path)}</code><span class="add">+${f.diff.added}</span><span class="del">−${f.diff.removed}</span></summary><pre>${f.diff.before > 0 ? `<i>… ${f.diff.before} ligne${f.diff.before > 1 ? 's' : ''} inchangée${f.diff.before > 1 ? 's' : ''}</i>\n` : ''}${f.diff.out.map(([k, l]) => `<span class="${k === '+' ? 'add' : k === '-' ? 'del' : 'ctx'}">${k} ${esc(l)}</span>`).join('\n')}${f.diff.after > 0 ? `\n<i>… ${f.diff.after} ligne${f.diff.after > 1 ? 's' : ''} inchangée${f.diff.after > 1 ? 's' : ''}</i>` : ''}</pre></details>`).join('')}
+      ${!p.pr && st.images.length ? `<label class="chat-prop-opt"><input type="checkbox" data-opt="images"${p.withImages ? ' checked' : ''}> ${st.images.length > 1 ? `Joindre les ${st.images.length} images` : 'Joindre l’image'} de la conversation à la PR <small>(commises dans le dépôt, donc publiques : pas de données réelles)</small></label>` : ''}
       <div class="chat-prop-actions">${p.pr ? `<a class="chat-btn chat-btn--primary" href="${esc(p.pr.url)}" target="_blank" rel="noopener">${ICON.pr} Pull request #${p.pr.number}</a><span class="muted">branche <code>${esc(p.pr.branch)}</code></span>` : `${tok.length ? `<button type="button" class="chat-btn" data-act="preview">${st.previewOn === p.id ? 'Retirer l’aperçu' : 'Aperçu dans la doc'}</button>` : ''}<button type="button" class="chat-btn chat-btn--primary" data-act="pr">${ICON.pr} Ouvrir la pull request</button>`}</div>`;
     el.classList.toggle('is-preview', st.previewOn === p.id);
+    el.querySelector('[data-opt="images"]')?.addEventListener('change', e => { p.withImages = e.target.checked; });
     el.querySelector('[data-act="preview"]')?.addEventListener('click', () => { setPreview(st.previewOn === p.id ? null : p); renderProposal(p, true); });
     el.querySelector('[data-act="pr"]')?.addEventListener('click', e => openPR(p, e.currentTarget));
     if (!replace) log.scrollTop = log.scrollHeight;
   }
   function renderPRs() { const box = $('#chatPRs'); if (!prs.length) { box.hidden = true; return; } box.hidden = false; box.innerHTML = `<span class="label">Pull requests ouvertes depuis la doc</span>${prs.slice(0, 5).map(p => `<a href="${esc(p.url)}" target="_blank" rel="noopener">${ICON.pr} #${p.number} ${esc(p.title)}</a>`).join('')}`; }
+
+  /* ---- images jointes (collées, glissées ou choisies) : réduites dans le navigateur, envoyées au modèle en base64 ---- */
+  const tray = $('#chatTray'), drop = $('#chatDrop');
+  function readImage(file) {
+    return new Promise((res, rej) => {
+      const url = URL.createObjectURL(file); const img = new Image();
+      img.onload = () => { const k = Math.min(1, MAX_EDGE / Math.max(img.width, img.height)); const c = document.createElement('canvas'); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k); c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); const png = file.type === 'image/png' || file.type === 'image/gif'; const type = png ? 'image/png' : 'image/jpeg'; const dataUrl = c.toDataURL(type, 0.9); URL.revokeObjectURL(url); res({ name: file.name || 'capture.png', type, data: dataUrl.split(',')[1], dataUrl, w: c.width, h: c.height }); };
+      img.onerror = () => { URL.revokeObjectURL(url); rej(new Error('Image illisible')); }; img.src = url;
+    });
+  }
+  async function addFiles(files) {
+    const list = [...files].filter(f => /^image\/(png|jpeg|webp|gif)$/.test(f.type));
+    if (!list.length) return;
+    for (const f of list) { if (st.pending.length >= MAX_IMG) { pushMessage('assistant', `Quatre images maximum par message.`, { error: true }); break; } try { st.pending.push(await readImage(f)); } catch (e) { pushMessage('assistant', 'Image illisible : ' + (f.name || ''), { error: true }); } }
+    renderTray();
+  }
+  function renderTray() { tray.hidden = !st.pending.length; tray.innerHTML = st.pending.map((im, i) => `<figure class="chat-thumb"><img src="${im.dataUrl}" alt="${esc(im.name)}"><button type="button" aria-label="Retirer" data-rm="${i}">${ICON.close}</button></figure>`).join(''); }
+  tray.addEventListener('click', e => { const b = e.target.closest('[data-rm]'); if (b) { st.pending.splice(+b.dataset.rm, 1); renderTray(); } });
+  $('#chatAttach').addEventListener('click', () => $('#chatFile').click());
+  $('#chatFile').addEventListener('change', e => { addFiles(e.target.files); e.target.value = ''; });
+  input.addEventListener('paste', e => { const items = [...(e.clipboardData?.items || [])].filter(i => i.kind === 'file'); if (items.length) { e.preventDefault(); addFiles(items.map(i => i.getAsFile()).filter(Boolean)); } });
+  let dragDepth = 0;
+  panel.addEventListener('dragenter', e => { if ([...(e.dataTransfer?.types || [])].includes('Files')) { dragDepth++; drop.hidden = false; } });
+  panel.addEventListener('dragleave', () => { if (--dragDepth <= 0) { dragDepth = 0; drop.hidden = true; } });
+  panel.addEventListener('dragover', e => { if (!drop.hidden) e.preventDefault(); });
+  panel.addEventListener('drop', e => { if (!drop.hidden) { e.preventDefault(); dragDepth = 0; drop.hidden = true; addFiles(e.dataTransfer.files); } });
 
   /* ---- boucle modèle ---- */
   function addToHistory(role, content) { st.messages.push({ role, content }); }
@@ -3081,9 +3134,14 @@ Scores d’audit (fidélité /100, calculés sur le CSS relevé : tokens 50 %, �
     return j;
   }
   async function send() {
-    const text = input.value.trim(); if (!text || st.busy) return;
+    const text = input.value.trim(); if ((!text && !st.pending.length) || st.busy) return;
     if (!settings.anthropicKey) { openSettings('Renseigne une clé API Anthropic pour utiliser le chat.'); return; }
-    input.value = ''; input.style.height = ''; pushMessage('user', text); addToHistory('user', text);
+    const imgs = st.pending.splice(0); renderTray();
+    input.value = ''; input.style.height = '';
+    const bubble = pushMessage('user', text || (imgs.length ? 'Voici une capture.' : ''));
+    if (imgs.length) { const g = document.createElement('div'); g.className = 'chat-imgs'; g.innerHTML = imgs.map(im => `<img src="${im.dataUrl}" alt="${esc(im.name)}" width="${im.w}" height="${im.h}">`).join(''); bubble.prepend(g); }
+    imgs.forEach(im => st.images.push({ name: im.name, type: im.type, data: im.data, dataUrl: im.dataUrl }));
+    addToHistory('user', imgs.length ? [...imgs.map(im => ({ type: 'image', source: { type: 'base64', media_type: im.type, data: im.data } })), { type: 'text', text: text || 'Voici une capture.' }] : text);
     st.busy = true; sendBtn.disabled = true; st.abort = new AbortController();
     const thinking = document.createElement('div'); thinking.className = 'chat-msg is-assistant is-thinking'; thinking.textContent = 'Réfléchit…'; log.appendChild(thinking); log.scrollTop = log.scrollHeight;
     try {

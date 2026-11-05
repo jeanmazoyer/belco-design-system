@@ -32,6 +32,8 @@ Le bouton Chat (en haut à droite, version GitHub Pages) ouvre un assistant qui 
 
 Fichiers modifiables : `tokens.css`, `rules/*.md`, `changelog.json`. Tout le reste est généré depuis la production.
 
+Images : on peut coller, glisser ou joindre jusqu’à quatre captures par message (écran, maquette, export Figma) ; elles sont réduites dans le navigateur et envoyées au modèle, qui les compare au relevé. Sur une proposition, une case permet de les joindre à la PR (commises dans `orica/propositions/<branche>/`, donc publiques : pas de données réelles).
+
 Réglages (roue dentée) : une clé API Anthropic et un jeton GitHub fine-grained (Contents + Pull requests en écriture sur ce dépôt), conservés dans le navigateur et envoyés uniquement à api.anthropic.com et api.github.com, sans serveur intermédiaire. Le chat est désactivé dans l’artefact Claude (appels directs bloqués).
 
 Côté GitHub, recommandé : protéger la branche main (pull request obligatoire) et passer la source de Pages sur « GitHub Actions ».
