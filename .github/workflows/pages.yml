@@ -1,0 +1,47 @@
+# Régénère la documentation Orica à partir des sources du dépôt (tokens.css, rules/*.md, changelog.json, src/)
+# et publie le site sur GitHub Pages. Déclenché à chaque fusion sur main : c'est ainsi qu'une pull request
+# ouverte depuis le chat de la documentation devient visible une fois validée.
+name: Documentation → GitHub Pages
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Générer la documentation Orica
+        run: node orica/src/build.js orica
+      - name: Préparer le site
+        run: |
+          mkdir -p _site/orica
+          cp index.html AGENTS.md tokens.css components.css README.md _site/ 2>/dev/null || true
+          cp -r rules _site/rules 2>/dev/null || true
+          cp -r orica/. _site/orica/
+          rm -rf _site/orica/src
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

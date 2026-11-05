@@ -1,0 +1,30 @@
+# Vérifie qu'une pull request (par exemple ouverte depuis le chat de la documentation) régénère la doc sans erreur
+# et ne touche que des fichiers sources (tokens.css, rules/*.md, changelog.json) ou le code de la doc.
+name: Vérification d'une proposition
+on:
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+  pull-requests: write
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Fichiers générés modifiés à la main ?
+        run: |
+          git fetch origin ${{ github.base_ref }} --depth=1
+          CHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+          echo "$CHANGED"
+          if echo "$CHANGED" | grep -E '^orica/(components\.css|base\.css|icons\.svg|AGENTS\.md|samples/)' ; then
+            echo "::error::Ces fichiers sont générés depuis la production (relevé ISO) : ils ne se modifient pas à la main."; exit 1; fi
+      - name: Régénérer la documentation
+        run: node orica/src/build.js orica
+      - name: Résumé
+        run: |
+          echo "## Proposition vérifiée" >> $GITHUB_STEP_SUMMARY
+          echo "La documentation se régénère sans erreur. Rappel : la doc est un relevé ISO de la production ; un changement de token doit être répercuté dans le thème Chakra d'Orica." >> $GITHUB_STEP_SUMMARY

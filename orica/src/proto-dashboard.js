@@ -2,7 +2,7 @@
 // samples/*.html). Aucune classe inventée : chaque classe vient de components.css, chaque fragment de markup d’un sample.
 // Usage : node proto-dashboard.js  → écrit dashboard.html (artefact, flags en data-URI) et dashboard-pages.html (GitHub Pages, flags jsDelivr comme en prod).
 const fs = require('fs'), path = require('path');
-const B = path.join(__dirname, '..');
+const B = process.env.ORICA_OUT || path.join(__dirname, '..'); // dossier du design system (samples/, components.css)
 const S = n => fs.readFileSync(path.join(B, 'samples', n + '.html'), 'utf8');
 const svgs = html => html.match(/<svg[\s\S]*?<\/svg>/g) || [];
 const strip = s => s.replace(/\s*\n\s*/g, ' ').replace(/>\s+</g, '><').trim();
@@ -169,6 +169,8 @@ const head = (mode) => mode === 'pages'
 <link rel="stylesheet" href="components.css">
 `;
 const foot = (mode) => mode === 'pages' ? '\n</body>\n</html>\n' : '\n';
+module.exports = { page, head, foot };
+if (require.main !== module) return;
 fs.writeFileSync(path.join(__dirname, 'dashboard.html'), head('artifact') + page('artifact') + foot('artifact'));
 fs.writeFileSync(path.join(__dirname, 'dashboard-pages.html'), head('pages') + page('pages') + foot('pages'));
 // vérification : toutes les classes css-* utilisées existent dans components.css
