@@ -1,10 +1,7 @@
 # Select & menus — Orica
-Statut : relevé sur toutes les listes. Fichier : select.md
-
-- .o-select : pilule 33 px blanche, filet grey-100, rayon 10.4, libellé + chevron (« Origines », « Statuts », « Crop »).
-- .o-menu : panneau blanc rayon 10.4 ombre md, lignes 29 px ; cases .o-check (15 px, vert) avec compteur à droite ; liens ou boutons pour les menus d'action (« Nouveau fournisseur », « Nouveau prospect », « Se déconnecter » en rouge).
-- .o-radio : 15 px, point vert.
-
+Fichier : select.md
+- chakra-select css-mfnris : <select> natif, hauteur sizes-10, radii-md, fond blanc, border 1px, padding-inline-start space-4, icône chevron absolue (chakra-select__icon-wrapper css-iohxn1, 24px). Hover → border gray-100 ; focus-visible → border rgb(49,130,206) ; [aria-invalid] → border red ; disabled → opacity .4.
+- chakra-menu__menu-list : panneau des menus (utilisateur, Power BI, filtres Origines) ; items chakra-menu__menuitem / __menuitem-option (css-hu8ktr) avec chakra-menu__icon-wrapper pour la coche.
+- Filtres de liste : un chakra-menu__menu-button ouvre une liste d'options cochables avec compteur.
 ## Règles
-- Multi-sélection = cases + compteurs ; sélection simple = radios.
-- Le menu utilisateur (avatar) contient langue (Français, English, Español) et déconnexion.
+- Select natif pour un choix simple ; menu Chakra à options pour le multi-choix avec compteurs.

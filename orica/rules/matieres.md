@@ -1,24 +1,15 @@
 # Matières — Orica
-Statut : relevé sur le Hub. Fichier : matieres.md
+Source : tokens Chakra servis. Fichier : matieres.md
 
-## Surfaces
-- .m-page-card : blanc, rayon 13 px, ombre sm → cartes de page, formulaires, KPI
-- .m-row : blanc, filet grey-100 en bas → lignes de liste et de tableau
-- .m-field : blanc, filet grey-100, rayon 7.8 px → champs de formulaire
-- .m-control : blanc, filet grey-100, rayon 10.4 px → boutons, selects, recherche
-- .m-tile : grey-100, rayon 10.4 px → tuile active de la barre latérale, boutons doux
-
-## Flottants
-- .m-menu : blanc, filet, rayon 10.4 px, ombre md → menus déroulants
-- .m-drawer : blanc, ombre lg, 364 px à droite, sur un voile noir à 48 % → panneau Filtres
-- Modal et tooltip : non relevés (Soon)
-
-## Rayons
-2.6 · 5.2 (chips, badges, choix) · 7.8 (champs) · 10.4 (boutons, selects, cartes KPI) · 13 (cartes de page) · pilule (statuts, avatars, pagination)
-
-## Ombres
-sm 0 2px 4px rgba(16,15,15,.05) · md 0 4px 12px rgba(16,15,15,.05) · lg 0 32px 64px + 0 -16px 32px rgba(16,15,15,.05)
+- radii : xs 0.2rem · sm 0.4rem · base 0.6rem · md 0.8rem (boutons, selects, inputs) · lg 1rem · xl 1.2rem · 2xl 1.4rem · 3xl 1.6rem · full 9999px (rem sur base 13px : md = 10.4px, sm = 5.2px, xs = 2.6px)
+- shadows : xs 0px 2px 4px 0px #100F0F0D · sm 0px 4px 12px 0px #100F0F0D · md 0px 8px 16px 0px #100F0F0D,0px -4px 8px 0px #100F0F0D · lg 0px 32px 64px 0px #100F0F0D,0px -16px 32px 0px #100F0F0D (drawer) · outline 0 0 0 3px rgba(66, 153, 225, 0.6) (focus) · xs-top 0px -2px 4px 0px #100F0F0D ; couleur d'ombre --chakra-colors-shadow #100F0F0D
+- space : 1 0.25rem … 96 24rem (échelle Chakra standard, base 13px) ; sizes : 10 = 2.5rem = 32.5px (hauteur des boutons, inputs, selects)
+- borders : 1px / 2px / 4px / 8px solid ; border-color par défaut --chakra-colors-chakra-border-color → gray-200
+- zIndices : dropdown 1000 · sticky 1100 · overlay 1300 · modal 1400 (drawer Filtres) · popover 1500 · toast 1700 · tooltip 1800
+- transitions : property-common background-color,border-color,color,fill,stroke,opacity,box-shadow,transform ; duration normal 200ms, fast 150ms
+- breakpoints : sm 451px · md 901px · lg 1281px · xl 1401px · 2xl 1601px
 
 ## Règles
-- Les ombres existent mais restent presque invisibles (5 %) : elles séparent, elles ne décorent pas.
-- Une surface blanche posée sur le gris de page = un contenu ; le gris-100 = en-tête, filtre ou outil.
+- Les ombres sont toutes à 5 % d'opacité (#100F0F0D) : elles séparent, elles ne décorent pas.
+- radii-md partout sur les contrôles ; radii-full pour les avatars et pastilles.
+- Le drawer utilise zIndices-modal et shadows-lg sur un overlay blackAlpha-600 (rgba(0, 0, 0, 0.48)).

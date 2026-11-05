@@ -1,10 +1,7 @@
-# Tabs & segmented — Orica
-Statut : relevé sur fournisseurs, contrats, plans d'achat. Fichier : tabs.md
-
-- .o-tabs / .o-tab : onglets soulignés 43 px, Medium 14, actif en vert avec trait de 2 px ; compteur .o-count après le libellé (« Fournisseurs 694 », « Prospects 14 », « Brouillons 9 »).
-- .o-seg : segmented control fond gris, segment actif noir (« Par origines / Par UB / Kanban », « Liste / Calendrier »).
-- Univers : segment « Café / Cacao » dans l'en-tête de page.
-
+# Tabs — Orica (chakra-tabs)
+Fichier : tabs.md
+- chakra-tabs__tablist css-1q9h0zz : flex, overflow scroll sans scrollbar, border-bottom 1px gray-300.
+- chakra-tabs__tab css-1wrhscr : weight 500, fontSizes-lg, padding 10px 0, margin-right 30px, border-bottom 2px transparent. [aria-selected=true] → couleur primary-500 et border-color primary-500 ; :active → fond gray-200 ; disabled → opacity .4.
+- Les onglets peuvent être des <a> (Références) ou des <button> (Contrats, Plans d'achat). Un badge compteur (chakra-badge) suit le libellé.
 ## Règles
-- Onglets = sous-ensembles d'une même liste ; segmented = autre vue des mêmes données.
-- L'onglet actif est vert, jamais souligné en gris.
+- Sous l'en-tête de page, avant la barre de filtres. Jamais plus d'un niveau.

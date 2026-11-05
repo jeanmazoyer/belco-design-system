@@ -16,3 +16,6 @@ Ouvrir index.html dans un navigateur, ou la déployer sur Vercel / Netlify / Clo
 1. Copier AGENTS.md, tokens.css et components.css à la racine du projet.
 2. Dans Claude Code, renommer AGENTS.md en CLAUDE.md ou le référencer depuis CLAUDE.md.
 3. Demander : « Fais la page X en respectant CLAUDE.md, avec les classes de components.css et les variables de tokens.css. Les composants marqués Soon ne doivent pas être produits. »
+
+## Orica (Belco Hub)
+Le dossier orica/ contient la documentation du module Orica du Belco Hub, en version ISO : tokens, CSS Emotion, HTML et icônes relevés dans le code servi par l’application, données neutralisées. Voir orica/README.md. En ligne : https://jeanmazoyer.github.io/belco-design-system/orica/

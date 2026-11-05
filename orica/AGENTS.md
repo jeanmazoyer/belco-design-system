@@ -1,306 +1,176 @@
 # Orica (Belco Hub) — règles pour les IA
 
-Source : hub.belco-sandbox.synako.fr, module Orica, relevé le 4 novembre 2026. Styles et composants uniquement ; aucune donnée métier.
-Fonte : Centra No2, corps 13 px. Primaire vert #127746. Fond gris #F8F9FA, surfaces blanches, ombres à 5 %.
-Tokens CSS : voir tokens.css. Composants : components.css (classes .o-*).
-Non relevés (ne pas les produire sans capture) : Terminal, Breadcrumbs, Carte géographique, Date picker, Kanban, Modal, Skeleton, Stepper, Switch, Toast, Tooltip, Import de fichier.
+Source : hub.belco-sandbox.synako.fr, module Orica, relevé ISO le 5 novembre 2026 (code servi, pas de réécriture).
+Stack : React + Chakra UI v2 + Emotion. Tokens : variables CSS --chakra-* (tokens.css). Composants : classes chakra-* + classes Emotion .css-xxxx (components.css).
+Fonte : CentraNo2 (400/500/700/800 servies). Fond de page gray-100 #f8f9fa, texte dark-500 #232930, accent primary-500 = orica-500 #127746.
+Non relevés (ne pas produire sans capture) : toast, modal de confirmation, tooltip, switch, skeleton, date picker, kanban, stepper, breadcrumbs, import de fichier, number input, popover.
+
+## Comment produire une interface Orica
+1. Utiliser les composants Chakra du Hub (<Button>, <Tabs>, <Select>, <Input>, <Checkbox>, <Radio>, <Menu>, <Avatar>, <Table>, <Accordion>, <Drawer>) avec les variantes du thème : les classes Emotion de components.css sont générées par ce thème, ne pas les recopier à la main dans un autre projet.
+2. Pour un prototype HTML statique, charger tokens.css + base.css + components.css et réutiliser le HTML de samples/ tel quel.
+3. Ne jamais écrire une couleur, un rayon ou une taille en dur : var(--chakra-colors-…), var(--chakra-radii-md), var(--chakra-sizes-10).
 
 ## Sommaire
 - rules/couleurs.md
 - rules/typographie.md
 - rules/matieres.md
-- rules/shell.md
 - rules/bouton.md
-- rules/badge.md
-- rules/choix.md
-- rules/recherche.md
-- rules/saisie.md
-- rules/select.md
-- rules/filtres.md
 - rules/tabs.md
+- rules/select.md
+- rules/champs.md
+- rules/badge.md
 - rules/tableau.md
-- rules/ligne.md
-- rules/avatar.md
-- rules/kpi.md
-- rules/accordeon.md
-- rules/pagination.md
-- rules/vide.md
+- rules/ecrans.md
 
 ---
 # Couleurs — Orica (Belco Hub)
-Statut : relevé sur hub.belco-sandbox.synako.fr, module Orica (styles calculés). Fichier : couleurs.md
+Source : variables CSS du thème Chakra UI servi par hub.belco-sandbox.synako.fr (relevé 5 nov. 2026). Fichier : couleurs.md
+Utiliser les variables telles quelles : var(--chakra-colors-…). Ne jamais écrire un hex en dur.
 
-## Palette
-grey-50 #F8F9FA (fond) · grey-100 #EDF0F4 (surface, filets légers, en-têtes de tableau) · grey-150 #E5E9EF · grey-200 #D8DEE7 (filets) · grey-300 #C5CAD2 · grey-500 #999EA4 · grey-600 #777A7F · grey-700 #4F5459 · grey-900 #232930 (texte)
-green-600 #127746 (primaire Orica) · green-50 #E7F1ED · green-100 #BCE6CE · green-700 #156035 · green-800 #0D5432
-blue-100 #BEE3F8 / blue-800 #2A4365 (info) · yellow-100 #FFF8DB / yellow-800 #806600 (attente) · red-500 #FF0000 (danger, texte seulement)
-Badges qualité : sand-200 #F0DBB4 · clay-200 #DCBFAD · gold-400 #DEAF58 · brown-500 #B17149
+## Échelles de marque
+- orica / primary (identiques) : 30 #f4f7f7 · 50 #e7f1ed · 100 #b6d5c6 · 300 #60a483 · 500 #127746 (accent Orica) · 600 #106c40 · 700 #0d5432 · 900 #08321d
+- blink (module Blink, hors périmètre) : 500 #d65932 · lab (Le Lab, hors périmètre) : 500 #b510a4
+- dark (texte) : 500 #232930 = couleur de texte html/body · 400 #4f5459 · alphas dark-500-1 … dark-500-8
+- gray / secondary (identiques) : 50 #fafafa · 100 #f8f9fa = fond html/body · 200 #edf0f4 · 300 #e5e9ef · 400 #e0e5ec · 500 #d8dee7 · 600 #c5cad2 · 700 #999ea4 (placeholders) · 800 #777a7f · 900 #5b5d61
+- green : 50 #e9f7ef · 100 #bce6ce · 500 #27ae60 · 800 #156035 · 900 #053021 (vert forêt belco.fr)
+- error / red : 500 #ff0000 · success-500 #27AE60 · warning-500 #FCFECF · alert #fceac5
+- sand : 50 #FBF9F5 (fond belco.fr) · 500 #DEAF58 · ivory-500 #FFFFEC · ivory-600 #F2F0EB
+- secondaryGreen 300 #798A72 (sauge) · 500 #4C5439 (mousse) · mossGreen 500 #5E651B · brown 500 #87715F
 
-## Rôles
---color-background → grey-50 ; --color-surface → grey-100 ; --color-surface-strong → grey-150
---color-text → grey-900 ; --color-text-muted → grey-600 ; --color-text-faint → grey-500
---color-border → grey-200 ; --color-border-light → grey-100
---color-primary → green-600 ; --color-primary-soft → green-50 ; --color-primary-foreground → white
---color-success-soft/text → green-100 / green-700 ; --color-info-soft/text → blue-100 / blue-800 ; --color-warning-soft/text → yellow-100 / yellow-800 ; --color-danger → red-500
+## Tokens sémantiques métier (badges qualité et statuts)
+- terroir 100/500 #F0DBB4 / #DEAF58 · label 100/500 #C8A4A7 / #85333A · labelplus #dcbfad / #b17149 · estate #ECE4D5 / #D5C3A2 · microlot #FFE6BF / #FFC871 · prestige #F9E88D / #F1CB00 · classic #D2EDE0 / #9BD6BB · blend #9E9FA2 / #25292E · nosourcing #9E9FA2 / #25292E
+- status-prospect #FBEBDD / #D4690B · status-fournisseur #E0D7EC / #895FBF · status-inactif #FAFED5 / #5E651B
+- statuteOffreAchat : recue #53BABA · negociation #895FBF · achetee #4F82BE · nogo #FF0000
+- planAchat : pipeline #F85A2F · conversion #895FBF · conversionMuted #E0D7EC
+- echantillon-type (offre, pss, arrivage, formation, sav, primeur), scoreMauvais/Moyen/Bon/TresBon, scoringCafeLevel high/mid/low, segmentScoringClient dormant/pepite/strategique : voir tokens.css
 
 ## Règles
-- Le vert #127746 est la couleur d'Orica. Les autres modules du Hub ont leur propre accent (Blink orange #D65932, Le Lab magenta #B510A4) : hors périmètre, ne pas les mélanger.
-- Un seul bouton primaire vert par en-tête de page.
-- Le rouge n'est jamais un fond : texte seulement (« Se déconnecter », astérisque obligatoire).
-- Statuts : pilule pleine (vert / gris) pour actif / inactif ; chips pastel (vert, bleu, jaune, gris) pour les étapes d'un flux.
-- Pas de mode sombre.
+- Le primaire d'Orica est primary-500 (= orica-500). Les boutons primaires passent en dégradé linear-gradient(135deg, primary-700 → primary-500) au hover et au active.
+- Le focus clavier est --chakra-shadows-outline (0 0 0 3px rgba(66, 153, 225, 0.6)) : ne pas le remplacer.
+- Texte : dark-500 ; placeholders : gray-700 ; filets : gray-200 à gray-300 ; fond de page : gray-100.
+- Le rouge error-500 n'est jamais un fond de bouton ; il sert au texte (« Se déconnecter », astérisque) et aux bordures invalides.
+- Pas de mode sombre activé (les règles .chakra-ui-dark existent dans le CSS mais ne sont pas appliquées).
 
 ---
 
 # Typographie — Orica
-Statut : relevé sur le Hub. Fichier : typographie.md
+Source : tokens Chakra servis. Fichier : typographie.md
 
-## Famille
-Centra No2 uniquement (Book 400, Medium 500, Semibold 600, Bold 700, ExtraBold 800). Oswald et Open Sans sont chargées par l'app mais jamais utilisées dans les styles calculés : ne pas les employer.
-Fallback : Outfit.
+- --chakra-fonts-body = --chakra-fonts-heading = "CentraNo2",system-ui,sans-serif ; --chakra-fonts-mono = SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace
+- @font-face CentraNo2 : 400 (book), 500 (medium), 700 (bold), 800 (extrabold) — fichiers /orica/fonts/centrano2-*.woff2
+- fontSizes : xs 10px · sm 12px · md 13px (défaut html/body) · lg 14px · xl 16px · 2xl 18px · 3xl 20px · 4xl 25px · 5xl 30px · 2xs 0.625rem · 3xs 0.45rem
+- fontWeights : normal 400 · medium 500 · semibold 600 · bold 700 · extrabold 800
+- lineHeights : none 1 · shorter 1.25 · short 1.375 · base 1.5 · tall 1.625 ; html reset line-height 1.5
+- letterSpacings : tighter -0.05em · tight -0.025em · normal 0 · wide 0.025em · wider 0.05em · widest 0.1em
 
-## Échelle (px / interlignage)
-Titre de page 25/30 Bold · Titre de carte 16/24 Bold · Libellé de formulaire 14/20 Semibold · Bouton 14 Medium ou Semibold · Corps 13/19.5 Book · Aide 12/16 · En-tête de tableau et badges 10 Book à Bold
+## Usages relevés
+- Titre de page (chakra-heading css-13e5vvr) : voir composant Heading ; boutons : fontSizes-lg (14px) weight 500/600 ; onglets : fontSizes-lg weight 500 ; libellés de formulaire : weight 600 ; corps : md (13px).
 
 ## Règles
-- Jamais de majuscules sur les titres ; capitales seulement sur les micro-libellés de 10 px.
-- Le corps est en 13 px : c'est un outil de travail dense, pas un site.
-- Chiffres tabulaires dans les tableaux, KPI et compteurs.
+- Une seule famille. Pas de police display, pas de majuscules sur les titres.
+- Toujours passer par var(--chakra-fontSizes-*) et var(--chakra-fontWeights-*).
 
 ---
 
 # Matières — Orica
-Statut : relevé sur le Hub. Fichier : matieres.md
+Source : tokens Chakra servis. Fichier : matieres.md
 
-## Surfaces
-- .m-page-card : blanc, rayon 13 px, ombre sm → cartes de page, formulaires, KPI
-- .m-row : blanc, filet grey-100 en bas → lignes de liste et de tableau
-- .m-field : blanc, filet grey-100, rayon 7.8 px → champs de formulaire
-- .m-control : blanc, filet grey-100, rayon 10.4 px → boutons, selects, recherche
-- .m-tile : grey-100, rayon 10.4 px → tuile active de la barre latérale, boutons doux
-
-## Flottants
-- .m-menu : blanc, filet, rayon 10.4 px, ombre md → menus déroulants
-- .m-drawer : blanc, ombre lg, 364 px à droite, sur un voile noir à 48 % → panneau Filtres
-- Modal et tooltip : non relevés (Soon)
-
-## Rayons
-2.6 · 5.2 (chips, badges, choix) · 7.8 (champs) · 10.4 (boutons, selects, cartes KPI) · 13 (cartes de page) · pilule (statuts, avatars, pagination)
-
-## Ombres
-sm 0 2px 4px rgba(16,15,15,.05) · md 0 4px 12px rgba(16,15,15,.05) · lg 0 32px 64px + 0 -16px 32px rgba(16,15,15,.05)
+- radii : xs 0.2rem · sm 0.4rem · base 0.6rem · md 0.8rem (boutons, selects, inputs) · lg 1rem · xl 1.2rem · 2xl 1.4rem · 3xl 1.6rem · full 9999px (rem sur base 13px : md = 10.4px, sm = 5.2px, xs = 2.6px)
+- shadows : xs 0px 2px 4px 0px #100F0F0D · sm 0px 4px 12px 0px #100F0F0D · md 0px 8px 16px 0px #100F0F0D,0px -4px 8px 0px #100F0F0D · lg 0px 32px 64px 0px #100F0F0D,0px -16px 32px 0px #100F0F0D (drawer) · outline 0 0 0 3px rgba(66, 153, 225, 0.6) (focus) · xs-top 0px -2px 4px 0px #100F0F0D ; couleur d'ombre --chakra-colors-shadow #100F0F0D
+- space : 1 0.25rem … 96 24rem (échelle Chakra standard, base 13px) ; sizes : 10 = 2.5rem = 32.5px (hauteur des boutons, inputs, selects)
+- borders : 1px / 2px / 4px / 8px solid ; border-color par défaut --chakra-colors-chakra-border-color → gray-200
+- zIndices : dropdown 1000 · sticky 1100 · overlay 1300 · modal 1400 (drawer Filtres) · popover 1500 · toast 1700 · tooltip 1800
+- transitions : property-common background-color,border-color,color,fill,stroke,opacity,box-shadow,transform ; duration normal 200ms, fast 150ms
+- breakpoints : sm 451px · md 901px · lg 1281px · xl 1401px · 2xl 1601px
 
 ## Règles
-- Les ombres existent mais restent presque invisibles (5 %) : elles séparent, elles ne décorent pas.
-- Une surface blanche posée sur le gris de page = un contenu ; le gris-100 = en-tête, filtre ou outil.
+- Les ombres sont toutes à 5 % d'opacité (#100F0F0D) : elles séparent, elles ne décorent pas.
+- radii-md partout sur les contrôles ; radii-full pour les avatars et pastilles.
+- Le drawer utilise zIndices-modal et shadows-lg sur un overlay blackAlpha-600 (rgba(0, 0, 0, 0.48)).
 
 ---
 
-# Coquille & en-tête — Orica
-Statut : relevé sur tous les écrans. Fichier : shell.md
+# Bouton — Orica (chakra-button)
+Source : HTML et règles Emotion servies. Fichier : bouton.md
 
-- .o-env : bandeau vert 20 px en haut (« Ceci est un environnement de démo »).
-- .o-rail : barre latérale 64 px blanche, tuiles 46 px rayon 10.4 ; active : fond grey-150, icône foncée ; en bas, avatar utilisateur.
-- .o-pagehead : 65 px, titre Bold 25 + segment univers Café / Cacao, primaire à droite ; sur une page de création, flèche retour .o-back avant le titre.
+## Variantes relevées (classe Emotion → usage)
+- css-umgg81 : primaire. Fond primary-500, texte blanc, hauteur sizes-10, radii-md, font-size lg, weight 500, padding-inline 24px. Hover/active : dégradé 135deg primary-700 → primary-500. Icône via chakra-button__icon (margin-inline-end 0.5rem).
+- css-9u5p6t : secondaire (« Filtres »). Fond gray-200, border 1px, hover gray-300. Dans un chakra-button__group attaché.
+- css-1mkv6x2 / css-15cs1d / css-1d5dnrm : pied du drawer (Réinitialiser / Appliquer / Supprimer).
+- css-dvj57b, css-rs6u5x : boutons texte (« Parcours prospect », « Gérer les tags fournisseur »).
+- css-4osav8 : onglet-bouton avec badge compteur (« Fournisseurs et prospects 708 »).
+- css-d8378c : choix Univers dans un formulaire (« Café » / « Cacao »).
+- css-1j5h8y1 : bouton doux « Ajouter … » des formulaires. css-j45hbs : « Enregistrer ». css-bquyvs : « Importer Excel ». css-x7zswu : « Nouvelle offre ». css-u8ip7p : « Tout fermer / Tout ouvrir ».
+- css-684j93 : bouton icône inline (copier) · css-39ivzn : flèches de pagination (disabled → opacity .4) · css-dj65kc : flèche de défilement des filtres · css-1vt6cti : tuile du rail · css-od61ih : retour (page de création) · css-1695t4a : bouton-avatar du menu utilisateur.
+
+## États (communs à toutes les variantes, écrits dans le CSS)
+- :focus-visible → box-shadow var(--chakra-shadows-outline)
+- :disabled / [aria-disabled=true] → opacity .4, cursor not-allowed, box-shadow none ; hover désactivé → dégradé primary-600 → primary-400 (primaire) ou gray-200 (secondaire)
+- transition : var(--chakra-transition-property-common) var(--chakra-transition-duration-normal)
 
 ## Règles
-- Ordre du rail Orica : Références, Fournisseurs, Plans d'achat, Direct Trade, Contrats d'achat, Géographie, Spécifications, Glossaire.
-- Les onglets de la liste viennent sous l'en-tête, puis la barre de filtres, puis la liste.
+- Réutiliser les classes Emotion existantes via le composant React <Button> du Hub ; ne pas recréer de bouton en CSS libre.
+- Un primaire par en-tête de page, à droite du titre, avec icône « plus » (FontAwesome circle-plus) à gauche.
 
 ---
 
-# Bouton — Orica
-Statut : relevé sur le Hub (toutes les listes, formulaire fournisseur). Fichier : bouton.md
-
-## Classes
-- .o-btn : primaire vert #127746, blanc, 33 px, rayon 10.4, Medium 14 (« Nouvelle référence », « Nouveau fournisseur »).
-- .o-btn--lg : 39 px, Semibold (actions d'en-tête de page).
-- .o-btn--secondary : gris #E5E9EF, filet grey-200 (« Importer Excel »).
-- .o-btn--soft : gris #EDF0F4 sans filet, avec icône + (« Ajouter une adresse », « Ajouter un contact », « Ajouter un rôle »).
-- .o-btn--outline : filet texte, fond transparent.
-- .o-btn--ghost : texte seul (« Parcours prospect », « Gérer les tags »).
-- .o-btn--danger-text : texte rouge (« Se déconnecter »).
-- .o-btn--icon : carré 33 px pour une icône seule.
-- .o-help : bouton flottant « Aide » noir, en bas à droite de chaque écran.
-
+# Tabs — Orica (chakra-tabs)
+Fichier : tabs.md
+- chakra-tabs__tablist css-1q9h0zz : flex, overflow scroll sans scrollbar, border-bottom 1px gray-300.
+- chakra-tabs__tab css-1wrhscr : weight 500, fontSizes-lg, padding 10px 0, margin-right 30px, border-bottom 2px transparent. [aria-selected=true] → couleur primary-500 et border-color primary-500 ; :active → fond gray-200 ; disabled → opacity .4.
+- Les onglets peuvent être des <a> (Références) ou des <button> (Contrats, Plans d'achat). Un badge compteur (chakra-badge) suit le libellé.
 ## Règles
-- Un seul primaire par en-tête de page, aligné à droite du titre.
-- Les actions de formulaire « Ajouter … » sont des boutons doux avec +, jamais des primaires.
-- Pas de bouton en majuscules ; libellé en Medium 14.
-
----
-
-# Badge & statut — Orica
-Statut : relevé sur le Hub (références, fournisseurs, contrats, direct trade). Fichier : badge.md
-
-## Classes
-- .o-status : pilule pleine 20 px, Bold 10 : vert = actif, .o-status--off gris = inactif / archivé.
-- .o-tag : chip 21 px rayon 5.2, Medium 10, gris par défaut ; --success (vert pâle), --success-strong (vert plus foncé, texte vert 800), --info (bleu pâle), --warning (jaune pâle), --faint (gris très clair), --dark (noir, « Sourcing Exclusive »).
-- Badges qualité : --sand, --clay, --gold, --brown (poids, labels de dégustation).
-- .o-count : compteur 20 px gris Semibold 10 (après un titre d'onglet : « Fournisseurs 694 »).
-
-## Règles
-- Pilule pleine = état binaire ; chip pastel = étape d'un flux (brouillon, soumis, validé…).
-- Les badges d'une ligne se rangent à droite, par ordre : qualité, label, poids.
-- Jamais plus de quatre badges par ligne.
-
----
-
-# Chips de choix — Orica
-Statut : relevé sur le formulaire « Nouveau fournisseur ». Fichier : choix.md
-
-- .o-choices : rangée de .o-choice (39 px, rayon 5.2, fond grey-50, filet grey-100, icône + libellé Medium 14).
-- Sélection : .is-on → fond vert pâle, filet vert, texte vert 800.
-- Valeurs du site : Univers (Café, Cacao) ; Types juridiques (Privé, Public, Association, Coopérative, Institution, ONG).
-
-## Règles
-- Choix unique ou multiple selon le champ ; le libellé du champ porte l'astérisque si requis.
-- Icône à gauche, 16 px.
-
----
-
-# Champ de recherche — Orica
-Statut : relevé sur toutes les listes. Fichier : recherche.md
-
-- .o-search : 33 px, blanc, filet grey-100, rayon 10.4, loupe grise à gauche, placeholder gris clair (« Rechercher une référence… »).
-- Placé en tête de la barre de filtres, juste après le compteur.
-
-## Règles
-- La recherche filtre la liste en direct ; pas de bouton.
-- Largeur 200 à 360 px dans la barre, 100 % sur mobile.
-
----
-
-# Champ de saisie — Orica
-Statut : relevé sur « Nouveau fournisseur ». Fichier : saisie.md
-
-- .o-field : libellé Semibold 14 avec astérisque rouge si requis, champ, aide 12 px.
-- .o-input : 33 px, blanc, filet grey-100, rayon 7.8, 13 px. .o-textarea : 80 px min.
-- .o-form-card : carte blanche rayon 13, ombre sm, 560 px max, sections empilées (gap 20).
-- Libellés relevés : Raison sociale*, Univers*, Flo ID, Partenaire depuis, Adresse principale*, Contact*, Roles*, Types juridiques, Commentaire.
-
-## Règles
-- Un formulaire = une page avec flèche retour + titre, jamais une modale (non relevée).
-- Les sous-objets (adresse, contact, rôle) s'ajoutent par bouton doux « Ajouter … ».
-- État d'erreur : non relevé (Soon).
+- Sous l'en-tête de page, avant la barre de filtres. Jamais plus d'un niveau.
 
 ---
 
 # Select & menus — Orica
-Statut : relevé sur toutes les listes. Fichier : select.md
-
-- .o-select : pilule 33 px blanche, filet grey-100, rayon 10.4, libellé + chevron (« Origines », « Statuts », « Crop »).
-- .o-menu : panneau blanc rayon 10.4 ombre md, lignes 29 px ; cases .o-check (15 px, vert) avec compteur à droite ; liens ou boutons pour les menus d'action (« Nouveau fournisseur », « Nouveau prospect », « Se déconnecter » en rouge).
-- .o-radio : 15 px, point vert.
-
+Fichier : select.md
+- chakra-select css-mfnris : <select> natif, hauteur sizes-10, radii-md, fond blanc, border 1px, padding-inline-start space-4, icône chevron absolue (chakra-select__icon-wrapper css-iohxn1, 24px). Hover → border gray-100 ; focus-visible → border rgb(49,130,206) ; [aria-invalid] → border red ; disabled → opacity .4.
+- chakra-menu__menu-list : panneau des menus (utilisateur, Power BI, filtres Origines) ; items chakra-menu__menuitem / __menuitem-option (css-hu8ktr) avec chakra-menu__icon-wrapper pour la coche.
+- Filtres de liste : un chakra-menu__menu-button ouvre une liste d'options cochables avec compteur.
 ## Règles
-- Multi-sélection = cases + compteurs ; sélection simple = radios.
-- Le menu utilisateur (avatar) contient langue (Français, English, Español) et déconnexion.
+- Select natif pour un choix simple ; menu Chakra à options pour le multi-choix avec compteurs.
 
 ---
 
-# Barre de filtres & panneau — Orica
-Statut : relevé sur références, fournisseurs, contrats, direct trade. Fichier : filtres.md
-
-- .o-filterbar : compteur (.o-count) → recherche → selects → case « Inclure … » → bouton « Filtres » (.o-btn--soft) → à droite, actions secondaires.
-- .o-drawer : panneau 364 px à droite, en-tête 52 px avec titre et fermeture, groupes de cases ou radios, pied avec « Réinitialiser » et « Appliquer » ; voile rgba(0,0,0,.48).
-- Groupes relevés : Type de café, Type de sourcing (Direct Trade, Cross Trade, Sourcing Exclusive, Alpha), Produits visibles sur Belco.fr, Produits en sommeil, Sourcing steps, Impact score, Due diligence (À soumettre, Soumise, Validée, Rejetée), UB.
-
+# Champs — Orica (chakra-input, chakra-textarea, chakra-form__label)
+Fichier : champs.md
+- Recherche : chakra-input__group css-1dg1wqw (min-width 200px) + chakra-input__left-element (loupe 16px) + chakra-input css-gpd2jp (hauteur 2.5em, padding-inline-start 2.5em, radii-md, border gray-200, texte dark-500, placeholder gray-700). Hover → border gray-500 ; focus → border primary-500 et fond gray-50 ; invalid → border red-500.
+- Formulaire : chakra-input css-1v4ryj4, chakra-textarea css-1gdsx9s, libellé chakra-form__label (weight 600, astérisque en span requis).
+- Cases : chakra-checkbox__control css-j9e2r5 (18px, radii-xs, border primary-500 ; checked → fond primary-500 ; hover checked → primary-600 ; disabled → gray-100). Radio : chakra-radio css-15xz5uj.
 ## Règles
-- Les filtres fréquents sont dans la barre ; les rares dans le panneau.
-- Le compteur de résultats se met à jour à chaque filtre.
+- Libellé au-dessus, weight 600, astérisque rouge via span. Aide et erreur sous le champ.
+- État d'erreur : [aria-invalid=true] (border error-500) existe dans le CSS ; aucun message d'erreur n'a été relevé visuellement.
 
 ---
 
-# Tabs & segmented — Orica
-Statut : relevé sur fournisseurs, contrats, plans d'achat. Fichier : tabs.md
-
-- .o-tabs / .o-tab : onglets soulignés 43 px, Medium 14, actif en vert avec trait de 2 px ; compteur .o-count après le libellé (« Fournisseurs 694 », « Prospects 14 », « Brouillons 9 »).
-- .o-seg : segmented control fond gris, segment actif noir (« Par origines / Par UB / Kanban », « Liste / Calendrier »).
-- Univers : segment « Café / Cacao » dans l'en-tête de page.
-
+# Badge & tags — Orica
+Fichier : badge.md
+- chakra-badge css-gb6hna / css-li4vr2 : compteur après un libellé d'onglet (« 708 », « 694 »).
+- Tags de référence (chakra-wrap css-ok8zxw > chakra-wrap__list) : spans css-1tzmuxv (poids, process), css-449933 (Microlot), css-iwbke2 (Label), css-p9hk8a (Terroir) — couleurs via tokens microlot / label / terroir.
+- Statuts de tableau (Actif / Inactif, Finalisé) : spans dans les cellules, couleurs status-* et tokens sémantiques.
 ## Règles
-- Onglets = sous-ensembles d'une même liste ; segmented = autre vue des mêmes données.
-- L'onglet actif est vert, jamais souligné en gris.
+- Un tag par qualité, ordre : type de sourcing, label, poids. Couleurs uniquement via les tokens métier (terroir, label, estate, microlot…).
 
 ---
 
-# Tableau — Orica
-Statut : relevé sur fournisseurs, contrats, direct trade, spécifications, glossaire. Fichier : tableau.md
-
-- .o-tablewrap > .o-table : en-tête gris-100, texte grey-700 10 px Book ; lignes 46 px, filet grey-100, survol gris de page.
-- Cellules : .cell-title (Semibold) + .cell-sub (10 px gris) ; .num aligné à droite tabulaire ; .actions à droite avec .o-icon-btn (24 px, rayon 5.2 ; --warning or, --danger brun, --success vert).
-- Colonnes relevées (contrats) : Créé le, BTB, Désignation, Embarquement, POL / POD, Produits · Volume · Montant, Statut.
-
+# Tableau — Orica (chakra-table)
+Fichier : tableau.md
+- chakra-table__container css-1nmizk2 > table.chakra-table css-h1zm47 ; thead ; tbody tr css-1jg4rhe (fournisseurs) / css-4tz101 (contrats).
+- Cellules : avatar-drapeau (chakra-avatar css-18oor2t) + nom, chips de type, statut, compteurs, colonne d'actions avec boutons icônes.
+- Pagination : nav.chakra-stack css-17769tf → texte « n / N » (chakra-text css-ebjc71) + deux chakra-button css-39ivzn (Précédent / Suivant, disabled quand inapplicable).
 ## Règles
-- Première colonne = identité (avatar ou drapeau + nom) ; dernière = statut puis actions.
-- Pas de bordures verticales ; le survol suffit à suivre la ligne.
-- Pagination « n / N » avec flèches rondes, à droite sous le tableau.
+- Première colonne = identité (drapeau + nom), dernière = actions. Pas de bordures verticales.
 
 ---
 
-# Ligne de référence — Orica
-Statut : relevé sur l'écran Références. Fichier : ligne.md
-
-- .o-list > .o-ref : grille 32 px (drapeau) · contenu · badges ; code 10 px gris clair, nom Semibold 13, triplet de stats (Qté actuel, Qté retenu, Position stock) ; badges qualité et poids à droite.
-
+# Écrans — Orica
+Fichier : ecrans.md
+- Rail : <aside> css-1dn00vq, 64px, tuiles chakra-button css-1vt6cti ; module actif marqué ; avatar utilisateur en bas (chakra-menu).
+- En-tête de page : <header> avec chakra-heading css-13e5vvr (titre), radiogroup Univers (css-1laeaix, Café / Cacao), action primaire à droite ; page de création : bouton retour css-od61ih avant le titre.
+- Liste : onglets → barre de filtres (chakra-input__group + chakra-select__wrapper × n + chakra-checkbox + bouton Filtres dans un chakra-button__group) → lignes (css-2g5t7v pour les références, chakra-table pour les autres) → pagination.
+- Plans d'achat : grille de KPI css-123lq1y > cartes css-qhm6ri (icône, titre, valeur css-1vcnt04, barre empilée css-sm2y2r, légendes), segmented radiogroup css-1g55o27 (Par origines / Par UB / Kanban), accordéons chakra-accordion__item.
+- Drawer Filtres : chakra-modal__content css-15u2225 (364px, droite) sur chakra-modal__overlay ; groupes chakra-form-control avec radios / cases ; pied Réinitialiser / Appliquer.
 ## Règles
-- Le drapeau de l'origine remplace la photo.
-- Trois statistiques maximum sous le nom, toujours dans le même ordre.
-- La ligne entière est cliquable.
-
----
-
-# Avatar — Orica
-Statut : relevé dans le menu utilisateur et les listes. Fichier : avatar.md
-
-- .o-avatar : rond 32 px gris clair avec initiales Semibold 12 ; --user : vert avec initiales blanches ; --flag : drapeau emoji 16 px ; --sm : 24 px.
-
-## Règles
-- Initiales (deux lettres) tant qu'il n'y a pas de photo.
-- Dans un tableau, 24 px ; dans l'en-tête, 32 px.
-
----
-
-# Cartes KPI & progression — Orica
-Statut : relevé sur Plans d'achat. Fichier : kpi.md
-
-- .o-kpis : grille de .o-kpi (carte blanche rayon 13, ombre sm) : icône + libellé 12 px, valeur Bold 25 tabulaire, barre .o-progress, deux sous-valeurs 10 px.
-- .o-progress : 6 px, fond gris, remplissage vert ; --info bleu, --warning or ; --sm 4 px dans les lignes.
-
-## Règles
-- Quatre KPI maximum en tête d'écran.
-- La barre montre toujours réalisé / objectif, jamais une valeur seule.
-
----
-
-# Accordéon — Orica
-Statut : relevé sur Plans d'achat (groupes par origine). Fichier : accordeon.md
-
-- .o-acc : carte blanche, groupes <details> ; en-tête 46 px avec chevron, nom Semibold 13, méta à droite (volumes tabulaires) ; lignes enfant en grille (nom, volume, objectif, action).
-- .o-acc-tools : « Tout fermer » / « Tout ouvrir » en vert au-dessus.
-
-## Règles
-- Un niveau d'imbrication maximum.
-- L'action de ligne (« Nouvelle offre ») est un bouton doux, pas un primaire.
-
----
-
-# Pagination — Orica
-Statut : relevé sous les tableaux (contrats, spécifications, géographie). Fichier : pagination.md
-
-- .o-pager : « 1 / 1 » Medium 12 gris + deux flèches rondes 22 px ; flèche désactivée à 40 %.
-
-## Règles
-- Alignée à droite, sous le tableau.
-- Les listes de références chargent en continu : pas de pagination là.
-
----
-
-# État vide — Orica
-Statut : relevé sur Géographie (« Aucune région trouvée ») et Clients. Fichier : vide.md
-
-- .o-empty : carte blanche, picto rond vert pâle 40 px, texte gris 12 px.
-
-## Règles
-- Dire ce qui est vide et, si possible, proposer l'action de création.
+- Toujours cet ordre : en-tête, onglets, filtres, contenu, pagination.
