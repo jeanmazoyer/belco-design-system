@@ -34,8 +34,9 @@ function buildAudit({ D, pick, g, renderable, COMP }) {
   const THEMEABLE = /^(color|background|background-color|border(-(top|right|bottom|left|inline|block)(-(start|end))?)?(-color)?|outline-color|fill|stroke|box-shadow|border-radius|border-(top|bottom)-(left|right)-radius|border-(start|end)-(start|end)-radius|font-size|font-weight|font-family|letter-spacing|line-height|padding(-[a-z-]+)?|margin(-[a-z-]+)?|gap|row-gap|column-gap|width|height|min-width|min-height|max-width|max-height|--[a-z-]+)$/;
   const NEUTRAL = /^(inherit|initial|unset|revert|transparent|currentcolor|none|auto|0|0px|1px|100%|normal|fit-content|max-content|min-content|\d+%|1|0\.\d+|bold|normal|solid|hidden|visible|\d+(\.\d+)?em)$/i;
   const HARD = /#[0-9a-f]{3,8}\b|rgba?\(|hsla?\(|\b\d*\.?\d+(px|rem|em|vh|vw|ch)\b/i;
+  const CAT = (prop, val) => /^(padding|margin|gap|row-gap|column-gap)/.test(prop) ? 'espacements' : /^(width|height|min-|max-)/.test(prop) ? 'tailles' : /^(font|line-height|letter-spacing)/.test(prop) ? 'typographie' : /radius/.test(prop) ? 'rayons' : /shadow/.test(prop) ? 'ombres' : /^border/.test(prop) && !/#|rgb|hsl/i.test(val) ? 'bordures' : /^(color|background|border|outline-color|fill|stroke)/.test(prop) ? 'couleurs' : 'autres';
   function analyse(rules) {
-    let tok = 0, hard = 0; const hardList = {};
+    let tok = 0, hard = 0; const hardList = {}; const hardCats = {};
     const states = { hover: false, focus: false, active: false, disabled: false, selected: false };
     for (const r of rules) {
       const sel = r.slice(0, r.indexOf('{'));
@@ -51,11 +52,11 @@ function buildAudit({ D, pick, g, renderable, COMP }) {
         if (!THEMEABLE.test(prop)) continue;
         if (/var\(--/.test(val)) { tok++; continue; }
         if (NEUTRAL.test(val)) { tok++; continue; }
-        if (HARD.test(val)) { hard++; const k = prop + ': ' + val; hardList[k] = (hardList[k] || 0) + 1; continue; }
+        if (HARD.test(val)) { hard++; const k = prop + ': ' + val; hardList[k] = (hardList[k] || 0) + 1; const cat = CAT(prop, val); const c = hardCats[cat] = hardCats[cat] || { n: 0, values: {} }; c.n++; const v = val.replace(/\s+/g, ' ').slice(0, 24); c.values[v] = (c.values[v] || 0) + 1; continue; }
         tok++;
       }
     }
-    return { tok, hard, hardList, states };
+    return { tok, hard, hardList, states, hardCats: Object.entries(hardCats).sort((x, y) => y[1].n - x[1].n).map(([cat, c]) => ({ cat, n: c.n, values: Object.entries(c.values).sort((x, y) => ((/calc\(|var\(/.test(x[0]) ? 1 : 0) - (/calc\(|var\(/.test(y[0]) ? 1 : 0)) || y[1] - x[1]).slice(0, 3).map(([v]) => v.replace(/(\d)px\b/g, '$1 px')) })) };
   }
   const uniq = a => [...new Set(a)];
   const AUDIT = DEF.map(c => {
@@ -75,7 +76,17 @@ function buildAudit({ D, pick, g, renderable, COMP }) {
     if (c.note) notes.push(c.note);
     const score = Math.max(0, Math.round((statesPct === null ? tokensPct * 0.7 + consistency * 0.3 : tokensPct * 0.5 + statesPct * 0.3 + consistency * 0.2) - penalties.length * 5));
     const meta = COMP.find(x => x.id === c.id) || {};
+    const STATE_FR = { hover: 'survol', focus: 'focus clavier', active: 'clic', disabled: 'désactivé', selected: 'sélection' };
+    const missing = expected.filter(k => !a.states[k]).map(k => STATE_FR[k]);
+    const weakest = [['tokens', tokensPct], ['etats', statesPct === null ? 101 : statesPct], ['coherence', consistency]].sort((x, y) => x[1] - y[1])[0][0];
+    const verdict = score >= 90 ? 'Très fidèle au design system.' : score >= 80 ? 'Fidèle au design system, avec quelques écarts.' : score >= 60 ? 'Partiellement fidèle : des écarts à corriger.' : 'Peu fidèle : à reprendre.';
+    const topCat = a.hardCats[0];
+    const why = weakest === 'coherence' && variants > 3 ? `Point faible : ${variants} déclinaisons différentes du même composant dans l’app (l’objectif est 3 au plus).`
+      : weakest === 'etats' && missing.length ? `Point faible : ${missing.length > 1 ? 'les états ' + missing.join(', ') + ' ne sont pas dessinés' : 'l’état ' + missing[0] + ' n’est pas dessiné'}.`
+      : topCat ? `Point faible : ${a.hard} valeur${a.hard > 1 ? 's' : ''} écrite${a.hard > 1 ? 's' : ''} en dur au lieu des tokens, surtout des ${topCat.cat} (${topCat.values.join(', ')}).`
+      : 'Aucun point faible notable.';
     return {
+      verdict, why, hardCats: a.hardCats, missing,
       id: c.id, title: meta.title || c.id, fam: c.fam, roots: uniq(c.samples.map(s => '.' + s.sig.trim().split(/\s+/).join('.'))),
       score, tokensPct, statesPct, consistency, variants, classes: classes.length, rules: rules.length, decl: a.tok + a.hard, hard: a.hard,
       hardTop: Object.entries(a.hardList).sort((x, y) => y[1] - x[1]).slice(0, 8).map(([k, n]) => ({ k, n })),

@@ -53,14 +53,14 @@
   <div class="aud-method" id="audMethodPanel" hidden>
     <div class="aud-method-card">
       <div class="aud-method-head"><h2>Comment le score est calculé</h2><button type="button" class="aud-btn" id="audMethodClose">${ICON.close}</button></div>
-      <p>Chaque composant est noté à partir des règles Emotion relevées pour les classes présentes dans ses échantillons (components.css). Rien n’est évalué à la main.</p>
+      <p>Chaque composant est noté à partir du CSS réellement servi par l’application, sans appréciation manuelle. Le score dit à quel point le composant respecte les règles du design system.</p>
       <dl>
-        <dt>Tokens · 50 %</dt><dd>Part des déclarations « thémables » (couleurs, ombres, rayons, typographie, espacements, tailles) qui passent par une variable <code>var(--chakra-…)</code> plutôt que par une valeur en dur (hex, rgb, px, rem). Les mots-clés neutres (inherit, transparent, 0, 100 %…) comptent comme conformes.</dd>
-        <dt>États · 30 %</dt><dd>Pour les composants interactifs : présence dans le CSS des sélecteurs <code>:hover</code>, <code>:focus</code>, <code>:active</code>, <code>:disabled</code> et, pour ceux qui portent une sélection (tabs, segmented, menus, cases, accordéons), <code>[aria-selected]</code> / <code>[data-checked]</code>. Les composants non interactifs n’ont pas ce critère : tokens 70 %, cohérence 30 %.</dd>
-        <dt>Cohérence · 20 %</dt><dd>Nombre de variantes Emotion distinctes relevées pour le même composant : 100 jusqu’à trois, puis −4 points par variante (plancher 40). Beaucoup de classes pour un même composant signale des combinaisons de props non factorisées.</dd>
-        <dt>Pénalités</dt><dd>−5 par écart du relevé qui touche au rendu (images externes remplacées dans l’aperçu). Les notes sans effet visuel (listes réduites, variante relevée disabled) sont affichées mais ne comptent pas.</dd>
+        <dt>Utilise les tokens du thème · 50 %</dt><dd>Part des couleurs, ombres, rayons, typographies, espacements et tailles qui passent par un token du thème plutôt que par une valeur écrite en dur (un hex, des px). Une valeur en dur, c’est une valeur que le thème ne pilote plus.</dd>
+        <dt>États dessinés · 30 %</dt><dd>Pour les composants avec lesquels on interagit : survol, focus clavier, clic, désactivé et, quand ça s’applique, sélection. Un état manquant, c’est un comportement laissé au hasard du navigateur. Les composants sans interaction n’ont pas ce critère (tokens 70 %, une seule façon de le faire 30 %).</dd>
+        <dt>Une seule façon de le faire · 20 %</dt><dd>Nombre de versions différentes du même composant dans l’app. Jusqu’à trois, c’est maîtrisé ; au-delà, chaque version supplémentaire coûte 4 points (plancher 40). Beaucoup de versions, c’est un composant difficile à faire évoluer.</dd>
+        <dt>Pénalités</dt><dd>−5 quand l’aperçu ne peut pas être exact (drapeaux et images remplacés par des visuels neutres). Les remarques sans effet visuel sont affichées mais ne comptent pas.</dd>
       </dl>
-      <p class="muted">Les écrans du navigateur sont recomposés à partir du HTML servi (rail, en-tête, contenu), données neutralisées. Les en-têtes des écrans Fournisseurs, Plans d’achat, Contrats, Direct Trade et Géographie reprennent le titre réel mais leur action primaire n’a pas été relevée. Le « Tableau de bord » est un prototype composé avec le bundle.</p>
+      <p class="muted">Les écrans du navigateur sont recomposés à partir du HTML servi (rail, en-tête, contenu), données neutralisées. Pour Fournisseurs, Plans d’achat, Contrats, Direct Trade et Géographie, le titre est réel mais l’action principale de l’en-tête n’a pas été relevée. Le « Tableau de bord » est un prototype composé avec le bundle.</p>
     </div>
   </div>`;
   document.body.appendChild(layer);
@@ -81,22 +81,35 @@
 
   /* ---- détail ---- */
   const pct = (v, cls) => `<span class="aud-mbar ${cls || ''}"><i style="width:${v}%"></i></span>`;
+  const STATE_FR = { hover: 'Survol', focus: 'Focus clavier', active: 'Clic', disabled: 'Désactivé', selected: 'Sélection' };
+  const CAT_FR = { espacements: 'espacements', tailles: 'tailles', couleurs: 'couleurs', typographie: 'typographie', rayons: 'rayons', ombres: 'ombres', autres: 'autres' };
   function renderDetail() {
     const x = st.cur && byId[st.cur]; if (!x) { detail.hidden = true; layer.classList.remove('has-detail'); return; }
     const c = counts[st.scr]; const here = c[x.id] || 0;
     const presence = SCR.map((s, i) => ({ i, n: counts[i][x.id] || 0, s })).filter(p => p.n);
+    const hardTxt = x.hard === 0 ? 'Tout passe par les tokens du thème : rien n’est écrit en dur.' : `${x.hard} valeur${x.hard > 1 ? 's' : ''} écrite${x.hard > 1 ? 's' : ''} en dur au lieu des tokens${x.hardCats && x.hardCats.length ? ' : ' + x.hardCats.slice(0, 3).map(h => `${CAT_FR[h.cat] || h.cat} (${h.values.join(', ')})`).join(', ') : ''}.`;
+    const statesTxt = x.statesPct === null ? 'Ce composant n’a pas d’état interactif : ce critère ne s’applique pas.' : x.missing.length === 0 ? `Tous les états sont dessinés : ${x.states.map(s => STATE_FR[s.k].toLowerCase()).join(', ')}.` : `Il manque ${x.missing.length > 1 ? 'les états ' + x.missing.join(' et ') : 'l’état ' + x.missing[0]}.`;
+    const varTxt = x.variants <= 1 ? 'Une seule version de ce composant dans l’app : c’est l’idéal.' : x.variants <= 3 ? `${x.variants} versions de ce composant dans l’app : c’est maîtrisé.` : `${x.variants} versions différentes de ce composant dans l’app. Plus il y en a, plus il est difficile à faire évoluer (objectif : 3 au plus).`;
+    const notesFR = n => n.replace('Listes réduites à trois éléments dans le relevé', 'Les listes longues sont montrées avec trois éléments seulement').replace('Certaines variantes relevées à l’état disabled', 'Certaines versions ont été capturées désactivées (grisées), comme à l’écran ce jour-là').replace('Images externes (drapeaux, sceaux) remplacées dans l’aperçu', 'Les drapeaux et images sont remplacés par des visuels neutres dans l’aperçu');
     detail.innerHTML = `
-      <div class="aud-dhead"><div><span class="label">Composant</span><h2>${esc(x.title)}</h2><code>${esc(x.roots.slice(0, 3).join('  '))}${x.roots.length > 3 ? ` +${x.roots.length - 3}` : ''}</code></div><div class="aud-big ${grade(x.score)}"><b>${x.score}</b><span>/100</span></div><button type="button" class="aud-btn aud-dclose" id="audDClose" aria-label="Fermer">${ICON.close}</button></div>
-      <div class="aud-metrics">
-        <div class="aud-metric"><span>Tokens</span>${pct(x.tokensPct, grade(x.tokensPct))}<b>${x.tokensPct} %</b><small>${x.decl} déclarations thémables, ${x.hard} en dur</small></div>
-        <div class="aud-metric"><span>États</span>${x.statesPct === null ? '<em>non interactif</em>' : pct(x.statesPct, grade(x.statesPct))}<b>${x.statesPct === null ? '—' : x.statesPct + ' %'}</b><small class="aud-states">${x.states.map(s => `<i class="${s.ok ? 'ok' : 'ko'}">${s.k === 'selected' ? 'sélection' : s.k}</i>`).join('')}</small></div>
-        <div class="aud-metric"><span>Cohérence</span>${pct(x.consistency, grade(x.consistency))}<b>${x.consistency} %</b><small>${x.variants} variante${x.variants > 1 ? 's' : ''} Emotion · ${x.classes} classes · ${x.rules} règles</small></div>
-        ${x.penalties.length ? `<div class="aud-pen">${x.penalties.map(p => `<span>−5 · ${esc(p)}</span>`).join('')}</div>` : ''}
+      <div class="aud-dhead"><div><span class="label">Composant</span><h2>${esc(x.title)}</h2></div><div class="aud-big ${grade(x.score)}"><b>${x.score}</b><span>/100</span></div><button type="button" class="aud-btn aud-dclose" id="audDClose" aria-label="Fermer">${ICON.close}</button></div>
+      <div class="aud-verdict ${grade(x.score)}"><strong>${esc(x.verdict)}</strong><span>${esc(x.why)}</span></div>
+      <div class="aud-crit">
+        <div class="aud-c"><div class="aud-c-top"><span>Utilise les tokens du thème</span>${pct(x.tokensPct, grade(x.tokensPct))}<b>${x.tokensPct} %</b></div><p>${esc(hardTxt)}</p></div>
+        <div class="aud-c"><div class="aud-c-top"><span>États dessinés</span>${x.statesPct === null ? '<i class="aud-na">sans objet</i>' : pct(x.statesPct, grade(x.statesPct))}<b>${x.statesPct === null ? '—' : x.statesPct + ' %'}</b></div>${x.statesPct === null ? '' : `<div class="aud-states">${x.states.map(s => `<i class="${s.ok ? 'ok' : 'ko'}">${STATE_FR[s.k]}</i>`).join('')}</div>`}<p>${esc(statesTxt)}</p></div>
+        <div class="aud-c"><div class="aud-c-top"><span>Une seule façon de le faire</span>${pct(x.consistency, grade(x.consistency))}<b>${x.consistency} %</b></div><p>${esc(varTxt)}</p></div>
+        ${x.penalties.length ? `<div class="aud-pen">${x.penalties.map(p => `<span>−5 · ${esc(notesFR(p))}</span>`).join('')}</div>` : ''}
       </div>
-      ${x.hardTop.length ? `<div class="aud-section"><span class="label">Valeurs en dur les plus fréquentes</span><ul class="aud-hard">${x.hardTop.map(h => `<li><code>${esc(h.k)}</code><span>× ${h.n}</span></li>`).join('')}</ul></div>` : '<div class="aud-section"><span class="label">Valeurs en dur</span><p class="muted">Aucune : tout passe par les tokens.</p></div>'}
-      <div class="aud-section"><span class="label">Sur cet écran</span><div class="aud-inst">${here ? `<b>${here}</b> instance${here > 1 ? 's' : ''} <span class="aud-instnav"><button type="button" class="aud-btn" id="audPrev" aria-label="Instance précédente">${ICON.back}</button><span id="audInstPos">${st.focus + 1}/${here}</span><button type="button" class="aud-btn" id="audNext" aria-label="Instance suivante">${ICON.fwd}</button></span>` : '<span class="muted">Absent de cet écran</span>'}</div></div>
-      <div class="aud-section"><span class="label">Présent sur</span><div class="aud-chips">${presence.length ? presence.map(p => `<button type="button" class="aud-chip${p.i === st.scr ? ' is-on' : ''}" data-scr="${p.i}">${esc(p.s.title)} <b>${p.n}</b></button>`).join('') : '<span class="muted">Aucun écran recomposé</span>'}</div></div>
-      ${x.notes.length ? `<div class="aud-section"><span class="label">Notes du relevé</span><ul class="aud-notes">${x.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul></div>` : ''}
+      <div class="aud-section"><span class="label">Où il apparaît</span><div class="aud-chips">${presence.length ? presence.map(p => `<button type="button" class="aud-chip${p.i === st.scr ? ' is-on' : ''}" data-scr="${p.i}">${esc(p.s.title)} <b>${p.n}</b></button>`).join('') : '<span class="muted">Sur aucun des écrans relevés</span>'}</div>
+        <div class="aud-inst">${here ? `<span><b>${here}</b> fois sur cet écran</span><span class="aud-instnav"><button type="button" class="aud-btn" id="audPrev" aria-label="Précédente">${ICON.back}</button><span id="audInstPos">${st.focus + 1}/${here}</span><button type="button" class="aud-btn" id="audNext" aria-label="Suivante">${ICON.fwd}</button></span>` : '<span class="muted">Pas sur cet écran</span>'}</div></div>
+      ${x.notes.length ? `<div class="aud-section"><span class="label">À savoir sur le relevé</span><ul class="aud-notes">${x.notes.map(n => `<li>${esc(notesFR(n))}</li>`).join('')}</ul></div>` : ''}
+      <details class="aud-tech"><summary>Détails techniques</summary>
+        <div class="aud-tech-body">
+          <p><span class="label">Classes racines</span><code>${esc(x.roots.join('  '))}</code></p>
+          <p class="muted">${x.classes} classes Emotion · ${x.rules} règles CSS · ${x.decl} déclarations thémables, dont ${x.hard} en dur · ${x.variants} signature${x.variants > 1 ? 's' : ''} racine${x.variants > 1 ? 's' : ''}</p>
+          ${x.hardTop.length ? `<ul class="aud-hard">${x.hardTop.map(h => `<li><code>${esc(h.k)}</code><span>× ${h.n}</span></li>`).join('')}</ul>` : ''}
+        </div>
+      </details>
       <a class="aud-open" href="#${x.id}">Ouvrir la fiche du composant ${ICON.fwd}</a>`;
     detail.hidden = false; layer.classList.add('has-detail');
   }
