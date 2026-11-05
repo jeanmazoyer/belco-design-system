@@ -22,5 +22,8 @@ Documentation du module Orica du Belco Hub, relevée le 5 novembre 2026 directem
 2. Dans Claude Code, renommer AGENTS.md en CLAUDE.md ou le référencer depuis CLAUDE.md.
 3. Demander : « Fais l’écran X en respectant CLAUDE.md, avec les classes `chakra-*` / `css-*` de components.css et les variables de tokens.css. Les composants marqués Soon ne doivent pas être produits. »
 
+## Mode Play (audit UI)
+Le bouton Play en haut à droite de la doc bascule en audit : à gauche, les 21 composants relevés avec un score de fidélité calculé à partir du CSS (tokens 50 %, états 30 %, cohérence des variantes 20 %, pénalités du relevé) ; à droite, un navigateur des écrans d’Orica recomposés à partir du HTML servi. Cliquer un composant surligne ses instances à l’écran ; survoler un élément de l’écran l’identifie, le cliquer sélectionne son composant. Le détail du calcul est dans le bouton « Méthode ».
+
 ## Prototypes
 - prototypes/dashboard.html : un tableau de bord composé uniquement avec le bundle (shell css-12p9q9f, rail, en-tête, tabs, grille KPI css-123lq1y, panneaux css-1ms5eys, chakra-table, pagination), données fictives. Généré par prototypes/build-dashboard.js à partir des samples ; 131 classes utilisées, toutes présentes dans components.css. En ligne : https://jeanmazoyer.github.io/belco-design-system/orica/prototypes/dashboard.html
