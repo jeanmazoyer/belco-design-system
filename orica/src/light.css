@@ -1,0 +1,29 @@
+/* ---------- édition designers ---------- */
+.is-light .brand small{letter-spacing:0}
+.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.vgrid.is-block{grid-template-columns:1fr}
+.vcard{margin:0;background:var(--color-white);border:1px solid var(--color-border-light);border-radius:var(--radius-xl);overflow:hidden;display:flex;flex-direction:column}
+.vcard.is-block{grid-column:1/-1}
+.vcard-preview{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:flex-start;padding:22px;min-height:88px;background:var(--color-white)}
+.vcard.is-grey .vcard-preview{background:var(--color-grey-50)}
+.vcard-preview.is-block{display:block}
+.vcard figcaption{display:flex;flex-direction:column;gap:3px;padding:8px 12px;border-top:1px solid var(--color-border-light);font-size:var(--text-xs);background:var(--color-background)}
+.vcard figcaption b{font-weight:var(--font-weight-semibold);color:var(--color-text)}
+.vcard figcaption .muted{font-size:11px}
+.dsname{font:11px/14px var(--font-mono);color:var(--color-text-muted)}
+.vcard.is-states{grid-column:1/-1;margin-bottom:12px}
+.vcard.is-states .vcard-preview{padding:22px 22px 18px}
+.usage{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;font-size:var(--text-sm);line-height:var(--leading-sm);color:var(--color-text)}
+.seen{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:26px;padding-top:16px;border-top:1px solid var(--color-border-light);font-size:var(--text-xs)}
+.seen .label{margin-right:4px}
+.seen a,.seen span{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:var(--radius-full);background:var(--color-white);border:1px solid var(--color-border-light);color:var(--color-text);text-decoration:none}
+.seen a:hover{border-color:var(--color-border)}
+.route{display:flex;align-items:center;gap:10px;margin-bottom:16px;font-size:var(--text-xs)}
+.sw-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+.swc{display:grid;grid-template-columns:36px 1fr;grid-template-rows:auto auto auto;column-gap:10px;row-gap:2px;background:var(--color-white);border:1px solid var(--color-border-light);border-radius:var(--radius-lg);padding:10px 12px;font-size:var(--text-xs)}
+.swc i{grid-row:1/4;width:36px;height:36px;border-radius:var(--radius-md);border:1px solid rgba(0,0,0,.06)}
+.swc b{font-weight:var(--font-weight-semibold);color:var(--color-text)}
+.swc small{color:var(--color-text-muted);line-height:14px}
+.swc code{font:11px/1 var(--font-mono);color:var(--color-text-faint)}
+.is-light .comp-grid a .soon{display:none}
+@media (max-width:800px){.vgrid{grid-template-columns:1fr}}

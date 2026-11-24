@@ -729,7 +729,7 @@ fs.writeFileSync(path.join(out, 'index.html'), `<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <style>body{margin:0;font:14px system-ui}img{max-width:100%}[hidden]{display:none!important}</style>
-${html.replace(/<meta name="claude:viewport-fit-sides"[^>]*>\n/, '').replace('const CHAT_ENABLED = false;', 'const CHAT_ENABLED = true;').replace(/^([\s\S]*?<\/style>\n<style id="prodFonts">[\s\S]*?<\/style>\n)/, '$1</head>\n<body>\n')}
+${html.replace(/<meta name="claude:viewport-fit-sides"[^>]*>\n/, '').replace('const CHAT_ENABLED = false;', 'const CHAT_ENABLED = true;').replace('<a href="#mcp" data-top="mcp">MCP</a></nav>', '<a href="#mcp" data-top="mcp">MCP</a><a href="designers/" data-top="light" title="Composants réellement utilisés, sans code">Designers</a></nav>').replace(/^([\s\S]*?<\/style>\n<style id="prodFonts">[\s\S]*?<\/style>\n)/, '$1</head>\n<body>\n')}
 </body>
 </html>
 `);
@@ -740,5 +740,11 @@ fs.writeFileSync(path.join(out, 'icons.svg'), spriteSvg());
 fs.writeFileSync(path.join(out, 'AGENTS.md'), agentsMd());
 for (const [k, v] of Object.entries(RULES)) fs.writeFileSync(path.join(out, 'rules', k + '.md'), v + '\n');
 for (const [k, s] of Object.entries(S)) fs.writeFileSync(path.join(out, 'samples', k.replace(/[^a-z0-9_-]+/gi, '_') + '.html'), `<!-- ${k} · ${s.screen} -->\n` + pretty(inlineIcons(s.html)) + '\n');
+// édition designers (composants réellement utilisés, sans code)
+try {
+  const { buildLight } = require('./light-doc.js');
+  const r = buildLight({ D, S, pick, g, renderable, inlineIcons, esc, section, T, DS, SCREENS, CHANGELOG, fmtDate, spriteSvg, shellCss, lightCss: fs.readFileSync(path.join(DIR, 'light.css'), 'utf8'), belcoLogo, fontFaceCss, sharedCss, allComponentCss, tokensCss, shellJs: fs.readFileSync(path.join(DIR, 'shell.js'), 'utf8'), DIR, OUT });
+  console.log('designers :', r.pages, 'pages,', r.components, 'composants,', (r.size / 1024).toFixed(0), 'KB');
+} catch (e) { console.warn('édition designers non générée :', e.message); }
 console.log('built', (html.length / 1024).toFixed(0), 'KB; pages', PAGES.length, '; components', COMP.length, '; audit', AUDIT.length, 'scored, screens', APP_SCREENS.length, '; out', OUT, '; sources:', SRC.tokens ? 'tokens.css' : 'tokens(json)', SRC.rules.length + ' rules.md', SRC.changelog ? 'changelog.json' : 'changelog(default)');
 if (process.env.VERBOSE) console.log(AUDIT.map(a => `${a.id}: ${a.score}`).join(', '));

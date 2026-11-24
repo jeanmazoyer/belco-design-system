@@ -30,6 +30,9 @@ Documentation du module Orica du Belco Hub, relevée le 5 novembre 2026 directem
 2. Dans Claude Code, renommer AGENTS.md en CLAUDE.md ou le référencer depuis CLAUDE.md.
 3. Demander : « Fais l’écran X en respectant CLAUDE.md, avec les classes `chakra-*` / `css-*` de components.css et les variables de tokens.css. Les composants marqués Soon ne doivent pas être produits. »
 
+## Édition designers
+`designers/` : la même documentation en version légère, limitée aux 21 composants réellement présents sur les écrans d’Orica, rendus avec le CSS servi, sans code ni classes : variantes, états (repos, survol, clic, focus, désactivé, rendus avec les règles d’état du CSS), règles d’usage observées, écrans. Chaque variante porte le nom du composant dans le Design System Hub (« DS : Button · outline · md ») pour parler le même langage que les développeurs. En ligne : https://jeanmazoyer.github.io/belco-design-system/orica/designers/
+
 ## Chat : faire évoluer le design system depuis la doc, sous garde-fous
 Le bouton Chat (en haut à droite, version GitHub Pages) ouvre un assistant qui connaît les tokens, les règles, le CSS relevé et les scores d’audit. Il répond aux questions et prépare des évolutions, sans jamais rien modifier directement :
 1. Il lit l’état courant du fichier sur main puis enregistre une **proposition**, affichée avec son diff ; pour les tokens, « Aperçu dans la doc » applique les nouvelles valeurs aux aperçus.
