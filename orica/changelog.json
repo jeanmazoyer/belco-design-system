@@ -1,5 +1,17 @@
 [
   {
+    "date": "2026-11-24",
+    "version": "v2.0",
+    "title": "Design System Hub comme source",
+    "added": [
+      "Fondations : page Design System Hub (thème, tokens surchargés par Orica, composants du thème et composants Hub). Composants : Alert, Progress, Slider, HubIcon, ScrollBox, TangoTuto, Notes, rendus depuis la source du DS ; Modal, Tooltip, Switch, Skeleton, Date picker, Import de fichier, Number input, Kanban passent de Soon à « DS » (définis dans le DS, non relevés sur les écrans). Sur chaque composant relevé : section « Dans le Design System Hub » (variantes, tailles, schémas, stories rendues) et « Conformité au Design System Hub » (classes servies comparées à la source). Mode Play : critère « Conforme au DS Hub ». Chat : outil lire_ds. Règle rules/design-system-hub.md."
+    ],
+    "modified": [
+      "Le paquet design-system-hub (Chakra UI 2.5.5) est la référence ; le relevé prod du 5 novembre reste la mesure de ce qui est servi. Les scores du mode Play intègrent la conformité au DS (40 %)."
+    ],
+    "removed": []
+  },
+  {
     "date": "2026-11-05",
     "version": "v1.0",
     "title": "Relevé ISO",

@@ -7,6 +7,8 @@ const DIR = __dirname;
 const OUT = process.argv[2] ? path.resolve(process.argv[2]) : path.join(DIR, 'bundle');
 process.env.ORICA_OUT = OUT;
 const D = JSON.parse(fs.readFileSync(path.join(DIR, 'orica-iso.json'), 'utf8'));
+const { loadDS, makeDsDoc } = require('./ds-doc.js');
+const DS = loadDS(DIR); // ds-source.json : thème, tokens, stories rendues et correspondance prod, générés depuis le code source du DS Hub
 const SRC = { tokens: false, rules: [], changelog: false };
 try {
   const css = fs.readFileSync(path.join(OUT, 'tokens.css'), 'utf8');
@@ -269,6 +271,9 @@ function rulesRow(key) {
     <div class="demo-panel demo-rules" hidden><div class="codewrap"><button class="copy-btn copy" type="button">Copier</button><pre><code>${esc(text)}</code></pre></div></div>`;
 }
 const section = (title, body, note) => `<section class="section"><h2>${title}</h2>${note ? `<p class="note">${note}</p>` : ''}${body}</section>`;
+const DSD = makeDsDoc({ DS, esc, pretty, cssPretty, section, chev, nextDemoId: () => ++demoId });
+const dsTop = (id, opts) => DSD ? DSD.dsSection(id, opts) : '';
+const confMark = id => DSD ? `<!--CONFORMITE:${id}-->` : '';
 
 /* ---- IA rules (fondées sur les classes et tokens réels) ---- */
 const T = D.tokens;
@@ -407,6 +412,30 @@ Fichier : ecrans.md
 - Toujours cet ordre : en-tête, onglets, filtres, contenu, pagination.`;
 
 /* ---- pages ---- */
+if (DSD) {
+  const theme = Object.entries(DSD.componentsSummary);
+  RULES['design-system-hub'] = `# Design System Hub — la source (paquet design-system-hub, Chakra UI 2.5.5)
+Fichier : design-system-hub.md. Généré depuis le code source du DS reçu le ${DS.meta.generatedAt} : rien n’est interprété.
+
+## Principe
+- Le DS Hub est la référence : thème Chakra (foundations + ${theme.length} composants surchargés) et ${DS.customComponents.length} composants React « Hub » (src/components).
+- Orica importe ce thème et le surcharge : échelle primary → orica (${DS.tokenDiff.changed.filter(c => /primary/.test(c.k)).length} tokens), police → CentraNo2 (fonts.body et fonts.heading ; le DS source déclare Open Sans et Oswald). Tout le reste (${Object.keys(DS.tokens).length - DS.tokenDiff.changed.length} tokens) est identique. Orica ajoute ${DS.tokenDiff.onlyProd.length} tokens métier absents du DS (statuteOffreAchat, planAchat, secondary, tracabilité…).
+- Produire une interface = utiliser ces composants avec leurs props (variant, size, colorScheme). Ne jamais recopier le CSS Emotion : il est généré.
+
+## Composants du thème (variantes · tailles · défaut)
+${theme.map(([n, c]) => `- <${n}> : ${c.variants.length ? 'variant ' + c.variants.join(' | ') : 'sans variante'}${c.sizes.length ? ' · size ' + c.sizes.join(' | ') : ''}${c.colorSchemes.length ? ' · colorScheme dédiés ' + c.colorSchemes.join(' | ') : ''} · défaut ${Object.entries(c.defaultProps).map(([k, v]) => k + '=' + v).join(' ') || '—'}`).join('\n')}
+
+## Composants Hub avec story (rendus dans la doc)
+${Object.entries(DSD.hubSummary).map(([n, st]) => `- <${n}> : ${st.join(', ')}`).join('\n')}
+
+## Composants Hub sans story (non rendus ; la plupart dépendent de l’API Belco)
+${DS.customComponents.filter(h => !DSD.hubSummary[h]).join(', ')}
+
+## Règles
+- Avant d’écrire un composant, vérifier qu’il n’existe pas dans cette liste ; s’il existe, utiliser ses variantes plutôt que des props de style.
+- Les dégradés des boutons et badges viennent de scaleGradient(colorScheme) : 135deg, {scale}.600 → {scale}.400 (hover 700 → 500). Ne pas les réécrire.
+- Un composant « hors DS » dans l’audit (carte KPI, pagination, état vide, rail) est composé dans Orica : candidat à une entrée dans le DS plutôt qu’à être copié.`;
+}
 for (const k of Object.keys(RULES)) { try { const t = fs.readFileSync(path.join(OUT, 'rules', k + '.md'), 'utf8'); if (t.trim()) { RULES[k] = t.replace(/\n+$/, ''); SRC.rules.push(k); } } catch (e) { } }
 const PAGES = [];
 const page = (id, group, title, lede, body, soon) => PAGES.push({ id, group, title, lede, body, soon });
@@ -415,8 +444,9 @@ const colorScale = (prefix, steps) => `<div class="scale"><b>${prefix}</b><div c
 const semanticList = (keys) => `<div class="sem">${keys.map(k => `<div class="sem-row"><i style="background:${T[k]}"></i><code>${k}</code><span>${T[k]}</span></div>`).join('')}</div>`;
 
 page('introduction', 'Fondations', 'Orica Design System',
-  'Documentation ISO du module Orica du Belco Hub : les variables CSS du thème Chakra UI, les règles Emotion et le HTML tels qu’ils sont servis par l’application, relevés le 5 novembre 2026. Rien n’est réécrit : chaque aperçu est rendu avec le CSS de la prod, chaque bloc de code est celui de la prod. Les données ont été neutralisées.',
+  DSD ? 'Deux sources, rien de réécrit. Le Design System Hub (code source du design system Belco, Chakra UI 2.5.5) est la référence : son thème est chargé tel quel et ses stories sont rendues en React. Le relevé ISO des écrans d’Orica (5 novembre 2026) montre ce que l’application sert vraiment. Chaque composant présente les deux et mesure leur écart.' : 'Documentation ISO du module Orica du Belco Hub : les variables CSS du thème Chakra UI, les règles Emotion et le HTML tels qu’ils sont servis par l’application, relevés le 5 novembre 2026. Rien n’est réécrit : chaque aperçu est rendu avec le CSS de la prod, chaque bloc de code est celui de la prod. Les données ont été neutralisées.',
   `<div class="bento">
+    ${DSD ? `<a href="#design-system-hub"><div class="bento-preview is-shadow" data-shadow-host></div><template data-shadow>${(DSD.storiesOf('chakra', 'Button').find(s => s.name === 'WithVariants') || { html: '' }).html}</template><h3>Design System Hub</h3><p>${Object.values(DS.components).filter(c => c.overridden).length} composants Chakra surchargés, ${Object.keys(DSD.hubSummary).length} composants Hub rendus, ${Object.values(DS.match).filter(m => m.sim === 1).length} classes servies identiques à la source.</p></a>` : ''}
     <a href="#couleurs"><div class="bento-preview"><div class="bars">${['dark-500','gray-700','gray-300','primary-500','primary-100','green-900','sand-500','terroir-500','label-500'].map(k => `<i style="background:${T['--chakra-colors-'+k]}"></i>`).join('')}</div></div><h3>Couleurs</h3><p>${Object.keys(T).filter(k => k.startsWith('--chakra-colors-')).length} variables de couleur : échelles, alphas, tokens métier.</p></a>
     <a href="#composants"><div class="bento-preview is-shadow" data-shadow-host></div><template data-shadow>${inlineIcons(g(pick.btnPrimary).html)} ${inlineIcons(g(pick.tabsPlans).html)}</template><h3>Composants</h3><p>${Object.keys(D.rulesByClass).length} classes Emotion relevées, ${Object.keys(D.icons).length} icônes SVG, ${Object.keys(S).length} échantillons HTML.</p></a>
     <a href="#ecran-references"><div class="bento-preview is-shadow" data-shadow-host style="align-items:flex-start"></div><template data-shadow>${inlineIcons(g(pick.pagehead).html)}</template><h3>Écrans</h3><p>Neuf écrans d’Orica, avec leurs en-têtes, barres de filtres, listes et panneaux tels que servis.</p></a>
@@ -424,7 +454,8 @@ page('introduction', 'Fondations', 'Orica Design System',
     <a href="#matieres"><div class="bento-preview"><div class="shape-row"><i style="border-radius:${T['--chakra-radii-sm']};background:#fff;box-shadow:${T['--chakra-shadows-xs']}"></i><i style="border-radius:${T['--chakra-radii-md']};background:#fff;box-shadow:${T['--chakra-shadows-sm']}"></i><i style="border-radius:${T['--chakra-radii-xl']};background:#fff;box-shadow:${T['--chakra-shadows-lg']}"></i></div></div><h3>Matières</h3><p>Rayons en rem sur base 13 px, ombres à 5 %, z-index et transitions Chakra.</p></a>
     <a href="#icones"><div class="bento-preview is-shadow" data-shadow-host style="flex-wrap:wrap;gap:14px;font-size:22px;color:#232930"></div><template data-shadow>${Object.entries(D.icons).slice(0, 14).map(([id, ic]) => `<svg viewBox="${ic.viewBox || '0 0 24 24'}" style="width:1em;height:1em" class="${ic.cls}">${ic.inner}</svg>`).join('')}</template><h3>Icônes</h3><p>${Object.keys(D.icons).length} SVG inline relevés (FontAwesome et Chakra), tels que servis.</p></a>
   </div>
-  ${section('Méthode', `<p>Pour chaque écran, un script a lu <code class="inline">document.styleSheets</code> (variables <code class="inline">--chakra-*</code>, reset, règles Emotion <code class="inline">.css-xxxx</code> avec leurs états <code class="inline">:hover</code>, <code class="inline">:focus-visible</code>, <code class="inline">[data-active]</code>, <code class="inline">:disabled</code>) et le <code class="inline">outerHTML</code> de chaque composant. Les aperçus sont rendus dans un Shadow DOM avec ces règles ; ils ne sont pas redessinés. Les images externes (drapeaux flag-icons chargés depuis jsDelivr, sceaux de certification servis par le CDN Filerobot) sont remplacées par un rectangle neutre dans les aperçus, le code conservant l\u2019URL d\u2019origine ; les identifiants portés par les liens (rapports Power BI) sont mis à zéro. Les listes répétitives sont réduites à trois éléments et les contenus métier (noms, références, montants, dates) remplacés par des valeurs neutres ; les libellés d’interface sont conservés.</p>`)}
+  ${DSD ? section('Source : le Design System Hub', `<p>Le paquet design-system-hub (reçu le ${esc(DS.meta.generatedAt)}) est bundlé avec son thème Chakra ; chaque story Storybook est rendue côté serveur avec React 18 et le CSS Emotion produit est normalisé par le navigateur, exactement comme le relevé de la prod. Les classes servies par Orica sont ensuite comparées déclaration par déclaration à celles que génère le DS : ${Object.values(DS.match).filter(m => m.sim === 1).length} classes sont identiques, ${Object.values(DS.match).filter(m => m.sim >= 0.8 && m.sim < 1).length} proches (props ajoutées par l’app), les autres sont des assemblages propres à Orica. Les tokens : ${Object.keys(DS.tokens).length - DS.tokenDiff.changed.length} identiques, ${DS.tokenDiff.changed.length} surchargés par Orica (échelle primary et police), ${DS.tokenDiff.onlyProd.length} ajoutés par Orica. Le code source du DS n’est pas publié : seuls les rendus et les structures (variantes, tailles, défauts) le sont.</p>`) : ''}
+  ${section('Méthode du relevé prod', `<p>Pour chaque écran, un script a lu <code class="inline">document.styleSheets</code> (variables <code class="inline">--chakra-*</code>, reset, règles Emotion <code class="inline">.css-xxxx</code> avec leurs états <code class="inline">:hover</code>, <code class="inline">:focus-visible</code>, <code class="inline">[data-active]</code>, <code class="inline">:disabled</code>) et le <code class="inline">outerHTML</code> de chaque composant. Les aperçus sont rendus dans un Shadow DOM avec ces règles ; ils ne sont pas redessinés. Les images externes (drapeaux flag-icons chargés depuis jsDelivr, sceaux de certification servis par le CDN Filerobot) sont remplacées par un rectangle neutre dans les aperçus, le code conservant l\u2019URL d\u2019origine ; les identifiants portés par les liens (rapports Power BI) sont mis à zéro. Les listes répétitives sont réduites à trois éléments et les contenus métier (noms, références, montants, dates) remplacés par des valeurs neutres ; les libellés d’interface sont conservés.</p>`)}
   ${section('Ce qui n’est pas ISO', `<p>Les fichiers de fontes CentraNo2 (woff2, sous licence) ne sont pas embarqués : la page les charge si elles sont installées localement, sinon system-ui. Les composants Chakra absents des écrans parcourus (toast, modal de confirmation, tooltip, switch, skeleton, date picker, kanban) sont marqués Soon. Les animations Framer Motion du segmented (translation du curseur) sont figées.</p>`)}
 `);
 
@@ -495,7 +526,7 @@ for (const [id, title, url, parts, desc] of SCREENS) {
 /* ---- composants ---- */
 page('composants', 'Composants', 'Tous les composants', 'Les composants Chakra UI relevés dans Orica, par ordre alphabétique, avec leur classe racine.', '<div class="comp-grid" id="compGrid"></div>');
 const COMP = [];
-const comp = (id, title, lede, body, soon) => { COMP.push({ id, title, soon }); page(id, 'Composants', title, lede, body, soon); };
+const comp = (id, title, lede, body, soon, ds) => { const withDs = soon ? body : `${dsTop(id, { block: /tableau|tabs|coquille|barre|ligne|accordeon|drawer|champ|heading|skeleton|progress|alert|scroll|notes|slider/.test(id) })}${body}${confMark(id)}`; COMP.push({ id, title, soon, ds: !!ds }); page(id, 'Composants', title, lede, withDs, soon); };
 
 comp('bouton', 'Bouton', 'chakra-button : toutes les variantes relevées, avec le CSS Emotion de chacune (hover, active, focus-visible, disabled).',
   `${section('Primaire', demo([pick.btnPrimary, pick.btnPrimaryMenu], { rules: 'bouton' }), 'css-umgg81. Le second est un chakra-menu__menu-button : il ouvre un menu (Nouveau fournisseur / Nouveau prospect).')}
@@ -564,8 +595,13 @@ comp('coquille', 'Coquille & en-tête', 'Rail de navigation (aside css-1dn00vq) 
 comp('etat-vide', 'État vide', 'chakra-stack css-1q63qd : « Aucune région trouvée ».', `${section('Vide', demo(pick.emptyState, { block: true }))}`);
 comp('lien', 'Lien', 'chakra-link : item de menu (Impact) et lien-bouton (export du glossaire).', `${section('Liens', demo([pick.linkMenu, pick.linkBtn]))}`);
 for (const [id, t] of [['toast','Toast'],['modal','Modal de confirmation'],['tooltip','Tooltip'],['switch','Switch'],['skeleton','Skeleton'],['date-picker','Date picker'],['kanban','Kanban'],['stepper','Stepper'],['breadcrumbs','Breadcrumbs'],['upload','Import de fichier'],['number-input','Number input'],['popover','Popover']]) {
-  comp(id, t, 'Composant Chakra non rencontré dans les écrans parcourus.', `<div class="empty-page"><span class="display">Soon</span><p>Dès qu’un écran d’Orica le montre, il sera relevé avec son HTML et ses règles.</p></div>`, true);
+  if (DSD && DSD.hasDs(id)) {
+    COMP.push({ id, title: t, soon: false, ds: true });
+    page(id, 'Composants', t, 'Défini dans le Design System Hub, non rencontré sur les écrans Orica relevés : rendu depuis la source du DS.', `${dsTop(id, { block: true })}<div class="ds-prodnote"><span class="ds-tag">non relevé en prod</span><p>Dès qu’un écran d’Orica le montre, le relevé s’ajoutera ici avec la comparaison au DS.</p></div>`, false);
+  } else comp(id, t, 'Composant Chakra non rencontré dans les écrans parcourus et absent du Design System Hub.', `<div class="empty-page"><span class="display">Soon</span><p>Dès qu’un écran d’Orica le montre, il sera relevé avec son HTML et ses règles.</p></div>`, true);
 }
+if (DSD) for (const [id, t, lede] of DSD.DS_ONLY_PAGES) { if (!DSD.hasDs(id)) continue; COMP.push({ id, title: t, soon: false, ds: true }); page(id, 'Composants', t, lede + ' Non rencontré sur les écrans Orica relevés.', `${dsTop(id, { block: true })}<div class="ds-prodnote"><span class="ds-tag">non relevé en prod</span><p>Rendu depuis la source du DS Hub ; aucun écran d’Orica relevé ne l’utilise encore.</p></div>`, false); }
+if (DSD) page('design-system-hub', 'Fondations', 'Design System Hub', 'Le code source du design system Belco (paquet design-system-hub, Chakra UI 2.5.5) est la référence ; cette page montre ce qu’Orica en garde, ce qu’elle surcharge, et quels composants sont effectivement servis.', DSD.dsHubPage(T, COMP));
 
 const CHANGELOG_DEFAULT = [
   { date: '2026-11-05', version: 'v1.0', title: 'Relevé ISO', modified: [`Toute la documentation est reconstruite à partir du code servi : ${Object.keys(T).length} variables du thème Chakra, ${Object.keys(D.rulesByClass).length} classes Emotion avec leurs états, ${Object.keys(D.icons).length} icônes SVG, ${Object.keys(S).length} échantillons HTML sur ${D.screens.length} écrans. Les versions réécrites (v0.1) sont retirées.`], added: ['Fondations : Icônes. Composants : Segmented control, Menu déroulant, Heading & divider, Lien. Écrans : Panneau Filtres.'], removed: ['Chips de choix (c’étaient des chakra-button), Progression (c’est une barre empilée dans la carte KPI), Toggle vue (non relevé dans Orica).'] },
@@ -586,6 +622,7 @@ page('mcp', 'Outils', 'MCP', 'Les fichiers à donner à une IA ou à un futur se
 ├── components.css      <span class="muted">← ${Object.keys(D.rulesByClass).length} classes Emotion avec leurs états</span>
 ├── icons.svg           <span class="muted">← ${Object.keys(D.icons).length} symboles</span>
 ├── samples/            <span class="muted">← HTML servi de chaque composant (${Object.keys(S).length} fichiers)</span>
+├── src/ds-source.json  <span class="muted">← thème, tokens, stories rendues et correspondance prod, générés depuis la source du DS Hub</span>
 └── rules/
 ${Object.keys(RULES).map((k, i, a) => `    ${i === a.length - 1 ? '└──' : '├──'} ${k}.md`).join('\n')}</pre>
 <div class="bundle-actions"><button class="copy-btn" style="position:static" type="button" id="copyAgents">Copier AGENTS.md</button><button class="copy-btn" style="position:static" type="button" id="copyTokens">Copier tokens.css</button><button class="copy-btn" style="position:static" type="button" id="copyCss">Copier components.css</button></div>`)}
@@ -593,7 +630,7 @@ ${section('AGENTS.md', `<div class="demo is-open"><div class="demo-code" style="
 function agentsMd() {
   return `# Orica (Belco Hub) — règles pour les IA
 
-Source : hub.belco-sandbox.synako.fr, module Orica, relevé ISO le 5 novembre 2026 (code servi, pas de réécriture).
+Deux sources. 1) Le Design System Hub : le code source du design system Belco (paquet design-system-hub, Chakra UI 2.5.5), chargé tel quel ; ses composants, variantes et tokens sont la référence (rules/design-system-hub.md). 2) Le relevé ISO des écrans d’Orica sur hub.belco-sandbox.synako.fr (5 novembre 2026) : ce que l’application sert vraiment. La doc montre les deux et mesure leur écart (mode Play, critère « Conforme au DS Hub »).
 Stack : React + Chakra UI v2 + Emotion. Tokens : variables CSS --chakra-* (tokens.css). Composants : classes chakra-* + classes Emotion .css-xxxx (components.css).
 Fonte : CentraNo2 (400/500/700/800 servies). Fond de page gray-100 #f8f9fa, texte dark-500 #232930, accent primary-500 = orica-500 #127746.
 Non relevés (ne pas produire sans capture) : toast, modal de confirmation, tooltip, switch, skeleton, date picker, kanban, stepper, breadcrumbs, import de fichier, number input, popover.
@@ -612,12 +649,14 @@ ${Object.keys(RULES).map(k => `- rules/${k}.md`).join('\n')}
 
 /* ------------------------------------------------------------------ assemblage HTML */
 const NAV = [
-  { group: 'Fondations', home: 'introduction', items: PAGES.filter(p => p.group === 'Fondations') },
+  { group: 'Fondations', home: 'introduction', items: (() => { const f = PAGES.filter(p => p.group === 'Fondations'); const i = f.findIndex(p => p.id === 'design-system-hub'); if (i > 0) { const [x] = f.splice(i, 1); f.splice(1, 0, x); } return f; })() },
   { group: 'Écrans Orica', home: 'ecran-references', items: PAGES.filter(p => p.group === 'Écrans Orica') },
   { group: 'Composants', home: 'composants', items: PAGES.filter(p => p.group === 'Composants') },
 ];
 const { buildAudit } = require('./audit-build.js');
-const { AUDIT, APP_SCREENS } = buildAudit({ D, pick, g, renderable, COMP });
+const { AUDIT, APP_SCREENS } = buildAudit({ D, pick, g, renderable, COMP, DS });
+if (DSD) for (const p of PAGES) p.body = p.body.replace(/<!--CONFORMITE:([a-z-]+)-->/g, (m, id) => { const a = AUDIT.find(x => x.id === id); return a ? DSD.conformity(id, a.roots) : ''; });
+const dsCss = DSD ? DSD.allRules.join('\n') : '';
 const shellCss = fs.readFileSync(path.join(DIR, 'shell.css'), 'utf8') + '\n' + fs.readFileSync(path.join(DIR, 'audit.css'), 'utf8') + '\n' + fs.readFileSync(path.join(DIR, 'chat.css'), 'utf8');
 const belcoLogo = fs.readFileSync(path.join(DIR, 'belco-logo.svg'), 'utf8');
 const pagesJson = JSON.stringify(PAGES.map(p => ({ id: p.id, group: p.group, title: p.title, lede: p.lede, body: p.body, soon: !!p.soon, nopager: p.group === 'Suivi' || p.group === 'Outils' })));
@@ -632,6 +671,7 @@ ${shellCss}
 <style id="prodFonts">${fontFaceCss}</style>
 <script type="text/plain" id="prodShared">${sharedCss.replace(/<\/script/g, '<\\/script')}</script>
 <script type="text/plain" id="prodComponents">${allComponentCss.replace(/<\/script/g, '<\\/script')}</script>
+<script type="text/plain" id="dsComponents">${dsCss.replace(/<\/script/g, '<\\/script')}</script>
 <div class="shell">
   <nav class="sidebar" id="sidebar" aria-label="Navigation de la documentation">
     <a class="brand" href="#introduction" id="brand">${belcoLogo}<span>Orica<small>Belco Hub · Design System · ISO</small></span></a>
@@ -652,13 +692,16 @@ ${shellCss}
 <script>
 const PAGES = ${pagesJson};
 const COMP = ${compJson};
-const NAV = ${JSON.stringify(NAV.map(n => ({ group: n.group, home: n.home, items: n.items.map(i => ({ id: i.id, label: i.id === 'introduction' ? 'Introduction' : i.title, soon: !!i.soon })) })))};
+const NAV = ${JSON.stringify(NAV.map(n => ({ group: n.group, home: n.home, items: n.items.map(i => ({ id: i.id, label: i.id === 'introduction' ? 'Introduction' : i.title, soon: !!i.soon, ds: !!(COMP.find(c => c.id === i.id) || {}).ds })) })))};
 const TOKENS_CSS = ${JSON.stringify(tokensCss)};
 const COMPONENTS_CSS = document.getElementById('prodComponents').textContent;
+const DS_CSS = (document.getElementById('dsComponents')||{textContent:''}).textContent;
 const SHARED_CSS = document.getElementById('prodShared').textContent;
 const AGENTS = ${JSON.stringify(agentsMd())};
 const AUDIT = ${JSON.stringify(AUDIT)};
 const RULES_MD = ${JSON.stringify(RULES)};
+const DS_TOKENS_CSS = ${JSON.stringify(DSD ? DSD.tokensOverrideCss : '')};
+const DS_COMPONENTS = ${JSON.stringify(DSD ? { theme: DSD.componentsSummary, hub: DSD.hubSummary, tokensChanged: DS.tokenDiff.changed } : null)};
 const CHAT_ENABLED = false; // true sur la version GitHub Pages (les appels API directs sont bloqués dans l’artefact)
 const APP_SCREENS = ${JSON.stringify(APP_SCREENS).replace(/<\/script/g, '<\\/script')};
 ${fs.readFileSync(path.join(DIR, 'shell.js'), 'utf8')}

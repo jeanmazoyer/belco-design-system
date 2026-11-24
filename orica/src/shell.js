@@ -1,21 +1,25 @@
 /* ---------- rendu ISO : chaque aperçu est un shadow root avec les règles de la prod ---------- */
-let sharedSheet=null, compSheet=null, previewSheet=null;
+let sharedSheet=null, compSheet=null, previewSheet=null, dsSheet=null;
 function sheets(){
-  if(sharedSheet) return [sharedSheet, compSheet, previewSheet];
-  try{ sharedSheet=new CSSStyleSheet(); sharedSheet.replaceSync(SHARED_CSS.replace(/:root, :host/g,':host')); compSheet=new CSSStyleSheet(); compSheet.replaceSync(COMPONENTS_CSS); previewSheet=new CSSStyleSheet(); }catch(e){ sharedSheet=null; }
-  return [sharedSheet, compSheet, previewSheet];
+  if(sharedSheet) return [sharedSheet, compSheet, dsSheet, previewSheet];
+  try{ sharedSheet=new CSSStyleSheet(); sharedSheet.replaceSync(SHARED_CSS.replace(/:root, :host/g,':host')); compSheet=new CSSStyleSheet(); compSheet.replaceSync(COMPONENTS_CSS); dsSheet=new CSSStyleSheet(); dsSheet.replaceSync(typeof DS_CSS==='string'?DS_CSS:''); previewSheet=new CSSStyleSheet(); }catch(e){ sharedSheet=null; }
+  return [sharedSheet, compSheet, dsSheet, previewSheet];
 }
+// tokens du DS Hub (source) à la place de la surcharge Orica, dans tous les aperçus
+let dsTokensOn=false;
+function toggleDsTokens(force){ dsTokensOn=typeof force==='boolean'?force:!dsTokensOn; setPreviewTokens(dsTokensOn?(typeof DS_TOKENS_CSS==='string'?DS_TOKENS_CSS:''):''); document.body.classList.toggle('ds-tokens-on',dsTokensOn); document.querySelectorAll('[data-ds-tokens]').forEach(b=>{ b.textContent=dsTokensOn?'Revenir aux tokens Orica':'Voir avec les tokens du DS Hub'; b.classList.toggle('is-on',dsTokensOn); }); }
+document.addEventListener('click',e=>{ const b=e.target.closest('[data-ds-tokens]'); if(b) toggleDsTokens(); });
 // aperçu d'une proposition de tokens : une feuille partagée par tous les shadow roots, vide par défaut
-function setPreviewTokens(css){ const [,,pv]=sheets(); if(pv){ try{ pv.replaceSync(css||''); }catch(e){} } }
+function setPreviewTokens(css){ const [,,,pv]=sheets(); if(pv){ try{ pv.replaceSync(css||''); }catch(e){} } }
 function mountShadows(root){
   root.querySelectorAll('[data-shadow-host]').forEach(host=>{
     if(host.shadowRoot) return;
     const tpl=host.nextElementSibling && host.nextElementSibling.matches('template[data-shadow]') ? host.nextElementSibling : null;
     if(!tpl) return;
     const sh=host.attachShadow({mode:'open'});
-    const [a,b,pv]=sheets();
-    if(a&&sh.adoptedStyleSheets!==undefined){ sh.adoptedStyleSheets=[a,b,pv]; }
-    else { const st=document.createElement('style'); st.textContent=SHARED_CSS.replace(/:root, :host/g,':host')+'\n'+COMPONENTS_CSS; sh.appendChild(st); }
+    const [a,b,ds,pv]=sheets();
+    if(a&&sh.adoptedStyleSheets!==undefined){ sh.adoptedStyleSheets=[a,b,ds,pv]; }
+    else { const st=document.createElement('style'); st.textContent=SHARED_CSS.replace(/:root, :host/g,':host')+'\n'+COMPONENTS_CSS+'\n'+(typeof DS_CSS==='string'?DS_CSS:''); sh.appendChild(st); }
     const wrap=document.createElement('div'); wrap.className='chakra-ui-light'; wrap.style.cssText='font-family:var(--chakra-fonts-body);color:var(--chakra-colors-dark-500);font-size:var(--chakra-fontSizes-md);line-height:1.5;-webkit-font-smoothing:antialiased;text-rendering:optimizelegibility;font-feature-settings:"kern";position:relative;transform:translateZ(0);contain:layout paint;overflow:hidden;display:flex;flex-wrap:wrap;gap:14px;align-items:center;width:100%';
     if(host.style.minHeight) wrap.style.minHeight=host.style.minHeight;
     if(host.classList.contains('is-block')) wrap.style.cssText+=';display:block';
@@ -34,7 +38,7 @@ const EXTRA=[{id:'changelog',label:'Changelog',top:'changelog'},{id:'mcp',label:
 const chevL='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>';
 const chevR='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
 function buildNav(){
-  navEl.innerHTML=NAV.map(g=>`<div class="nav-group"><a class="group-title" href="#${g.home}">${g.group}</a>${g.items.map(i=>`<a class="nav-item ${i.soon?'is-soon':''}" href="#${i.id}" data-id="${i.id}"><span>${i.label}</span>${i.soon?'<span class="soon">Soon</span>':''}</a>`).join('')}</div>`).join('')+'<div class="nav-empty" id="navEmpty" hidden>Aucun résultat.</div>';
+  navEl.innerHTML=NAV.map(g=>`<div class="nav-group"><a class="group-title" href="#${g.home}">${g.group}</a>${g.items.map(i=>`<a class="nav-item ${i.soon?'is-soon':''}" href="#${i.id}" data-id="${i.id}"><span>${i.label}</span>${i.soon?'<span class="soon">Soon</span>':i.ds?'<span class="soon is-ds">DS</span>':''}</a>`).join('')}</div>`).join('')+'<div class="nav-empty" id="navEmpty" hidden>Aucun résultat.</div>';
 }
 function currentId(){const h=(location.hash||'').replace(/^#/,'');return PAGES.some(p=>p.id===h)?h:'introduction';}
 function render(){
@@ -45,7 +49,7 @@ function render(){
   const top=(EXTRA.find(e=>e.id===id)||{}).top||'ds';
   document.querySelectorAll('.topnav a').forEach(a=>a.classList.toggle('is-active',a.dataset.top===top));
   pageEl.innerHTML=`<header class="page-head"><span class="label">${p.group}</span><div class="head-row"><h1>${p.title}</h1>${p.soon?'<span class="soon">Soon</span>':''}</div>${p.lede?`<p class="lede">${p.lede}</p>`:''}</header>${p.body||''}${p.nopager?'':`<nav class="pager" aria-label="Pages voisines">${prev?`<a class="prev" href="#${prev.id}"><span class="label">Précédent</span><strong>${chevL} ${prev.label}</strong></a>`:'<span></span>'}${next?`<a class="next" href="#${next.id}"><span class="label">Suivant</span><strong>${next.label} ${chevR}</strong></a>`:''}</nav>`}`;
-  const grid=$('#compGrid'); if(grid) grid.innerHTML=COMP.map(c=>`<a href="#${c.id}" class="${c.soon?'is-soon':''}">${c.title}${c.soon?'<span class="soon">Soon</span>':chevR}</a>`).join('');
+  const grid=$('#compGrid'); if(grid) grid.innerHTML=COMP.map(c=>`<a href="#${c.id}" class="${c.soon?'is-soon':''}">${c.title}${c.soon?'<span class="soon">Soon</span>':c.ds?'<span class="soon is-ds">DS</span>':chevR}</a>`).join('');
   document.querySelectorAll('.nav-item').forEach(a=>a.classList.toggle('is-active',a.dataset.id===id));
   mountShadows(pageEl);
   document.body.classList.remove('nav-open'); window.scrollTo({top:0});

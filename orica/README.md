@@ -1,12 +1,18 @@
 # Orica Design System (Belco Hub) — version ISO
 
+Deux sources depuis la v2.0 (24 nov. 2026) :
+1. **Le Design System Hub** — le code source du design system Belco (paquet `design-system-hub`, Chakra UI 2.5.5). Son thème est chargé tel quel et ses stories Storybook sont rendues en React : c’est la référence. Le code n’est pas publié ici ; `src/ds-source.json` contient les rendus, la structure du thème (variantes, tailles, défauts) et les tokens (voir `src/ds-pipeline/`).
+2. **Le relevé ISO des écrans d’Orica** (5 nov. 2026) — ce que l’application sert vraiment (ci-dessous).
+
+Chaque composant montre « Dans le Design System Hub » (ce que la source génère) puis les échantillons servis et « Conformité au Design System Hub » (les classes servies comparées à la source, déclaration par déclaration). La page Fondations › Design System Hub résume les écarts : Orica surcharge l’échelle `primary` (orica) et la police (CentraNo2), ajoute 83 tokens métier ; 718 tokens sont identiques.
+
 Documentation du module Orica du Belco Hub, relevée le 5 novembre 2026 directement dans le code servi par l’application (hub.belco-sandbox.synako.fr). Rien n’est redessiné : les tokens, le CSS Emotion (Chakra UI v2), le HTML et les icônes SVG sont ceux de la production, les données métier sont neutralisées (zéros, « Exemple », « Prénom Nom »).
 
 - index.html : la documentation (aperçus rendus en Shadow DOM avec le CSS de prod), générée par src/build.js
 - AGENTS.md : les règles assemblées pour une IA (généré à partir de rules/)
 - tokens.css : les 801 variables `--chakra-*` du thème (bloc `:root, :host`) — source de la doc
 - changelog.json : les entrées du changelog — source de la doc
-- src/ : le build de la doc et le relevé ISO (voir src/README.md)
+- src/ : le build de la doc, le relevé ISO et ds-source.json (voir src/README.md et src/ds-pipeline/README.md)
 - base.css : @font-face CentraNo2, reset Chakra et keyframes
 - components.css : toutes les règles Emotion relevées (`.css-xxxx`, avec :hover / :focus-visible / :disabled / :active)
 - icons.svg : sprite des icônes SVG inline (FontAwesome et Chakra), `<use href="icons.svg#id">`

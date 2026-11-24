@@ -1,0 +1,39 @@
+{
+  "name": "orica-ds-pipeline",
+  "private": true,
+  "description": "Génère ds-source.json à partir du code source du Design System Hub (non versionné ici).",
+  "scripts": {
+    "all": "node bundle-theme.js $DS_SRC && node render-stories.js $DS_SRC && node normalize-css.js && node gen-ds-source.js $DS_SRC && cp out/ds-source.json ../ds-source.json"
+  },
+  "dependencies": {
+    "@chakra-ui/react": "2.5.5",
+    "@chakra-ui/styled-system": "^2",
+    "@chakra-ui/theme-tools": "^2",
+    "@chakra-ui/utils": "^2",
+    "@chakra-ui/anatomy": "^2",
+    "@chakra-ui/icon": "^3",
+    "@chakra-ui/system": "^2",
+    "@emotion/react": "^11",
+    "@emotion/styled": "^11",
+    "@emotion/server": "^11",
+    "@emotion/cache": "^11",
+    "framer-motion": "^6",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-icons": "^5",
+    "esbuild": "^0.21",
+    "jsdom": "^26",
+    "playwright": "^1",
+    "uri-template": "^2",
+    "sanitize-html": "^2",
+    "react-number-format": "^5",
+    "react-phone-number-input": "^3",
+    "react-hook-form": "^7",
+    "react-country-flag": "^3",
+    "react-router-dom": "^6",
+    "@ebay/nice-modal-react": "^1",
+    "http-link-header": "^1",
+    "react-file-icon": "^1",
+    "@choc-ui/chakra-autocomplete": "^5"
+  }
+}

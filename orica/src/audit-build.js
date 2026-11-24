@@ -3,7 +3,7 @@
 // est dérivé des règles Emotion des classes présentes dans les échantillons du composant.
 const fs = require('fs'), path = require('path');
 
-function buildAudit({ D, pick, g, renderable, COMP }) {
+function buildAudit({ D, pick, g, renderable, COMP, DS }) {
   const S = D.samples;
   const cmp = (id, fam, samples, o = {}) => ({ id, fam, samples: samples.map(g).filter(Boolean), interactive: !!o.interactive, selectable: !!o.selectable, note: o.note || '' });
   const DEF = [
@@ -74,19 +74,31 @@ function buildAudit({ D, pick, g, renderable, COMP }) {
     if (c.samples.some(s => /éléments identiques/.test(s.html))) notes.push('Listes réduites à trois éléments dans le relevé');
     if (c.samples.some(s => /^<button[^>]*\sdisabled=""/.test(s.html))) notes.push('Certaines variantes relevées à l’état disabled');
     if (c.note) notes.push(c.note);
-    const score = Math.max(0, Math.round((statesPct === null ? tokensPct * 0.7 + consistency * 0.3 : tokensPct * 0.5 + statesPct * 0.3 + consistency * 0.2) - penalties.length * 5));
+    // conformité au DS Hub : similarité des classes racines servies avec ce que génère la source du DS
+    let dsPct = null, dsMatches = [];
+    if (DS && DS.match) {
+      const rootCls = uniq(c.samples.flatMap(s => (s.sig.match(/css-[a-z0-9]+/g) || [])));
+      dsMatches = rootCls.map(k => { const m = DS.match[k]; return m ? { cls: k, ds: m.ds, sim: m.sim, story: m.stories[0] ? `${m.stories[0].component} › ${m.stories[0].name}` : '', prodOnly: m.prodOnly.slice(0, 4), dsOnly: m.dsOnly.slice(0, 4) } : null; }).filter(Boolean);
+      dsPct = dsMatches.length ? Math.round(100 * dsMatches.reduce((s, m) => s + m.sim, 0) / dsMatches.length) : 0;
+    }
+    const score = Math.max(0, Math.round((dsPct === null
+      ? (statesPct === null ? tokensPct * 0.7 + consistency * 0.3 : tokensPct * 0.5 + statesPct * 0.3 + consistency * 0.2)
+      : (statesPct === null ? tokensPct * 0.4 + consistency * 0.2 + dsPct * 0.4 : tokensPct * 0.3 + statesPct * 0.2 + consistency * 0.1 + dsPct * 0.4)) - penalties.length * 5));
     const meta = COMP.find(x => x.id === c.id) || {};
     const STATE_FR = { hover: 'survol', focus: 'focus clavier', active: 'clic', disabled: 'désactivé', selected: 'sélection' };
     const missing = expected.filter(k => !a.states[k]).map(k => STATE_FR[k]);
-    const weakest = [['tokens', tokensPct], ['etats', statesPct === null ? 101 : statesPct], ['coherence', consistency]].sort((x, y) => x[1] - y[1])[0][0];
+    const weakest = [['tokens', tokensPct], ['etats', statesPct === null ? 101 : statesPct], ['coherence', consistency], ['ds', dsPct === null ? 101 : dsPct]].sort((x, y) => x[1] - y[1])[0][0];
     const verdict = score >= 90 ? 'Très fidèle au design system.' : score >= 80 ? 'Fidèle au design system, avec quelques écarts.' : score >= 60 ? 'Partiellement fidèle : des écarts à corriger.' : 'Peu fidèle : à reprendre.';
     const topCat = a.hardCats[0];
-    const why = weakest === 'coherence' && variants > 3 ? `Point faible : ${variants} déclinaisons différentes du même composant dans l’app (l’objectif est 3 au plus).`
+    const pref = (require('./ds-doc.js').DS_MAP[c.id] || { chakra: [], hub: [] }); const prefNames = [...pref.chakra, ...pref.hub];
+    const dsBest = dsMatches.slice().sort((x, y) => ((prefNames.some(n => y.story.startsWith(n + ' ')) ? 1 : 0) - (prefNames.some(n => x.story.startsWith(n + ' ')) ? 1 : 0)) || y.sim - x.sim)[0];
+    const why = weakest === 'ds' && dsPct !== null ? (dsPct < 50 ? 'Point faible : ce composant n’est pas dans le Design System Hub, il est composé dans l’application Orica.' : `Point faible : les styles servis s’écartent de ce que génère le DS Hub (${dsPct} % de conformité${dsBest && dsBest.prodOnly.length ? ' ; par ex. ' + dsBest.prodOnly[0] + ' ajouté par l’app' : ''}).`)
+      : weakest === 'coherence' && variants > 3 ? `Point faible : ${variants} déclinaisons différentes du même composant dans l’app (l’objectif est 3 au plus).`
       : weakest === 'etats' && missing.length ? `Point faible : ${missing.length > 1 ? 'les états ' + missing.join(', ') + ' ne sont pas dessinés' : 'l’état ' + missing[0] + ' n’est pas dessiné'}.`
       : topCat ? `Point faible : ${a.hard} valeur${a.hard > 1 ? 's' : ''} écrite${a.hard > 1 ? 's' : ''} en dur au lieu des tokens, surtout des ${topCat.cat} (${topCat.values.join(', ')}).`
       : 'Aucun point faible notable.';
     return {
-      verdict, why, hardCats: a.hardCats, missing,
+      verdict, why, hardCats: a.hardCats, missing, dsPct, dsMatches, dsBest: dsBest || null,
       id: c.id, title: meta.title || c.id, fam: c.fam, roots: uniq(c.samples.map(s => '.' + s.sig.trim().split(/\s+/).join('.'))),
       score, tokensPct, statesPct, consistency, variants, classes: classes.length, rules: rules.length, decl: a.tok + a.hard, hard: a.hard,
       hardTop: Object.entries(a.hardList).sort((x, y) => y[1] - x[1]).slice(0, 8).map(([k, n]) => ({ k, n })),
